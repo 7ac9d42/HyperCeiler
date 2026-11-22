@@ -20,7 +20,6 @@
 package com.sevtinge.hyperceiler.hooker;
 
 
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreHyperOSVersion;
 import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isHyperOSVersion;
 
 import android.content.Context;
@@ -58,10 +57,7 @@ public class HomeFragment extends DashboardFragment {
 
     @Override
     public int getPreferenceScreenResId() {
-        if (isMoreHyperOSVersion(3f)) {
-            return R.xml.home_new;
-        }
-        return R.xml.home;
+        return R.xml.home_new;
     }
 
     public static boolean isHyperOsPackage(Context context, String packageName) {
