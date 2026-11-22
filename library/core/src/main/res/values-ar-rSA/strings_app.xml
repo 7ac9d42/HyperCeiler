@@ -553,18 +553,6 @@
     <string name="system_ui_lock_screen_linkage_anim_off">معدل أنيميشن الشاشة عند الإيقاف</string>
     <string name="system_ui_navigation_title">التنقل</string>
     <string name="system_ui_navigation_handle_title">شريط التنقل</string>
-    <string name="system_ui_navigation_handle_custom">شريط تنقل مخصص</string>
-    <string name="system_ui_navigation_handle_custom_height">الطول</string>
-    <string name="system_ui_navigation_handle_custom_width">قياس الطول</string>
-    <string name="system_ui_navigation_handle_custom_width_land">قياس العرض</string>
-    <string name="system_ui_navigation_handle_custom_thickness">السماكة</string>
-    <string name="system_ui_navigation_handle_custom_color">اللون في وضع الإضاءة</string>
-    <string name="system_ui_navigation_handle_custom_color_dark">اللون في وضع الظلام</string>
-    <string name="system_ui_navigation_custom">تنقل مخصص</string>
-    <string name="system_ui_navigation_custom_height">ارتفاع شريط التنقل</string>
-    <string name="system_ui_navigation_custom_height_land">ارتفاع شريط التنقل في الوضع العرضي</string>
-    <string name="system_ui_navigation_frame_custom_height">ارتفاع إطار شريط التنقل</string>
-    <string name="system_ui_navigation_frame_custom_height_land">ارتفاع إطار شريط التنقل في الوضع العرضي</string>
     <string name="system_ui_statusbar_title">شريط الحالة</string>
     <string name="system_ui_statusbar_iconmanage_title">إدارة الأيقونات</string>
     <string name="system_ui_statusbar_network_speed_indicator_title">إدارة مؤشر سرعة الشبكة</string>
@@ -581,7 +569,6 @@
     <string name="system_ui_status_bar_mobile_indicator">إخفاء مؤشرات نشاط شبكة الجوّال</string>
     <string name="system_ui_status_bar_mobile_type_custom">نص مخصص</string>
     <string name="system_ui_statusbar_mobile_type_font_size">حجم الخط</string>
-    <string name="system_ui_status_bar_battery_style_change_location_title">تبديل النسبة المئوية و أيقونة البطارية</string>
     <string name="system_ui_status_bar_battery_style_font_size">حجم خط النسبة المئوية للبطارية</string>
     <string name="system_ui_status_bar_battery_style_font_mark_size">حجم خط رمز النسبة المئوية للبطارية</string>
     <string name="system_ui_status_bar_battery_style_vertical_offset">إزاحة لأعلى ولأسفل لرمز نسبة البطارية</string>
@@ -604,8 +591,6 @@
     <string name="system_ui_status_bar_icon_bluetooth">البلوتوث</string>
     <string name="system_ui_status_bar_icon_bluetooth_battery">بطارية البلوتوث</string>
     <string name="system_ui_status_bar_icon_new_hd">أيقونة HD جديدة</string>
-    <string name="system_ui_status_bar_icon_small_hd">أيقونة HD صغيرة</string>
-    <string name="system_ui_status_bar_icon_big_hd">أيقونة HD كبيرة</string>
     <string name="system_ui_status_bar_icon_mobile_network_signal_no_card">أيقونة عدم توفر بطاقة SIM</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_1">إخفاء أيقونة SIM 1</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_2">إخفاء أيقونة SIM 2</string>
@@ -698,10 +683,6 @@
     <string name="system_ui_statusbar_music_hide_aod_title">عدم عرض إشعارات التركيز أسفل الشاشة</string>
     <string name="system_ui_statusbar_music_show_aod_mode_title">عربي</string>
     <string name="system_ui_statusbar_music_cusiom_statusbar_title">إعدادات عرض شريط الحالة</string>
-    <string name="system_ui_statusbar_music_hide_clock_title">إخفاء ساعة شريط الحالة</string>
-    <string name="system_ui_statusbar_music_hide_clock_desc">إخفاء ساعة شريط الحالة عند عرض كلمات الأغاني المركزة، وضبط حركة الرسوم المتحركة في شريط الإشعارات المنسدل.</string>
-    <string name="system_ui_statusbar_music_click_clock_title">انقر لإظهار الساعة</string>
-    <string name="system_ui_statusbar_music_click_clock_desc">انقر فوق حدث كلمات الأغاني المحددة لتغيير ساعة شريط الحالة المراد عرضها، وإلا فقم بإخفائها. يحتاج المفتاح إلى إعادة تشغيل تطبيق الموسيقى المقابل حتى يتم تفعيله.</string>
     <string name="system_ui_statusbar_music_speed_title">معدل تمرير كلمات الأغاني</string>
     <string name="system_ui_statusbar_music_scroll_delay_title">تأخير تمرير كلمات الأغاني</string>
     <string name="system_ui_statusbar_music_width_title">إضافة مساحة بيضاء في نهاية كلمات الأغاني</string>

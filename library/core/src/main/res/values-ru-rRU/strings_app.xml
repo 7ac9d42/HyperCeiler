@@ -561,18 +561,6 @@
     <string name="system_ui_lock_screen_linkage_anim_off">Скорость анимации выключения экрана</string>
     <string name="system_ui_navigation_title">Навигация</string>
     <string name="system_ui_navigation_handle_title">Полоса жестов</string>
-    <string name="system_ui_navigation_handle_custom">Настроить полосу жестов</string>
-    <string name="system_ui_navigation_handle_custom_height">Высота</string>
-    <string name="system_ui_navigation_handle_custom_width">Ширина портретной ориентации</string>
-    <string name="system_ui_navigation_handle_custom_width_land">Ширина в альбомной ориентации</string>
-    <string name="system_ui_navigation_handle_custom_thickness">Толщина</string>
-    <string name="system_ui_navigation_handle_custom_color">Цвет в светлом режиме</string>
-    <string name="system_ui_navigation_handle_custom_color_dark">Цвет в темном режиме</string>
-    <string name="system_ui_navigation_custom">Свои настройки панели навигации</string>
-    <string name="system_ui_navigation_custom_height">Высота панели</string>
-    <string name="system_ui_navigation_custom_height_land">Высота панели в альбомной ориентации</string>
-    <string name="system_ui_navigation_frame_custom_height">Высота рамки навигационной панели</string>
-    <string name="system_ui_navigation_frame_custom_height_land">Высота рамки навигационной панели в альбомной ориентации</string>
     <string name="system_ui_statusbar_title">Строка состояния</string>
     <string name="system_ui_statusbar_iconmanage_title">Управление иконками</string>
     <string name="system_ui_statusbar_network_speed_indicator_title">Управление индикатором скорости сети</string>
@@ -589,7 +577,6 @@
     <string name="system_ui_status_bar_mobile_indicator">Скрыть индикаторы активности мобильной сети</string>
     <string name="system_ui_status_bar_mobile_type_custom">Свой текст</string>
     <string name="system_ui_statusbar_mobile_type_font_size">Размер шрифта</string>
-    <string name="system_ui_status_bar_battery_style_change_location_title">Поменять местами значок и процент батареи</string>
     <string name="system_ui_status_bar_battery_style_font_size">Размер шрифта процентов заряда батареи</string>
     <string name="system_ui_status_bar_battery_style_font_mark_size">Размер шрифта процентов заряда батареи</string>
     <string name="system_ui_status_bar_battery_style_vertical_offset">Вертикальное смещение процентов индикатора батареи</string>
@@ -612,8 +599,6 @@
     <string name="system_ui_status_bar_icon_bluetooth">Bluetooth</string>
     <string name="system_ui_status_bar_icon_bluetooth_battery">Заряд Bluetooth-устройства</string>
     <string name="system_ui_status_bar_icon_new_hd">Новый HD</string>
-    <string name="system_ui_status_bar_icon_small_hd">Маленький HD</string>
-    <string name="system_ui_status_bar_icon_big_hd">Большой HD</string>
     <string name="system_ui_status_bar_icon_mobile_network_signal_no_card">Отсутствие SIM-карты</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_1">Скрыть иконку сигнала SIM-карты 1</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_2">Скрыть иконку сигнала SIM-карты 2</string>
@@ -707,10 +692,6 @@
     <string name="system_ui_statusbar_music_hide_aod_title">Не показывать уведомления о фокусе под экраном</string>
     <string name="system_ui_statusbar_music_show_aod_mode_title">Использовать пользовательские настройки экрана фокусировки</string>
     <string name="system_ui_statusbar_music_cusiom_statusbar_title">Настройки отображения строки состояния</string>
-    <string name="system_ui_statusbar_music_hide_clock_title">Скрыть часы в строке состояния</string>
-    <string name="system_ui_statusbar_music_hide_clock_desc">Скройте часы в строке состояния при отображении выделенного текста и настройте анимацию раскрывающейся панели уведомлений</string>
-    <string name="system_ui_statusbar_music_click_clock_title">Нажмите, чтобы показать часы</string>
-    <string name="system_ui_statusbar_music_click_clock_desc">Нажмите на текстовое событие, чтобы изменить отображение часов в строке состояния, в противном случае скройте их. Для вступления переключателя в силу необходимо перезапустить соответствующее музыкальное программное обеспечение.</string>
     <string name="system_ui_statusbar_music_speed_title">Скорость прокрутки текста</string>
     <string name="system_ui_statusbar_music_scroll_delay_title">Скорость прокрутки текста</string>
     <string name="system_ui_statusbar_music_width_title">Добавить пробел в конце текста</string>

@@ -491,7 +491,6 @@
     <string name="system_ui_lock_screen_linkage_anim_off">我不让你关</string>
     <string name="system_ui_navigation_title">导航</string>
     <string name="system_ui_navigation_handle_title">底线</string>
-    <string name="system_ui_navigation_handle_custom_thickness">粗 细</string>
     <string name="system_ui_statusbar_title">状态不实时显示的栏</string>
     <string name="system_ui_statusbar_iconmanage_title">你还管上图标了？</string>
     <string name="system_ui_status_bar_double_tap_to_sleep">双击睡大觉</string>
@@ -511,8 +510,6 @@
     <string name="system_ui_status_bar_icon_bluetooth">黄龙江一带</string>
     <string name="system_ui_status_bar_icon_bluetooth_battery">黄龙江电池</string>
     <string name="system_ui_status_bar_icon_new_hd">不新的HD图标</string>
-    <string name="system_ui_status_bar_icon_small_hd">非常小的HD</string>
-    <string name="system_ui_status_bar_icon_big_hd">非常大的HD</string>
     <string name="system_ui_status_bar_icon_mobile_network_signal_no_card">你sim卡掉了</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_1">卸载sim 1 图标</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_2">卸载sim 2 图标</string>

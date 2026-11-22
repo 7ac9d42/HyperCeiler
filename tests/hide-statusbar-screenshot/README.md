@@ -21,8 +21,8 @@ Coverage:
 - 截屏期间窗口 Surface 被重建时，收尾不会留下 0 alpha；
 - SDK ≥ 37 走 `MiuiPhoneStatusBarView#onAttachedToWindow` 分支。
 
-Source guards 另外检查 `SystemUIV`/`SystemUIB` 各只注册一次该规则、`BaseLoad`
-仍会拦下重复注册、规则状态仍是进程内共享而不是实例字段。
+Source guards 另外检查 `SystemUIB` 只注册一次该规则、`BaseLoad` 仍会拦下重复注册、
+规则状态仍是进程内共享而不是实例字段。
 
 Host tests 覆盖规则逻辑与去重路径；真机验收已通过：截屏结束后状态栏立即恢复，
 `finished=true` 的 `CALLBACK_HIT` 为 `visibility=0`。

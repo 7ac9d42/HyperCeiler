@@ -525,18 +525,6 @@
     <string name="system_ui_lock_screen_linkage_anim_off">Szybkość animacji wyłączania ekranu</string>
     <string name="system_ui_navigation_title">Nawigacja</string>
     <string name="system_ui_navigation_handle_title">Linia uchwytu</string>
-    <string name="system_ui_navigation_handle_custom">Własna linia uchwytu</string>
-    <string name="system_ui_navigation_handle_custom_height">Wysokość</string>
-    <string name="system_ui_navigation_handle_custom_width">Szerokość pionowa</string>
-    <string name="system_ui_navigation_handle_custom_width_land">Szerokość pozioma</string>
-    <string name="system_ui_navigation_handle_custom_thickness">Grubość</string>
-    <string name="system_ui_navigation_handle_custom_color">Kolor w jasnym motywie</string>
-    <string name="system_ui_navigation_handle_custom_color_dark">Kolor w ciemnym motywie</string>
-    <string name="system_ui_navigation_custom">Własna nawigacja</string>
-    <string name="system_ui_navigation_custom_height">Wysokość nawigacji</string>
-    <string name="system_ui_navigation_custom_height_land">Wysokość nawigacji w poziomie</string>
-    <string name="system_ui_navigation_frame_custom_height">Wysokość ramki nawigacji</string>
-    <string name="system_ui_navigation_frame_custom_height_land">Wysokość ramki nawigacji w poziomie</string>
     <string name="system_ui_statusbar_title">Pasek stanu</string>
     <string name="system_ui_statusbar_iconmanage_title">Zarządzaj ikonami</string>
     <string name="system_ui_statusbar_network_speed_indicator_title">Zarządzaj wskaźnikiem szybkości sieci</string>
@@ -553,7 +541,6 @@
     <string name="system_ui_status_bar_mobile_indicator">Ukryj wskaźniki aktywności sieci komórkowej</string>
     <string name="system_ui_status_bar_mobile_type_custom">Własny tekst</string>
     <string name="system_ui_statusbar_mobile_type_font_size">Rozmiar czcionki</string>
-    <string name="system_ui_status_bar_battery_style_change_location_title">Zamień ikonę i procent baterii</string>
     <string name="system_ui_status_bar_battery_style_font_size">Rozmiar czcionki procentu baterii</string>
     <string name="system_ui_status_bar_battery_style_font_mark_size">Rozmiar czcionki symbolu procentu baterii</string>
     <string name="system_ui_status_bar_battery_style_vertical_offset">Przesunięcie w górę i w dół symbolu procentu baterii</string>
@@ -571,8 +558,6 @@
     <string name="system_ui_status_bar_icon_wifi_network_indicator">Wskaźnik aktywności Wi-Fi</string>
     <string name="system_ui_status_bar_icon_bluetooth_battery">Bateria Bluetooth</string>
     <string name="system_ui_status_bar_icon_new_hd">Nowa ikona HD</string>
-    <string name="system_ui_status_bar_icon_small_hd">Mała ikona HD</string>
-    <string name="system_ui_status_bar_icon_big_hd">Duża ikona HD</string>
     <string name="system_ui_status_bar_icon_mobile_network_signal_no_card">Ikona braku karty SIM</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_1">Ukryj ikonę sygnału SIM 1</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_2">Ukryj ikonę sygnału SIM 2</string>
@@ -654,10 +639,6 @@
     <string name="system_ui_statusbar_music_tip">Notatki przed użyciem:\n• Po włączeniu tej funkcji sprawdź i uruchom ponownie interfejs System UI oraz odpowiedni zakres muzyczny.\n• Ta funkcja wymaga użycia modułu \"SuperLyric\".\n• Upewnij się, że ustawienie \"Skoncentruj powiadomienie na tekstach piosenek\" jest włączone w kategorii powiadomień odpowiedniej aplikacji muzycznej i w ustawieniach powiadomień skupienia aplikacji.</string>
     <string name="system_ui_statusbar_music_notification">Skoncentruj powiadomienie na tekstach piosenek</string>
     <string name="system_ui_statusbar_music_cusiom_notific_title">Ustawienia wyświetlania</string>
-    <string name="system_ui_statusbar_music_hide_clock_title">Ukryj zegar na pasku statusu</string>
-    <string name="system_ui_statusbar_music_hide_clock_desc">Ukrywa zegar paska statusu podczas wyświetlania tekstów piosenek i dostosowuje animacje rozwijanego centrum powiadomień.</string>
-    <string name="system_ui_statusbar_music_click_clock_title">Kliknij, aby wyświetlić zegar</string>
-    <string name="system_ui_statusbar_music_click_clock_desc">Kliknij tekst piosenki, aby zmienić zegar na pasku stanu na widoczny, w przeciwnym razie zostanie ukryty. Przełącznik wymaga ponownego uruchomienia odpowiedniego oprogramowania muzycznego, aby zadziałał.</string>
     <string name="system_ui_statusbar_music_speed_title">Prędkość przewijania tekstów</string>
     <string name="system_ui_statusbar_music_scroll_delay_title">Opóźnienie przewijania tekstów</string>
     <string name="system_ui_statusbar_music_width_title">Dodaj spację na końcu tekstu piosenki</string>

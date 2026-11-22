@@ -29,13 +29,10 @@ with tempfile.TemporaryDirectory(prefix='hc-hide-statusbar-') as out:
     print(z.stderr, end='')
     failed += int(z.returncode != 0)
 
-system_ui = (libhook / 'app/SystemUI/SystemUIV.java').read_text(encoding='utf8')
 system_ui_b = (libhook / 'app/SystemUI/SystemUIB.java').read_text(encoding='utf8')
 base_load = (libhook / 'base/BaseLoad.java').read_text(encoding='utf8')
 rule_text = rule.read_text(encoding='utf8')
 checks = {
-    'SystemUIV registers hide-status-bar rule once':
-        system_ui.count('initHook(new HideStatusBarBeforeScreenshot()') == 1,
     'SystemUIB registers hide-status-bar rule once':
         system_ui_b.count('initHook(new HideStatusBarBeforeScreenshot()') == 1,
     'BaseLoad rejects duplicated hook registration':

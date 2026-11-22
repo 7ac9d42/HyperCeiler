@@ -534,18 +534,6 @@
     <string name="system_ui_lock_screen_linkage_anim_off">Ekran kapalıyken animasyon oranı</string>
     <string name="system_ui_navigation_title">Gezinme</string>
     <string name="system_ui_navigation_handle_title">Çubuk</string>
-    <string name="system_ui_navigation_handle_custom">Özel çubuk</string>
-    <string name="system_ui_navigation_handle_custom_height">Yükseklik</string>
-    <string name="system_ui_navigation_handle_custom_width">Dikey genişlik</string>
-    <string name="system_ui_navigation_handle_custom_width_land">Yatay genişlik</string>
-    <string name="system_ui_navigation_handle_custom_thickness">Kalınlık</string>
-    <string name="system_ui_navigation_handle_custom_color">Aydınlık modda renk</string>
-    <string name="system_ui_navigation_handle_custom_color_dark">Karanlık modda renk</string>
-    <string name="system_ui_navigation_custom">Özel gezinme</string>
-    <string name="system_ui_navigation_custom_height">Gezinme çubuğu yüksekliği</string>
-    <string name="system_ui_navigation_custom_height_land">Yatay gezinme çubuğu yüksekliği</string>
-    <string name="system_ui_navigation_frame_custom_height">Gezinme çubuğu çerçeve yüksekliği</string>
-    <string name="system_ui_navigation_frame_custom_height_land">Yatay gezinme çubuğu yüksekliği</string>
     <string name="system_ui_statusbar_title">Durum çubuğu</string>
     <string name="system_ui_statusbar_iconmanage_title">Simge yöneticisi</string>
     <string name="system_ui_statusbar_network_speed_indicator_title">Ağ hızı göstergesi yönetimi</string>
@@ -562,7 +550,6 @@
     <string name="system_ui_status_bar_mobile_indicator">Mobil ağ etkinliği göstergelerini gizle</string>
     <string name="system_ui_status_bar_mobile_type_custom">Özeli metin</string>
     <string name="system_ui_statusbar_mobile_type_font_size">Yazı Boyutu</string>
-    <string name="system_ui_status_bar_battery_style_change_location_title">Simge ve Pil yüzdesi Değiştirin</string>
     <string name="system_ui_status_bar_battery_style_font_size">Pil yüzdesi yazı tipi boyutu</string>
     <string name="system_ui_status_bar_battery_style_font_mark_size">Pil yüzdesi sembolü yazı tipi boyutu</string>
     <string name="system_ui_status_bar_battery_style_vertical_offset">Pil yüzdesi sembolünün aşağı ve yukarı ofseti</string>
@@ -585,8 +572,6 @@
     <string name="system_ui_status_bar_icon_bluetooth">Bluetooth</string>
     <string name="system_ui_status_bar_icon_bluetooth_battery">Bluetooth pili</string>
     <string name="system_ui_status_bar_icon_new_hd">Yeni HD simge</string>
-    <string name="system_ui_status_bar_icon_small_hd">Küçük HD simge</string>
-    <string name="system_ui_status_bar_icon_big_hd">Büyük HD simge</string>
     <string name="system_ui_status_bar_icon_mobile_network_signal_no_card">Sim kart simgesi yok</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_1">SIM kart 1 sinyal simgesini gizle</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_2">SIM kart 2 sinyal simgesini gizle</string>
@@ -665,9 +650,6 @@
     <string name="system_ui_status_bar_strong_toast_test_long_text_1">Bu, kaydırma biçiminde çıktısı alınacak uzun bir metin parçasıdır</string>
     <string name="system_ui_statusbar_music_tip">Kullanmadan önce notlar:\n- Bu özelliği açtıktan sonra, Sistem UI kapsamını kontrol edin ve yeniden başlatın.\n- Bu özelliğin \"SuperLyric\" modülü ile kullanılması gerekir.</string>
     <string name="system_ui_statusbar_music_notification">Bildirim sözlerine odaklan</string>
-    <string name="system_ui_statusbar_music_hide_clock_title">Durum çubuğu saatini gizle</string>
-    <string name="system_ui_statusbar_music_hide_clock_desc">Odak şarkı sözlerini gösterirken durum çubuğu saatini gizle</string>
-    <string name="system_ui_statusbar_music_click_clock_title">Saati göstermek için tıklayın</string>
     <string name="system_ui_controlcenter_title">Kontrol merkezi</string>
     <string name="system_ui_control_center_magnet_tile_settings">Mıknatıs</string>
     <string name="system_ui_control_center_notification_title">Bildirim</string>

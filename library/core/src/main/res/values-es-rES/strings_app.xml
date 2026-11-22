@@ -472,18 +472,6 @@
     <string name="system_ui_lock_screen_allow_third_face_desc">Se permite el reconocimiento de cara y huella normal en la pantalla de bloqueo que muestran las aplicaciones terceros</string>
     <string name="system_ui_navigation_title">Navegación</string>
     <string name="system_ui_navigation_handle_title">Línea indicadora de gesto</string>
-    <string name="system_ui_navigation_handle_custom">Personalizar la línea indicadora de gesto</string>
-    <string name="system_ui_navigation_handle_custom_height">Altura</string>
-    <string name="system_ui_navigation_handle_custom_width">Ancho vertical</string>
-    <string name="system_ui_navigation_handle_custom_width_land">Ancho horizontal</string>
-    <string name="system_ui_navigation_handle_custom_thickness">Grosor</string>
-    <string name="system_ui_navigation_handle_custom_color">Color en modo claro</string>
-    <string name="system_ui_navigation_handle_custom_color_dark">Color en modo oscuro</string>
-    <string name="system_ui_navigation_custom">Personalizar navegación</string>
-    <string name="system_ui_navigation_custom_height">Altura de barra de navegación</string>
-    <string name="system_ui_navigation_custom_height_land">Altura de barra de navegación horizontal</string>
-    <string name="system_ui_navigation_frame_custom_height">Altura del marco de navegación</string>
-    <string name="system_ui_navigation_frame_custom_height_land">Altura del marco de navegación horizontal</string>
     <string name="system_ui_statusbar_title">Barra de estado</string>
     <string name="system_ui_statusbar_iconmanage_title">Administración de iconos</string>
     <string name="system_ui_statusbar_network_speed_indicator_title">Administración de indicadores de velocidad de red</string>
@@ -499,7 +487,6 @@
     <string name="system_ui_status_bar_mobile_indicator">Ocultar indicadores de actividad de red móvil</string>
     <string name="system_ui_status_bar_mobile_type_custom">Personalizar texto</string>
     <string name="system_ui_statusbar_mobile_type_font_size">Tamaño de fuente</string>
-    <string name="system_ui_status_bar_battery_style_change_location_title">Intercambiar icono y porcentaje de la batería</string>
     <string name="system_ui_status_bar_battery_style_font_size">Tamaño de fuente del porcentaje de batería</string>
     <string name="system_ui_status_bar_battery_style_font_mark_size">Tamaño de fuente del signo de porcentaje de batería</string>
     <string name="system_ui_status_bar_battery_style_vertical_offset">Arriba o abajo del signo de porcentaje de batería</string>
@@ -518,8 +505,6 @@
     <string name="system_ui_status_bar_icon_wifi_network_indicator">Indicador de actividad de red</string>
     <string name="system_ui_status_bar_icon_bluetooth_battery">Batería de Bluetooth</string>
     <string name="system_ui_status_bar_icon_new_hd">Nuevo icono de HD</string>
-    <string name="system_ui_status_bar_icon_small_hd">Icono de HD pequeño</string>
-    <string name="system_ui_status_bar_icon_big_hd">Icono de HD grande</string>
     <string name="system_ui_status_bar_icon_mobile_network_signal_no_card">Icono de que no hay SIM</string>
     <string name="system_ui_status_bar_icon_mobile_network_type">Lógica de muestra</string>
     <string name="system_ui_status_bar_big_mobile_network_type">Icono grande de tipo de red</string>

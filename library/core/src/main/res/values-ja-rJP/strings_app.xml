@@ -561,18 +561,6 @@
     <string name="system_ui_lock_screen_linkage_anim_off">画面オフ時のアニメーション速度</string>
     <string name="system_ui_navigation_title">ナビゲーション</string>
     <string name="system_ui_navigation_handle_title">ジェスチャーライン</string>
-    <string name="system_ui_navigation_handle_custom">ジェスチャーラインをカスタマイズ</string>
-    <string name="system_ui_navigation_handle_custom_height">高さ</string>
-    <string name="system_ui_navigation_handle_custom_width">縦向き時の幅</string>
-    <string name="system_ui_navigation_handle_custom_width_land">横向き時の幅</string>
-    <string name="system_ui_navigation_handle_custom_thickness">太さ</string>
-    <string name="system_ui_navigation_handle_custom_color">ライトモード時の色</string>
-    <string name="system_ui_navigation_handle_custom_color_dark">ダークモード時の色</string>
-    <string name="system_ui_navigation_custom">カスタムナビゲーション</string>
-    <string name="system_ui_navigation_custom_height">ナビゲーションの高さ</string>
-    <string name="system_ui_navigation_custom_height_land">横向き時のナビゲーションの高さ</string>
-    <string name="system_ui_navigation_frame_custom_height">ナビゲーションフレームの高さ</string>
-    <string name="system_ui_navigation_frame_custom_height_land">横向き時のナビゲーションフレームの高さ</string>
     <string name="system_ui_statusbar_title">ステータスバー</string>
     <string name="system_ui_statusbar_iconmanage_title">アイコンの管理</string>
     <string name="system_ui_statusbar_network_speed_indicator_title">ネットワーク速度インジケーターの管理</string>
@@ -589,7 +577,6 @@
     <string name="system_ui_status_bar_mobile_indicator">モバイルネットワークアクティビティインジケーターを非表示</string>
     <string name="system_ui_status_bar_mobile_type_custom">カスタムテキスト</string>
     <string name="system_ui_statusbar_mobile_type_font_size">フォントのサイズ</string>
-    <string name="system_ui_status_bar_battery_style_change_location_title">バッテリーアイコンとパーセント表示を入れ替える</string>
     <string name="system_ui_status_bar_battery_style_font_size">バッテリー残量のフォントサイズ</string>
     <string name="system_ui_status_bar_battery_style_font_mark_size">バッテリー残量記号のフォントサイズ</string>
     <string name="system_ui_status_bar_battery_style_vertical_offset">バッテリー残量記号の上下オフセット</string>
@@ -612,8 +599,6 @@
     <string name="system_ui_status_bar_icon_bluetooth">Bluetooth</string>
     <string name="system_ui_status_bar_icon_bluetooth_battery">Bluetooth のバッテリー残量</string>
     <string name="system_ui_status_bar_icon_new_hd">新しい HD アイコン</string>
-    <string name="system_ui_status_bar_icon_small_hd">小さな HD アイコン</string>
-    <string name="system_ui_status_bar_icon_big_hd">大きな HD アイコン</string>
     <string name="system_ui_status_bar_icon_mobile_network_signal_no_card">SIM カード未挿入アイコン</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_1">SIM カード1のシグナルアイコンを非表示</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_2">SIM カード2のシグナルアイコンを非表示</string>
@@ -707,10 +692,6 @@
     <string name="system_ui_statusbar_music_hide_aod_title">ロック画面にフォーカス通知を表示しない</string>
     <string name="system_ui_statusbar_music_show_aod_mode_title">カスタムフォーカススクリーンオフレイアウトを使用</string>
     <string name="system_ui_statusbar_music_cusiom_statusbar_title">ステータスバーの表示設定</string>
-    <string name="system_ui_statusbar_music_hide_clock_title">ステータスバーの時計を非表示</string>
-    <string name="system_ui_statusbar_music_hide_clock_desc">フォーカスされた歌詞を表示しているときにステータスバーの時計を非表示にする</string>
-    <string name="system_ui_statusbar_music_click_clock_title">タップで時計を表示</string>
-    <string name="system_ui_statusbar_music_click_clock_desc">フォーカスされた歌詞をクリックするとステータスバーの時計を表示するように変更し、そうでない場合は非表示に切り替えます。この切り替えを有効にするには、対応する音楽アプリを再起動する必要があります。</string>
     <string name="system_ui_statusbar_music_speed_title">歌詞のスクロール速度</string>
     <string name="system_ui_statusbar_music_scroll_delay_title">歌詞のスクロールの遅延</string>
     <string name="system_ui_statusbar_music_width_title">歌詞の終わりに空白を追加する</string>

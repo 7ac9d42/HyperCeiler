@@ -561,18 +561,6 @@
     <string name="system_ui_lock_screen_linkage_anim_off">Tốc độ hoạt ảnh tắt màn hình</string>
     <string name="system_ui_navigation_title">Phím điều hướng</string>
     <string name="system_ui_navigation_handle_title">Thanh ngang</string>
-    <string name="system_ui_navigation_handle_custom">Tùy chỉnh thanh ngang</string>
-    <string name="system_ui_navigation_handle_custom_height">Chiều cao</string>
-    <string name="system_ui_navigation_handle_custom_width">Độ rộng chiều dọc</string>
-    <string name="system_ui_navigation_handle_custom_width_land">Độ rộng chiều ngang</string>
-    <string name="system_ui_navigation_handle_custom_thickness">Độ dày thanh ngang</string>
-    <string name="system_ui_navigation_handle_custom_color">Màu ở chế độ sáng</string>
-    <string name="system_ui_navigation_handle_custom_color_dark">Màu ở chế độ tối</string>
-    <string name="system_ui_navigation_custom">Tùy chỉnh thanh ngang cử chỉ</string>
-    <string name="system_ui_navigation_custom_height">Chiều cao thanh ngang</string>
-    <string name="system_ui_navigation_custom_height_land">Chiều cao thanh ngang \"xoay ngang\"</string>
-    <string name="system_ui_navigation_frame_custom_height">Chiều cao thanh điều hướng</string>
-    <string name="system_ui_navigation_frame_custom_height_land">Chiều cao thanh điều hướng \'xoay ngang\'</string>
     <string name="system_ui_statusbar_title">Thanh trạng thái</string>
     <string name="system_ui_statusbar_iconmanage_title">Biểu tượng</string>
     <string name="system_ui_statusbar_network_speed_indicator_title">Tốc độ mạng</string>
@@ -589,7 +577,6 @@
     <string name="system_ui_status_bar_mobile_indicator">Ẩn chỉ báo hoạt động mạng di động</string>
     <string name="system_ui_status_bar_mobile_type_custom">Tuỳ chỉnh văn bản</string>
     <string name="system_ui_statusbar_mobile_type_font_size">Cỡ chữ</string>
-    <string name="system_ui_status_bar_battery_style_change_location_title">Hoán đổi biểu tượng và phần trăm pin</string>
     <string name="system_ui_status_bar_battery_style_font_size">Kích thước phông chữ pin</string>
     <string name="system_ui_status_bar_battery_style_font_mark_size">Kích thước phông chữ %pin</string>
     <string name="system_ui_status_bar_battery_style_vertical_offset">Độ cao thấp của %pin</string>
@@ -612,8 +599,6 @@
     <string name="system_ui_status_bar_icon_bluetooth">Bluetooth</string>
     <string name="system_ui_status_bar_icon_bluetooth_battery">Pin bluetooth</string>
     <string name="system_ui_status_bar_icon_new_hd">Biểu tượng HD mới</string>
-    <string name="system_ui_status_bar_icon_small_hd">Biểu tượng HD nhỏ</string>
-    <string name="system_ui_status_bar_icon_big_hd">Biểu tượng HD lớn</string>
     <string name="system_ui_status_bar_icon_mobile_network_signal_no_card">Biểu tượng không có sim</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_1">Ẩn biểu tượng tín hiệu SIM 1</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_2">Ẩn biểu tượng tín hiệu SIM 2</string>
@@ -708,10 +693,6 @@
     <string name="system_ui_statusbar_music_hide_aod_title">Không hiển thị thông báo tập trung dưới màn hình</string>
     <string name="system_ui_statusbar_music_show_aod_mode_title">Sử dụng bố cục màn hình lấy nét tùy chỉnh</string>
     <string name="system_ui_statusbar_music_cusiom_statusbar_title">Cài đặt hiển thị thanh trạng thái</string>
-    <string name="system_ui_statusbar_music_hide_clock_title">Ẩn đồng hồ thanh trạng thái</string>
-    <string name="system_ui_statusbar_music_hide_clock_desc">Ẩn đồng hồ trên thanh trạng thái khi hiển thị lời bài hát focus và điều chỉnh hoạt ảnh của mục Thông báo thả xuống.</string>
-    <string name="system_ui_statusbar_music_click_clock_title">Nhấp để hiện đồng hồ</string>
-    <string name="system_ui_statusbar_music_click_clock_desc">Nhấp vào sự kiện lời bài hát focus để thay đổi đồng hồ thanh trạng thái để hiển thị, nếu không thì ẩn nó. Công tắc cần khởi động lại phần mềm âm nhạc tương ứng để có hiệu lực.</string>
     <string name="system_ui_statusbar_music_speed_title">Tỉ lệ cuộn lời bài hát</string>
     <string name="system_ui_statusbar_music_scroll_delay_title">Hoãn cuộn lời bài hát</string>
     <string name="system_ui_statusbar_music_width_title">Thêm khoảng trắng vào cuối lời bài hát</string>

@@ -402,18 +402,6 @@
     <string name="system_ui_lock_screen_allow_third_face_desc">Izinkan pengenalan wajah dan sidik jari digunakan secara normal pada layar kunci yang ditampilkan oleh aplikasi pihak ketiga</string>
     <string name="system_ui_navigation_title">Navigasi</string>
     <string name="system_ui_navigation_handle_title">Tangani garis</string>
-    <string name="system_ui_navigation_handle_custom">Garis pegangan khusus</string>
-    <string name="system_ui_navigation_handle_custom_height">Tinggi</string>
-    <string name="system_ui_navigation_handle_custom_width">Lebar potret</string>
-    <string name="system_ui_navigation_handle_custom_width_land">Lebar lanskap</string>
-    <string name="system_ui_navigation_handle_custom_thickness">Ketebalan</string>
-    <string name="system_ui_navigation_handle_custom_color">Warnai saat mode terang</string>
-    <string name="system_ui_navigation_handle_custom_color_dark">Warnai saat mode gelap</string>
-    <string name="system_ui_navigation_custom">Navigasi khusus</string>
-    <string name="system_ui_navigation_custom_height">Ketinggian navigasi</string>
-    <string name="system_ui_navigation_custom_height_land">Ketinggian navigasi lanskap</string>
-    <string name="system_ui_navigation_frame_custom_height">Tinggi bingkai navigasi</string>
-    <string name="system_ui_navigation_frame_custom_height_land">Tinggi bingkai navigasi lanskap</string>
     <string name="system_ui_statusbar_iconmanage_title">Manajemen ikon</string>
     <string name="system_ui_statusbar_network_speed_indicator_title">Manajemen indikator kecepatan jaringan</string>
     <string name="system_ui_statusbar_clock_title">Manajemen indikator jam</string>
@@ -428,7 +416,6 @@
     <string name="system_ui_status_bar_mobile_indicator">Sembunyikan indikator aktivitas jaringan seluler</string>
     <string name="system_ui_status_bar_mobile_type_custom">Teks khusus</string>
     <string name="system_ui_statusbar_mobile_type_font_size">Ukuran huruf</string>
-    <string name="system_ui_status_bar_battery_style_change_location_title">Tukar ikon dan persentase baterai</string>
     <string name="system_ui_status_bar_battery_style_font_size">Ukuran font persentase baterai</string>
     <string name="system_ui_status_bar_battery_style_font_mark_size">Ukuran font simbol persentase baterai</string>
     <string name="system_ui_status_bar_battery_style_vertical_offset">Offset atas dan bawah simbol persentase baterai</string>
@@ -449,8 +436,6 @@
     <string name="system_ui_status_bar_icon_wifi_network_indicator">Indikator Aktivitas Jaringan</string>
     <string name="system_ui_status_bar_icon_bluetooth_battery">baterai Bluetooth</string>
     <string name="system_ui_status_bar_icon_new_hd">Ikon HD baru</string>
-    <string name="system_ui_status_bar_icon_small_hd">Ikon HD kecil</string>
-    <string name="system_ui_status_bar_icon_big_hd">Ikon HD besar</string>
     <string name="system_ui_status_bar_icon_mobile_network_signal_no_card">Tidak ada ikon kartu SIM</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_1">Sembunyikan ikon sinyal kartu SIM 1</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_2">Sembunyikan ikon sinyal kartu SIM 2</string>

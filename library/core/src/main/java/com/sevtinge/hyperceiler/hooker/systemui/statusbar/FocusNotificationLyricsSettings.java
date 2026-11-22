@@ -18,28 +18,12 @@
  */
 package com.sevtinge.hyperceiler.hooker.systemui.statusbar;
 
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.Miui.isPad;
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreAndroidVersion;
-
-import androidx.preference.SwitchPreference;
-
 import com.sevtinge.hyperceiler.core.R;
 import com.sevtinge.hyperceiler.dashboard.DashboardFragment;
 
 public class FocusNotificationLyricsSettings extends DashboardFragment {
-    SwitchPreference mHideClock;
-
     @Override
     public int getPreferenceScreenResId() {
         return R.xml.system_ui_status_bar_music;
-    }
-
-    @Override
-    public void initPrefs() {
-        mHideClock = findPreference("prefs_key_system_ui_statusbar_music_hide_clock");
-
-        if (isPad() || isMoreAndroidVersion(36)) {
-            setFuncHint(mHideClock, 1);
-        }
     }
 }

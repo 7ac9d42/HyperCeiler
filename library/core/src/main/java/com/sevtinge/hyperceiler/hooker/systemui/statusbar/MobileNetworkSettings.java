@@ -32,8 +32,6 @@ import fan.preference.DropDownPreference;
 public class MobileNetworkSettings extends DashboardFragment {
 
     DropDownPreference mNewHD;
-    DropDownPreference mSmallHD;
-    DropDownPreference mBigHD;
     DropDownPreference mShowSignal;
     SwitchPreference mHideCard1;
     SwitchPreference mHideCard2;
@@ -50,8 +48,6 @@ public class MobileNetworkSettings extends DashboardFragment {
     public void initPrefs() {
         mSignalMode = Integer.parseInt(getSharedPreferences().getString("prefs_key_system_ui_status_bar_icon_mobile_network_signal_mode", "0"));
 
-        mSmallHD = findPreference("prefs_key_system_ui_status_bar_icon_small_hd");
-        mBigHD = findPreference("prefs_key_system_ui_status_bar_icon_big_hd");
         mNewHD = findPreference("prefs_key_system_ui_status_bar_icon_new_hd");
         mShowSignal = findPreference("prefs_key_system_ui_status_bar_icon_mobile_network_signal_mode");
         mHideCard1 = findPreference("prefs_key_system_ui_status_bar_icon_mobile_network_hide_card_1");
@@ -59,12 +55,8 @@ public class MobileNetworkSettings extends DashboardFragment {
         mDoubleMobile = findPreference("prefs_key_system_ui_statusbar_iconmanage_mobile_network");
 
         if (isMoreHyperOSVersion(3f)) {
-            setPreVisible(mSmallHD, false);
-            setPreVisible(mBigHD, false);
             setPreVisible(mNewHD, false);
         } else if (isMoreSmallVersion(200, 2f)) {
-            setFuncHint(mSmallHD, 1);
-            setFuncHint(mBigHD, 1);
             setFuncHint(mNewHD, 1);
         }
 

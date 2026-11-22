@@ -582,18 +582,6 @@
     <string name="system_ui_lock_screen_linkage_anim_off">息屏動畫速率</string>
     <string name="system_ui_navigation_title">導航欄</string>
     <string name="system_ui_navigation_handle_title">手勢提示線</string>
-    <string name="system_ui_navigation_handle_custom">自定義手勢提示線</string>
-    <string name="system_ui_navigation_handle_custom_height">高度</string>
-    <string name="system_ui_navigation_handle_custom_width">豎屏寬度</string>
-    <string name="system_ui_navigation_handle_custom_width_land">橫屏寬度</string>
-    <string name="system_ui_navigation_handle_custom_thickness">粗細</string>
-    <string name="system_ui_navigation_handle_custom_color">淺色背景下顏色</string>
-    <string name="system_ui_navigation_handle_custom_color_dark">深色背景下顏色</string>
-    <string name="system_ui_navigation_custom">自定義導航欄</string>
-    <string name="system_ui_navigation_custom_height">豎屏導航欄高度</string>
-    <string name="system_ui_navigation_custom_height_land">橫屏導航欄高度</string>
-    <string name="system_ui_navigation_frame_custom_height">豎屏導航欄框架高度</string>
-    <string name="system_ui_navigation_frame_custom_height_land">橫屏導航欄框架高度</string>
     <string name="system_ui_statusbar_title">狀態欄</string>
     <string name="system_ui_statusbar_iconmanage_title">圖示</string>
     <string name="system_ui_statusbar_network_speed_indicator_title">網速指示器</string>
@@ -610,7 +598,6 @@
     <string name="system_ui_status_bar_mobile_indicator">隱藏行動網絡活動指示器</string>
     <string name="system_ui_status_bar_mobile_type_custom">自定義文本内容</string>
     <string name="system_ui_statusbar_mobile_type_font_size">字體大小</string>
-    <string name="system_ui_status_bar_battery_style_change_location_title">交換電池圖示與百分比位置</string>
     <string name="system_ui_status_bar_battery_style_font_size">電量百分比字體大小</string>
     <string name="system_ui_status_bar_battery_style_font_mark_size">電量百分比符號字體大小</string>
     <string name="system_ui_status_bar_battery_style_vertical_offset">電量百分比符號上下偏移量</string>
@@ -633,8 +620,6 @@
     <string name="system_ui_status_bar_icon_bluetooth">藍牙</string>
     <string name="system_ui_status_bar_icon_bluetooth_battery">藍牙電量</string>
     <string name="system_ui_status_bar_icon_new_hd">新 HD 圖示</string>
-    <string name="system_ui_status_bar_icon_small_hd">小 HD 圖示</string>
-    <string name="system_ui_status_bar_icon_big_hd">大 HD 圖示</string>
     <string name="system_ui_status_bar_icon_mobile_network_signal_no_card">無 SIM 卡圖示</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_1">隱藏 SIM 卡 1 信號圖示</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_2">隱藏 SIM 卡 2 信號圖示</string>
@@ -728,10 +713,6 @@
     <string name="system_ui_statusbar_music_hide_aod_title">不在息屏下顯示焦點通知</string>
     <string name="system_ui_statusbar_music_show_aod_mode_title">使用自定義焦點息屏佈局</string>
     <string name="system_ui_statusbar_music_cusiom_statusbar_title">狀態欄顯示設定</string>
-    <string name="system_ui_statusbar_music_hide_clock_title">隱藏狀態欄時鐘</string>
-    <string name="system_ui_statusbar_music_hide_clock_desc">顯示焦點歌詞時隱藏狀態欄時鐘，並調整下拉通知中心的動畫</string>
-    <string name="system_ui_statusbar_music_click_clock_title">點按顯示時鐘</string>
-    <string name="system_ui_statusbar_music_click_clock_desc">單擊焦點歌詞事件變更為顯示狀態欄時鐘，反之隱藏</string>
     <string name="system_ui_statusbar_music_speed_title">歌詞滚動速率</string>
     <string name="system_ui_statusbar_music_scroll_delay_title">歌詞滚動延遲</string>
     <string name="system_ui_statusbar_music_width_title">歌詞末尾墊寬</string>

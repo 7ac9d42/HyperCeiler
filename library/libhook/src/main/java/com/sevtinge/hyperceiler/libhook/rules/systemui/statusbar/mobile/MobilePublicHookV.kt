@@ -28,11 +28,9 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.telephony.SubscriptionManager
 import androidx.annotation.RequiresPermission
-import com.sevtinge.hyperceiler.common.utils.PrefsBridge
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
 import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreAndroidVersion
 import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreHyperOSVersion
-import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreSmallVersion
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.StateFlowHelper.newReadonlyStateFlow
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.StateFlowHelper.setStateFlowValue
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.MobileClass.miuiCellularIconVM
@@ -107,7 +105,7 @@ class MobilePublicHookV : BaseHook() {
                     return@createAfterHook
                 }
                 vmImpl.setAdditionalInstanceField("visibilityReplaced", true)
-                applyVisibility(vmImpl, subId, vmImpl)
+                applyVisibility(vmImpl, subId)
             }
     }
 
@@ -118,13 +116,13 @@ class MobilePublicHookV : BaseHook() {
                 val cellularIcon = param.thisObject
                 val mobileIconInteractor = param.args[2] ?: return@after
                 val subId = mobileIconInteractor.getObjectFieldAs<Int>("subId")
-                applyVisibility(cellularIcon, subId, param.thisObject)
+                applyVisibility(cellularIcon, subId)
             }
         }
     }
 
     @RequiresPermission(allOf = [Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.READ_PHONE_STATE])
-    private fun applyVisibility(cellularIcon: Any, subId: Int, thisObject: Any) {
+    private fun applyVisibility(cellularIcon: Any, subId: Int) {
         val isVisible = createVisibilityFlow()
 
         when {
@@ -167,11 +165,6 @@ class MobilePublicHookV : BaseHook() {
             // 失败则改为劫持其内部 $transform$inlined$1 lambda 让合并结果恒为 false。
             forceRoamHidden(cellularIcon, "smallRoamVisible")
             forceRoamHidden(cellularIcon, "mobileRoamVisible")
-        }
-        if (!isMoreSmallVersion(200, 2f)) {
-            updateIconState(thisObject, "smallHdVisible", "system_ui_status_bar_icon_small_hd")
-            updateIconState(thisObject, "volteVisibleCn", "system_ui_status_bar_icon_big_hd")
-            updateIconState(thisObject, "volteVisibleGlobal", "system_ui_status_bar_icon_big_hd")
         }
     }
 
@@ -372,14 +365,5 @@ class MobilePublicHookV : BaseHook() {
         BaseHook.registerNetworkCallbackHotReloadCleanup(cm, callback)
         broadcastRegistered = true
         BaseHook.putHotReloadRuntimeState(STATE_CONTEXT, context)
-    }
-
-    private fun updateIconState(thisObject: Any, fieldName: String, key: String) {
-        val opt = PrefsBridge.getStringAsInt(key, 0)
-        if (opt != 0) {
-            runCatching {
-                thisObject.setObjectField(fieldName, newReadonlyStateFlow(opt == 1))
-            }
-        }
     }
 }

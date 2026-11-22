@@ -541,18 +541,6 @@
     <string name="system_ui_lock_screen_linkage_anim_off">Bildschirm-aus-Animationsrate</string>
     <string name="system_ui_navigation_title">Navigation</string>
     <string name="system_ui_navigation_handle_title">Gestenlinie</string>
-    <string name="system_ui_navigation_handle_custom">Gestenlinie anpassen</string>
-    <string name="system_ui_navigation_handle_custom_height">Höhe</string>
-    <string name="system_ui_navigation_handle_custom_width">Vertikale Breite</string>
-    <string name="system_ui_navigation_handle_custom_width_land">Horizontale Breite</string>
-    <string name="system_ui_navigation_handle_custom_thickness">Dicke</string>
-    <string name="system_ui_navigation_handle_custom_color">Farbe im hellen Modus</string>
-    <string name="system_ui_navigation_handle_custom_color_dark">Farbe im dunklen Modus</string>
-    <string name="system_ui_navigation_custom">Benutzerdefinierte Navigation</string>
-    <string name="system_ui_navigation_custom_height">Vertikale Navigationshöhe</string>
-    <string name="system_ui_navigation_custom_height_land">Horizontale Navigationshöhe</string>
-    <string name="system_ui_navigation_frame_custom_height">Vertikale Navigationsrahmenhöhe</string>
-    <string name="system_ui_navigation_frame_custom_height_land">Horizontale Navigationsrahmenhöhe</string>
     <string name="system_ui_statusbar_title">Statusleiste</string>
     <string name="system_ui_statusbar_iconmanage_title">Symbole verwalten</string>
     <string name="system_ui_statusbar_network_speed_indicator_title">Netzwerkgeschwindigkeits-Indikator verwalten</string>
@@ -569,7 +557,6 @@
     <string name="system_ui_status_bar_mobile_indicator">Mobilnetzwerk-Aktivitätsindikatoren ausblenden</string>
     <string name="system_ui_status_bar_mobile_type_custom">Benutzerdefinierter Text</string>
     <string name="system_ui_statusbar_mobile_type_font_size">Schriftgröße</string>
-    <string name="system_ui_status_bar_battery_style_change_location_title">Akku-Symbol und Prozentsatz tauschen</string>
     <string name="system_ui_status_bar_battery_style_font_size">Schriftgröße der Akku-Prozentanzeige</string>
     <string name="system_ui_status_bar_battery_style_font_mark_size">Schriftgröße des Akku-Prozentzeichens</string>
     <string name="system_ui_status_bar_battery_style_vertical_offset">Vertikaler Versatz des Akku-Prozentzeichens</string>
@@ -592,8 +579,6 @@
     <string name="system_ui_status_bar_icon_bluetooth">Bluetooth</string>
     <string name="system_ui_status_bar_icon_bluetooth_battery">Bluetooth-Akku</string>
     <string name="system_ui_status_bar_icon_new_hd">Neues HD-Symbol</string>
-    <string name="system_ui_status_bar_icon_small_hd">Kleines HD-Symbol</string>
-    <string name="system_ui_status_bar_icon_big_hd">Großes HD-Symbol</string>
     <string name="system_ui_status_bar_icon_mobile_network_signal_no_card">Symbol für keine SIM-Karte</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_1">SIM 1 Signalsymbol ausblenden</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_2">SIM 2 Signalsymbol ausblenden</string>
@@ -685,10 +670,6 @@
     <string name="system_ui_statusbar_music_show_notific_title">Benachrichtigungs-Liedtexte anzeigen</string>
     <string name="system_ui_statusbar_music_hide_aod_title">Fokus-Benachrichtigungen auf dem Sperrbildschirm nicht anzeigen</string>
     <string name="system_ui_statusbar_music_cusiom_statusbar_title">Statusleisten-Anzeigeeinstellungen</string>
-    <string name="system_ui_statusbar_music_hide_clock_title">Statusleisten-Uhr ausblenden</string>
-    <string name="system_ui_statusbar_music_hide_clock_desc">Die Statusleisten-Uhr ausblenden beim Anzeigen von Fokus-Liedtexten</string>
-    <string name="system_ui_statusbar_music_click_clock_title">Klicken um Uhr anzuzeigen</string>
-    <string name="system_ui_statusbar_music_click_clock_desc">Klicke auf das Fokus-Liedtext-Event um zur Anzeige der Statusleisten-Uhr zu wechseln, andernfalls ausblenden. Der Schalter benötigt einen Neustart der entsprechenden Musik-App um zu wirken.</string>
     <string name="system_ui_statusbar_music_speed_title">Liedtext-Scrollgeschwindigkeit</string>
     <string name="system_ui_statusbar_music_scroll_delay_title">Liedtext-Scroll-Verzögerung</string>
     <string name="system_ui_statusbar_music_width_title">Leerzeichen am Ende der Liedtexte hinzufügen</string>

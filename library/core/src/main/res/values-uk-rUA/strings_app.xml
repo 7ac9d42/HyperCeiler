@@ -535,18 +535,6 @@
     <string name="system_ui_lock_screen_linkage_anim_off">Швидкість анімації вимкнення екрана</string>
     <string name="system_ui_navigation_title">Навігація</string>
     <string name="system_ui_navigation_handle_title">Смуга жестів</string>
-    <string name="system_ui_navigation_handle_custom">Налаштувати смугу жестів</string>
-    <string name="system_ui_navigation_handle_custom_height">Висота</string>
-    <string name="system_ui_navigation_handle_custom_width">Вертикальна ширина</string>
-    <string name="system_ui_navigation_handle_custom_width_land">Горизонтальна ширина</string>
-    <string name="system_ui_navigation_handle_custom_thickness">Товщина</string>
-    <string name="system_ui_navigation_handle_custom_color">Колір у світлому режимі</string>
-    <string name="system_ui_navigation_handle_custom_color_dark">Колір у темному режимі</string>
-    <string name="system_ui_navigation_custom">Користувацька навігація</string>
-    <string name="system_ui_navigation_custom_height">Висота вертикальної навігації</string>
-    <string name="system_ui_navigation_custom_height_land">Висота горизонтальної навігації</string>
-    <string name="system_ui_navigation_frame_custom_height">Висота рамки вертикальної навігації</string>
-    <string name="system_ui_navigation_frame_custom_height_land">Висота рамки горизонтальної навігації</string>
     <string name="system_ui_statusbar_title">Рядок стану</string>
     <string name="system_ui_statusbar_iconmanage_title">Керування іконками</string>
     <string name="system_ui_statusbar_network_speed_indicator_title">Керування індикатором швидкості мережі</string>
@@ -563,7 +551,6 @@
     <string name="system_ui_status_bar_mobile_indicator">Приховати індикатори активності мобільної мережі</string>
     <string name="system_ui_status_bar_mobile_type_custom">Користувацький текст</string>
     <string name="system_ui_statusbar_mobile_type_font_size">Розмір шрифту</string>
-    <string name="system_ui_status_bar_battery_style_change_location_title">Поміняти місцями іконку батареї та відсотки</string>
     <string name="system_ui_status_bar_battery_style_font_size">Розмір шрифту відсотків батареї</string>
     <string name="system_ui_status_bar_battery_style_font_mark_size">Розмір шрифту символу відсотків батареї</string>
     <string name="system_ui_status_bar_battery_style_vertical_offset">Зміщення символу відсотків батареї вгору та вниз</string>
@@ -586,8 +573,6 @@
     <string name="system_ui_status_bar_icon_bluetooth">Bluetooth</string>
     <string name="system_ui_status_bar_icon_bluetooth_battery">Батарея Bluetooth</string>
     <string name="system_ui_status_bar_icon_new_hd">Нова іконка HD</string>
-    <string name="system_ui_status_bar_icon_small_hd">Мала іконка HD</string>
-    <string name="system_ui_status_bar_icon_big_hd">Велика іконка HD</string>
     <string name="system_ui_status_bar_icon_mobile_network_signal_no_card">Іконка \"Немає SIM-карти\"</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_1">Приховати іконку сигналу SIM 1</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_2">Приховати іконку сигналу SIM 2</string>
@@ -679,10 +664,6 @@
     <string name="system_ui_statusbar_music_show_notific_title">Показувати текст пісні у сповіщенні</string>
     <string name="system_ui_statusbar_music_hide_aod_title">Не показувати фокусні сповіщення на заблокованому екрані</string>
     <string name="system_ui_statusbar_music_cusiom_statusbar_title">Налаштування відображення в рядку стану</string>
-    <string name="system_ui_statusbar_music_hide_clock_title">Приховати годинник у рядку стану</string>
-    <string name="system_ui_statusbar_music_hide_clock_desc">Приховувати годинник у рядку стану при показі фокусного тексту пісні</string>
-    <string name="system_ui_statusbar_music_click_clock_title">Натисніть, щоб показати годинник</string>
-    <string name="system_ui_statusbar_music_click_clock_desc">Натисніть на подію фокусного тексту пісні, щоб відобразити годинник у рядку стану, інакше він буде прихований. Для застосування змін потрібно перезапустити відповідний музичний додаток.</string>
     <string name="system_ui_statusbar_music_speed_title">Швидкість прокрутки тексту пісні</string>
     <string name="system_ui_statusbar_music_scroll_delay_title">Затримка прокрутки тексту пісні</string>
     <string name="system_ui_statusbar_music_width_title">Додати пробіл у кінці тексту пісні</string>

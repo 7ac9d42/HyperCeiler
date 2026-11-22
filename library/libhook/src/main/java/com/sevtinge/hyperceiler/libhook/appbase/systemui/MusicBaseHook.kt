@@ -89,9 +89,6 @@ abstract class MusicBaseHook : BaseHook() {
     private val isShowApp by lazy {
         PrefsBridge.getBoolean("system_ui_statusbar_music_show_app")
     }
-    private val isClickClock by lazy {
-        PrefsBridge.getBoolean("system_ui_statusbar_music_click_clock")
-    }
 
     private val circlePaint by lazy {
         Paint(Paint.ANTI_ALIAS_FLAG)
@@ -207,13 +204,8 @@ abstract class MusicBaseHook : BaseHook() {
      * 创建 PendingIntent
      */
     private fun createPendingIntent(launchIntent: Intent?): PendingIntent? {
-        return if (isClickClock) {
-            val intent = Intent("$CHANNEL_ID.actions.switchClockStatus")
-            PendingIntent.getBroadcast(context, PENDING_INTENT_REQUEST_CODE, intent, PendingIntent.FLAG_IMMUTABLE)
-        } else {
-            launchIntent?.let {
-                PendingIntent.getActivity(context, PENDING_INTENT_REQUEST_CODE, it, PendingIntent.FLAG_MUTABLE)
-            }
+        return launchIntent?.let {
+            PendingIntent.getActivity(context, PENDING_INTENT_REQUEST_CODE, it, PendingIntent.FLAG_MUTABLE)
         }
     }
 

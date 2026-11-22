@@ -53,20 +53,6 @@
             app:entries="@array/status_bar_icon_mode_new"
             app:entryValues="@array/status_bar_icon_mode_new_value" />
 
-        <fan.preference.DropDownPreference
-            android:defaultValue="0"
-            android:key="prefs_key_system_ui_status_bar_icon_small_hd"
-            android:title="@string/system_ui_status_bar_icon_small_hd"
-            app:entries="@array/status_bar_icon_mode"
-            app:entryValues="@array/status_bar_icon_mode_value" />
-
-        <fan.preference.DropDownPreference
-            android:defaultValue="0"
-            android:key="prefs_key_system_ui_status_bar_icon_big_hd"
-            android:title="@string/system_ui_status_bar_icon_big_hd"
-            app:entries="@array/status_bar_icon_mode"
-            app:entryValues="@array/status_bar_icon_mode_value" />
-
         <SwitchPreference
             android:defaultValue="false"
             android:key="prefs_key_system_ui_status_bar_mobile_hide_roaming_icon"

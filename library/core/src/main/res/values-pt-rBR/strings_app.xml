@@ -558,18 +558,6 @@
     <string name="system_ui_lock_screen_linkage_anim_off">Velocidade da animação de tela desligada</string>
     <string name="system_ui_navigation_title">Navegação</string>
     <string name="system_ui_navigation_handle_title">Indicador de tela infinita</string>
-    <string name="system_ui_navigation_handle_custom">Indicador de tela infinita personalizado</string>
-    <string name="system_ui_navigation_handle_custom_height">Altura</string>
-    <string name="system_ui_navigation_handle_custom_width">Largura vertical</string>
-    <string name="system_ui_navigation_handle_custom_width_land">Largura horizontal</string>
-    <string name="system_ui_navigation_handle_custom_thickness">Espessura</string>
-    <string name="system_ui_navigation_handle_custom_color">Cor quando estiver no Modo claro</string>
-    <string name="system_ui_navigation_handle_custom_color_dark">Cor quando estiver no Modo escuro</string>
-    <string name="system_ui_navigation_custom">Navegação personalizada</string>
-    <string name="system_ui_navigation_custom_height">Altura da navegação vertical</string>
-    <string name="system_ui_navigation_custom_height_land">Altura da navegação horizontal</string>
-    <string name="system_ui_navigation_frame_custom_height">Altura do quadro de navegação vertical</string>
-    <string name="system_ui_navigation_frame_custom_height_land">Altura do quadro de navegação horizontal</string>
     <string name="system_ui_statusbar_title">Barra de status</string>
     <string name="system_ui_statusbar_iconmanage_title">Gerenciar ícones</string>
     <string name="system_ui_statusbar_network_speed_indicator_title">Gerenciar indicador de velocidade da rede</string>
@@ -586,7 +574,6 @@
     <string name="system_ui_status_bar_mobile_indicator">Ocultar indicadores de atividade da rede móvel</string>
     <string name="system_ui_status_bar_mobile_type_custom">Texto personalizado</string>
     <string name="system_ui_statusbar_mobile_type_font_size">Tamanho da fonte</string>
-    <string name="system_ui_status_bar_battery_style_change_location_title">Trocar ícone e porcentagem da bateria</string>
     <string name="system_ui_status_bar_battery_style_font_size">Tamanho da fonte da porcentagem da bateria</string>
     <string name="system_ui_status_bar_battery_style_font_mark_size">Tamanho da fonte do símbolo de porcentagem da bateria</string>
     <string name="system_ui_status_bar_battery_style_vertical_offset">Deslocamento para cima e para baixo do símbolo de porcentagem da bateria</string>
@@ -609,8 +596,6 @@
     <string name="system_ui_status_bar_icon_bluetooth">Bluetooth</string>
     <string name="system_ui_status_bar_icon_bluetooth_battery">Bateria do Bluetooth</string>
     <string name="system_ui_status_bar_icon_new_hd">Novo ícone HD</string>
-    <string name="system_ui_status_bar_icon_small_hd">Ícone HD pequeno</string>
-    <string name="system_ui_status_bar_icon_big_hd">Ícone HD grande</string>
     <string name="system_ui_status_bar_icon_mobile_network_signal_no_card">Sem ícone do cartão SIM</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_1">Ocultar ícone de sinal do SIM 1</string>
     <string name="system_ui_status_bar_icon_mobile_network_hide_card_2">Ocultar ícone de sinal do SIM 2</string>
@@ -704,10 +689,6 @@
     <string name="system_ui_statusbar_music_hide_aod_title">Não mostrar notificações de foco na tela bloqueada</string>
     <string name="system_ui_statusbar_music_show_aod_mode_title">Usar layout personalizado da tela de foco desativada</string>
     <string name="system_ui_statusbar_music_cusiom_statusbar_title">Configurações de exibição da barra de status</string>
-    <string name="system_ui_statusbar_music_hide_clock_title">Ocultar relógio da barra de status</string>
-    <string name="system_ui_statusbar_music_hide_clock_desc">Oculte o relógio da barra de status ao mostrar as letras em foco</string>
-    <string name="system_ui_statusbar_music_click_clock_title">Clicar para mostrar o relógio</string>
-    <string name="system_ui_statusbar_music_click_clock_desc">Clique no evento de letras de foco para alterar para exibir o relógio da barra de status, caso contrário, oculte-o. O interruptor precisa reiniciar o app de música correspondente para entrar em vigor.</string>
     <string name="system_ui_statusbar_music_speed_title">Taxa de rolagem das letras</string>
     <string name="system_ui_statusbar_music_scroll_delay_title">Atraso na rolagem das letras</string>
     <string name="system_ui_statusbar_music_width_title">Adicionar espaço em branco no final da letra</string>

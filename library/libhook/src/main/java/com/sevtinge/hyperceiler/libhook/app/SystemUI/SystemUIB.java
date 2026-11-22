@@ -172,8 +172,7 @@ public class SystemUIB extends BaseLoad {
             PrefsBridge.getBoolean("system_ui_status_bar_battery_percent_mark") ||
             PrefsBridge.getBoolean("system_ui_status_bar_battery_charging");
         initHook(HideBatteryIconB.INSTANCE, isHideBatteryIcon);
-        initHook(BatteryStyle.INSTANCE, PrefsBridge.getBoolean("system_ui_status_bar_battery_style_enable_custom") ||
-            PrefsBridge.getBoolean("system_ui_status_bar_battery_style_change_location"));
+        initHook(BatteryStyle.INSTANCE, PrefsBridge.getBoolean("system_ui_status_bar_battery_style_enable_custom"));
         initHook(BatteryDetailIndicator.INSTANCE, PrefsBridge.getBoolean("system_ui_statusbar_battery_detail_enable"));
 
         // 网速指示器
@@ -186,12 +185,6 @@ public class SystemUIB extends BaseLoad {
 
         // 时钟指示器
         initHook(StatusBarClockNew.INSTANCE, PrefsBridge.getBoolean("system_ui_statusbar_clock_all_status_enable"));
-
-        // 焦点歌词
-        /*if (PrefsBridge.getBoolean("system_ui_statusbar_music_switch")) {
-            initHook(FocusNotifLyric.INSTANCE);
-            initHook(HideFakeStatusBar.INSTANCE, PrefsBridge.getBoolean("system_ui_statusbar_music_hide_clock") && !isPad());
-        }*/
 
         if (PrefsBridge.getBoolean("system_ui_unlock_all_focus")) {
             initHook(new UnlockFocus());
@@ -297,9 +290,7 @@ public class SystemUIB extends BaseLoad {
             PrefsBridge.getBoolean("system_ui_status_bar_icon_mobile_network_hide_card_1") ||
             PrefsBridge.getBoolean("system_ui_status_bar_icon_mobile_network_hide_card_2") ||
             PrefsBridge.getBoolean("system_ui_status_bar_mobile_hide_roaming_icon") ||
-            PrefsBridge.getBoolean("system_ui_status_bar_mobile_indicator") ||
-            PrefsBridge.getStringAsInt("system_ui_status_bar_icon_small_hd", 0) != 0 ||
-            PrefsBridge.getStringAsInt("system_ui_status_bar_icon_big_hd", 0) != 0);
+            PrefsBridge.getBoolean("system_ui_status_bar_mobile_indicator"));
         initHook(MobileTypeSingle2Hook.INSTANCE, isEnabledDualRowSignal ||
             PrefsBridge.getStringAsInt("system_ui_status_bar_icon_show_mobile_network_type", 0) != 0 ||
             PrefsBridge.getBoolean("system_ui_statusbar_mobile_type_enable"));

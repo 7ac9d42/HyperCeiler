@@ -20,11 +20,9 @@ package com.sevtinge.hyperceiler.libhook.rules.systemui.statusbar.icon.all
 
 import android.graphics.Typeface
 import android.util.TypedValue
-import android.widget.LinearLayout
 import android.widget.TextView
 import com.sevtinge.hyperceiler.common.utils.PrefsBridge
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
-import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreHyperOSVersion
 import com.sevtinge.hyperceiler.libhook.utils.api.DisplayUtils.dp2px
 import io.github.lingqiqi5211.ezhooktool.core.findMethod
 import io.github.lingqiqi5211.ezhooktool.core.loadClass
@@ -43,9 +41,6 @@ object BatteryStyle : BaseHook() {
     }
     private val verticalOffsetMark by lazy {
         PrefsBridge.getInt("system_ui_status_bar_battery_style_vertical_offset_mark", 27)
-    }
-    private val isChangeLocation by lazy {
-        PrefsBridge.getBoolean("system_ui_status_bar_battery_style_change_location")
     }
     private val isHideText by lazy {
         PrefsBridge.getBoolean("system_ui_status_bar_battery_percent")
@@ -68,17 +63,6 @@ object BatteryStyle : BaseHook() {
         mBatteryMeterViewClass.findMethod { name("updateAll$1") }.createAfterHook { param ->
                 hookStatusBattery(param)
             }
-    }
-
-    private fun changeLocation(
-        batteryView: LinearLayout,
-        mBatteryPercentView: TextView,
-        mBatteryPercentMarkView: TextView
-    ) {
-        batteryView.removeView(mBatteryPercentView)
-        batteryView.removeView(mBatteryPercentMarkView)
-        batteryView.addView(mBatteryPercentMarkView, 0)
-        batteryView.addView(mBatteryPercentView, 0)
     }
 
     private fun setBatterySize(view: TextView, size: Float) {
@@ -127,19 +111,12 @@ object BatteryStyle : BaseHook() {
     }
 
     private fun hookStatusBattery(param: HookParam) {
-        val batteryView = param.thisObject as LinearLayout
         val mBatteryPercentView =
             getObjectField(param.thisObject, "mBatteryPercentView") as TextView
         val mBatteryPercentMarkView =
             getObjectField(param.thisObject, "mBatteryPercentMarkView") as TextView
         val mBatteryTextDigitView =
             getObjectField(param.thisObject, "mBatteryTextDigitView") as TextView
-
-        // 交换电池图标与电量位置（电量外显下才能正常交换）
-        // Todo：HyperOS3 因为修改了布局，需要重新适配
-        if (isChangeLocation && !isHideText && !isMoreHyperOSVersion(3f)) {
-            changeLocation(batteryView, mBatteryPercentView, mBatteryPercentMarkView)
-        }
 
         // 以下功能需要启用修改
         if (!isHideText && isEnableCustom) {
