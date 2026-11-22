@@ -1005,15 +1005,6 @@
     <string name="system_settings_novelty_haptic_desc">Only for devices with the Sounds &amp; Haptic feedback - Haptics page</string>
     <string name="system_settings_unlock_google_header">Unlock Google entry</string>
     <string name="system_settings_unlock_ui_mode">Unlock app layout optimizations</string>
-    <string name="system_settings_usb_mode">Hide pop-up window when connecting to USB</string>
-    <string name="system_settings_usb_mode_choose">USB default option</string>
-    <string name="system_settings_usb_default">Default</string>
-    <string name="system_usb_use_charging_only">Charge only</string>
-    <string name="system_usb_use_file_transfers">File transfers</string>
-    <string name="system_usb_use_photo_transfers">Photo transfers</string>
-    <string name="system_usb_use_MIDI">MIDI</string>
-    <string name="system_usb_reverse_charge">Reverse charging</string>
-    <string name="system_usb_tethering">USB tethering</string>
     <string name="system_settings_connection_sharing_title">Connection &amp; sharing</string>
     <string name="system_settings_new_nfc_page">New NFC page</string>
     <string name="system_settings_new_nfc_page_desc">This feature will prevent Xiaomi Wallet from being selected by the default app on unsupported models</string>

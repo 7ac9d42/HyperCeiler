@@ -733,14 +733,6 @@
     <string name="system_settings_novelty_haptic_desc">Yalnızca Sesler ve Dokunsal Geri Bildirim özelliğine sahip cihazlar için - Dokunsal Geri Bildirim sayfası</string>
     <string name="system_settings_unlock_google_header">Google girişinin kilidini aç</string>
     <string name="system_settings_unlock_ui_mode">Uygulama düzeni optimizasyonlarının kilidini açın</string>
-    <string name="system_settings_usb_mode">USB\'ye bağlanırken açılan pencereyi gizle</string>
-    <string name="system_settings_usb_mode_choose">USB varsayılan seçeneği</string>
-    <string name="system_settings_usb_default">Varsayılan</string>
-    <string name="system_usb_use_charging_only">Sadece şarj edin</string>
-    <string name="system_usb_use_file_transfers">Dosya transferleri</string>
-    <string name="system_usb_use_photo_transfers">Fotoğraf transferleri</string>
-    <string name="system_usb_reverse_charge">Ters şarj</string>
-    <string name="system_usb_tethering">USB bağlantısı</string>
     <string name="system_settings_new_nfc_page">Yeni NFC sayfası</string>
     <string name="system_settings_new_nfc_page_desc">Açıldıktan sonra, desteklenmeyen modeller için varsayılan ödeme uygulaması Xiaomi Cüzdan\'ı seçemiyor</string>
     <string name="system_settings_lab_title">Öne çıkan işlevler</string>

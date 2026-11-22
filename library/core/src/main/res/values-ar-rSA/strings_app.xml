@@ -829,15 +829,6 @@
     <string name="system_settings_novelty_haptic_desc">لأجهزة معينة تحتوي على صفحة الصوت وردود الفعل اللمسية</string>
     <string name="system_settings_unlock_google_header">فتح إدخال Google</string>
     <string name="system_settings_unlock_ui_mode">فتح تحسينات تخطيط التطبيق</string>
-    <string name="system_settings_usb_mode">إخفاء نافذة منبثقة عند الاتصال بالـ USB</string>
-    <string name="system_settings_usb_mode_choose">الخيار الافتراضي لـ USB</string>
-    <string name="system_settings_usb_default">افتراضي</string>
-    <string name="system_usb_use_charging_only">شحن فقط</string>
-    <string name="system_usb_use_file_transfers">نقل الملفات</string>
-    <string name="system_usb_use_photo_transfers">نقل الصور</string>
-    <string name="system_usb_use_MIDI">MIDI</string>
-    <string name="system_usb_reverse_charge">الشحن العكسي</string>
-    <string name="system_usb_tethering">مشاركة الاتصال عبر USB</string>
     <string name="system_settings_connection_sharing_title">الاتصال &amp; المشاركة</string>
     <string name="system_settings_new_nfc_page">صفحة NFC جديدة</string>
     <string name="system_settings_new_nfc_page_desc">بعد تفعيلها، لا يمكن اختيار تطبيق المحفظة الافتراضي للنماذج غير المدعومة من Xiaomi Wallet.</string>

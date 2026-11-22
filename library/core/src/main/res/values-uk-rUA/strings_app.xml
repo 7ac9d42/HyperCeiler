@@ -795,15 +795,6 @@
     <string name="system_settings_novelty_haptic_desc">Тільки для пристроїв зі сторінкою \"Звуки та тактильний відгук\" - \"Тактильні відчуття\"</string>
     <string name="system_settings_unlock_google_header">Розблокувати пункт Google</string>
     <string name="system_settings_unlock_ui_mode">Розблокувати оптимізацію макета додатка</string>
-    <string name="system_settings_usb_mode">Приховати спливаюче вікно при підключенні до USB</string>
-    <string name="system_settings_usb_mode_choose">Опція USB за замовчуванням</string>
-    <string name="system_settings_usb_default">За замовчуванням</string>
-    <string name="system_usb_use_charging_only">Тільки зарядка</string>
-    <string name="system_usb_use_file_transfers">Передача файлів</string>
-    <string name="system_usb_use_photo_transfers">Передача фотографій</string>
-    <string name="system_usb_use_MIDI">MIDI</string>
-    <string name="system_usb_reverse_charge">Реверсивна зарядка</string>
-    <string name="system_usb_tethering">USB-модем</string>
     <string name="system_settings_connection_sharing_title">Підключення та спільний доступ</string>
     <string name="system_settings_new_nfc_page">Нова сторінка NFC</string>
     <string name="system_settings_new_nfc_page_desc">Ця функція запобігатиме вибору Xiaomi Wallet як додатка за замовчуванням на непідтримуваних моделях</string>

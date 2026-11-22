@@ -41,11 +41,9 @@ import com.sevtinge.hyperceiler.libhook.rules.systemsettings.QuickManagerAccessi
 import com.sevtinge.hyperceiler.libhook.rules.systemsettings.RunningServices;
 import com.sevtinge.hyperceiler.libhook.rules.systemsettings.ShowAutoUIMode;
 import com.sevtinge.hyperceiler.libhook.rules.systemsettings.UnlockMaxFps;
-import com.sevtinge.hyperceiler.libhook.rules.systemsettings.UnlockNeverSleepScreen;
 import com.sevtinge.hyperceiler.libhook.rules.systemsettings.UnlockNeverSleepScreenOS4;
 import com.sevtinge.hyperceiler.libhook.rules.systemsettings.UnlockTaplusForSettings;
 import com.sevtinge.hyperceiler.libhook.rules.systemsettings.UnlockXiaomiHyperAIEntranceKt;
-import com.sevtinge.hyperceiler.libhook.rules.systemsettings.UsbModeChoose;
 import com.sevtinge.hyperceiler.libhook.rules.systemsettings.ViewWifiPasswordHook;
 import com.sevtinge.hyperceiler.libhook.rules.systemsettings.aiimage.UnlockAi;
 import com.sevtinge.hyperceiler.libhook.rules.systemsettings.aiimage.UnlockMemc;
@@ -76,9 +74,9 @@ public class SystemSettingsB extends BaseLoad {
         initHook(UnlockTaplusForSettings.INSTANCE, PrefsBridge.getBoolean("content_extension_unlock_taplus"));
 
         // 显示与息屏
-        initHook(com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreHyperOSVersion(4f)
-            ? new UnlockNeverSleepScreenOS4() : new UnlockNeverSleepScreen(),
-            PrefsBridge.getBoolean("system_settings_allow_never_lock_screen"));
+        if (com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreHyperOSVersion(4f)) {
+            initHook(new UnlockNeverSleepScreenOS4(), PrefsBridge.getBoolean("system_settings_allow_never_lock_screen"));
+        }
         initHook(new UnlockSuperResolution(), PrefsBridge.getBoolean("system_settings_ai_image_unlock_sr"));
         initHook(new UnlockAi(), PrefsBridge.getBoolean("system_settings_ai_image_unlock_ai"));
         initHook(new UnlockMemc(), PrefsBridge.getBoolean("system_settings_ai_image_unlock_memc"));
@@ -89,8 +87,6 @@ public class SystemSettingsB extends BaseLoad {
         initHook(new QuickManagerAccessibilityPermission(), PrefsBridge.getBoolean("system_settings_permission_accessibility"));
 
         // 开发者选项
-        initHook(new UsbModeChoose(), PrefsBridge.getStringAsInt("system_settings_usb_mode_choose", 0) != 0
-            || PrefsBridge.getBoolean("system_settings_usb_mode"));
         initHook(new AppsFreezerEnable(), PrefsBridge.getBoolean("system_settings_apps_freezer"));
         initHook(UnlockMaxFps.INSTANCE, PrefsBridge.getBoolean("system_settings_develop_max_fps"));
         initHook(new EnableSpeedMode(), PrefsBridge.getBoolean("system_settings_develop_speed_mode"));
@@ -102,7 +98,6 @@ public class SystemSettingsB extends BaseLoad {
         // initHook(new BluetoothRestrict(), PrefsBridge.getBoolean("various_disable_bluetooth_restrict"));
         initHook(new ControlCenterStyle(), PrefsBridge.getBoolean("system_control_center_unlock_old"));
         initHook(NoveltyHaptic.INSTANCE, PrefsBridge.getBoolean("system_settings_novelty_haptic"));
-        initHook(UnlockTaplusForSettings.INSTANCE, PrefsBridge.getBoolean("content_extension_unlock_taplus"));
 
         if (isPad()) {
             initHook(new ShowAutoUIMode(), PrefsBridge.getBoolean("system_settings_unlock_ui_mode"));

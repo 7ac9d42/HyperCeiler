@@ -839,15 +839,6 @@
     <string name="system_settings_novelty_haptic_desc">Chỉ dành cho các thiết bị có Âm thanh &amp; Chạm - Tab Chạm</string>
     <string name="system_settings_unlock_google_header">Tắt các cổng Google ẩn</string>
     <string name="system_settings_unlock_ui_mode">Mở khóa tối ưu hóa bố cục ứng dụng</string>
-    <string name="system_settings_usb_mode">Tắt cửa sổ nổi lên khi kết nối USB</string>
-    <string name="system_settings_usb_mode_choose">Tùy chọn dùng USB mặc định</string>
-    <string name="system_settings_usb_default">mặc định</string>
-    <string name="system_usb_use_charging_only">Chỉ sạc</string>
-    <string name="system_usb_use_file_transfers">Chuyển tập tin</string>
-    <string name="system_usb_use_photo_transfers">Chuyển ảnh</string>
-    <string name="system_usb_use_MIDI">Chế độ MIDI</string>
-    <string name="system_usb_reverse_charge">Sạc ngược</string>
-    <string name="system_usb_tethering">Chia sẻ kết nối qua USB</string>
     <string name="system_settings_connection_sharing_title">Kết nối &amp; Chia sẻ</string>
     <string name="system_settings_new_nfc_page">Trang NFC mới</string>
     <string name="system_settings_new_nfc_page_desc">Sau khi mở, ứng dụng thanh toán mặc định không được hỗ trợ không thể chọn Ví Xiaomi</string>

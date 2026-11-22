@@ -760,14 +760,6 @@
     <string name="system_settings_novelty_haptic_desc">Tylko dla urządzeń z ustawieniami Dźwięki i wibracje - strona Haptyka</string>
     <string name="system_settings_unlock_google_header">Odblokuj wpis Google</string>
     <string name="system_settings_unlock_ui_mode">Odblokuj optymalizację układu aplikacji</string>
-    <string name="system_settings_usb_mode">Ukryj wyskakujące okno podczas połączenia z USB</string>
-    <string name="system_settings_usb_mode_choose">Domyślna opcja USB</string>
-    <string name="system_settings_usb_default">Domyślna</string>
-    <string name="system_usb_use_charging_only">Tylko ładowanie</string>
-    <string name="system_usb_use_file_transfers">Przesyłanie plików</string>
-    <string name="system_usb_use_photo_transfers">Przesyłanie zdjęć</string>
-    <string name="system_usb_reverse_charge">Ładowanie zwrotne</string>
-    <string name="system_usb_tethering">Tethering przez USB</string>
     <string name="system_settings_connection_sharing_title">Połączenie i udostępnianie</string>
     <string name="system_settings_new_nfc_page">Nowa strona NFC</string>
     <string name="system_settings_new_nfc_page_desc">Po włączeniu tej opcji aplikacja domyślna do płatności dla nieobsługiwanych modeli nie będzie mogła wybrać portfela Xiaomi.</string>

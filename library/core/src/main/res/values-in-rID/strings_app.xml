@@ -596,15 +596,6 @@
     <string name="system_settings_novelty_haptic_desc">Hanya untuk perangkat dengan halaman Suara &amp; Haptik - Haptik</string>
     <string name="system_settings_unlock_google_header">Buka kunci Entri Google</string>
     <string name="system_settings_unlock_ui_mode">Buka pengoptimalan tata letak aplikasi</string>
-    <string name="system_settings_usb_mode">Tidak ada jendela pop-up saat menghubungkan ke USB</string>
-    <string name="system_settings_usb_mode_choose">Opsi Bawaan USB</string>
-    <string name="system_settings_usb_default">bawaan</string>
-    <string name="system_usb_use_charging_only">Hanya Mengisi Daya</string>
-    <string name="system_usb_use_file_transfers">Transfer Berkas</string>
-    <string name="system_usb_use_photo_transfers">Transfer Foto</string>
-    <string name="system_usb_use_MIDI">Modus MIDI</string>
-    <string name="system_usb_reverse_charge">Biaya Terbalik</string>
-    <string name="system_usb_tethering">Penambatan USB</string>
     <string name="system_settings_connection_sharing_title">Koneksi Jaringan &amp; berbagi</string>
     <string name="system_settings_new_nfc_page">Halaman NFC Baru</string>
     <string name="system_settings_new_nfc_page_desc">Setelah dibuka, aplikasi pembayaran default untuk model yang tidak didukung tidak dapat memilih Xiaomi Wallet</string>

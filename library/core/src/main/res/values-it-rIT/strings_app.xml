@@ -579,15 +579,6 @@
     <string name="system_settings_novelty_haptic_title">Sblocca la nuova versione della pagina di regolazione touch</string>
     <string name="system_settings_novelty_haptic_desc">Solo per dispositivi con Suoni &amp; Haptics - Pagina Haptics</string>
     <string name="system_settings_unlock_google_header">Sblocca voce Google</string>
-    <string name="system_settings_usb_mode">Non è presente alcuna finestra pop-up durante la connessione a USB</string>
-    <string name="system_settings_usb_mode_choose">Opzione USB predefinita</string>
-    <string name="system_settings_usb_default">default</string>
-    <string name="system_usb_use_charging_only">Solo ricarica</string>
-    <string name="system_usb_use_file_transfers">Trasferimenti file</string>
-    <string name="system_usb_use_photo_transfers">Trasferimenti foto</string>
-    <string name="system_usb_use_MIDI">Modalità MIDI</string>
-    <string name="system_usb_reverse_charge">Ricarica inversa</string>
-    <string name="system_usb_tethering">Tethering USB</string>
     <string name="system_settings_connection_sharing_title">Connessione di rete e amp; condivisione</string>
     <string name="system_settings_new_nfc_page">Nuova pagina NFC</string>
     <string name="system_settings_new_nfc_page_desc">Dopo l\'apertura, l\'applicazione di pagamento predefinita per i modelli non supportati non può selezionare Xiaomi Wallet</string>

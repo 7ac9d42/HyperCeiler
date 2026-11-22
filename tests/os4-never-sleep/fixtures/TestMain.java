@@ -3,12 +3,11 @@ import android.content.Context;
 import com.android.settings.KeyguardTimeoutDropDownPreference;
 import com.sevtinge.hyperceiler.libhook.base.BaseHook;
 import com.sevtinge.hyperceiler.libhook.rules.systemsettings.UnlockNeverSleepScreenOS4;
-import com.sevtinge.hyperceiler.libhook.rules.systemsettings.UnlockNeverSleepScreen;
 import com.sevtinge.hyperceiler.common.log.XposedLog;
 import io.github.lingqiqi5211.ezhooktool.xposed.common.HookParam;
 import java.util.*;
 public class TestMain {
- static int passed,failed;static boolean baseline;
+ static int passed,failed;
  interface Case {void run() throws Exception;}
  static void check(boolean b,String why){if(!b)throw new AssertionError(why);}
  static void test(String name,Case c){
@@ -22,9 +21,7 @@ public class TestMain {
  }
  static boolean never(KeyguardTimeoutDropDownPreference p){return Arrays.asList(p.values).contains("2147483647");}
  public static void main(String[] args){
-  baseline=args.length>0&&args[0].equals("baseline");
-  if(baseline){try{new UnlockNeverSleepScreen().init();}catch(Throwable t){System.out.println("EXPECTED_BASELINE_REGISTRATION_FAILURE "+t.getMessage());}}
-  else new UnlockNeverSleepScreenOS4().init();
+  new UnlockNeverSleepScreenOS4().init();
   test("target_registration",()->check(BaseHook.callback!=null&&"disableUnusableTimeouts".equals(BaseHook.registeredName),"new ROM method was not hooked"));
   test("oled_never_preserved",()->{var p=pref(0);invoke(p);check(never(p),"OLED dropped Never");check(p.restrictionUpdates==1,"restriction update count");check(p.providerWrites==0,"hook wrote settings");});
   test("null_policy_service",()->{var p=pref(0);p.mContext.service=null;invoke(p);check(never(p),"null policy did not preserve Never");});
@@ -51,7 +48,7 @@ public class TestMain {
   test("policy_read_failure_uses_original",()->{var p=pref(0);((DevicePolicyManager)p.mContext.service).failures=1;try{invoke(p);}catch(SecurityException expected){}check(p.originalCalls==1,"policy read failure skipped original");});
   test("unknown_service_uses_original",()->{var p=pref(0);p.mContext.service=new Object();try{invoke(p);}catch(ClassCastException expected){}check(p.originalCalls==1,"unknown policy service skipped original");});
   test("null_context_uses_original",()->{var p=pref(0);p.mContext=null;try{invoke(p);}catch(NullPointerException expected){}check(p.originalCalls==1,"null context skipped original");});
-  System.out.println("RESULT passed="+passed+" failed="+failed+" total="+(passed+failed)+" baseline="+baseline);
+  System.out.println("RESULT passed="+passed+" failed="+failed+" total="+(passed+failed));
   if(failed!=0)System.exit(1);
  }
 }

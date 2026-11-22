@@ -859,15 +859,6 @@
     <string name="system_settings_novelty_haptic_desc">僅支持有 \"聲音與觸覺-觸覺\" 頁面的裝置</string>
     <string name="system_settings_unlock_google_header">禁止隱藏 \"Google\" 入口</string>
     <string name="system_settings_unlock_ui_mode">解鎖應用程式佈局優化</string>
-    <string name="system_settings_usb_mode">接入 USB 時不彈窗</string>
-    <string name="system_settings_usb_mode_choose">USB 預設選項</string>
-    <string name="system_settings_usb_default">預設</string>
-    <string name="system_usb_use_charging_only">僅限充電</string>
-    <string name="system_usb_use_file_transfers">傳輸檔案</string>
-    <string name="system_usb_use_photo_transfers">傳輸相片</string>
-    <string name="system_usb_use_MIDI">MIDI 模式</string>
-    <string name="system_usb_reverse_charge">反向充電</string>
-    <string name="system_usb_tethering">USB 網絡共享</string>
     <string name="system_settings_connection_sharing_title">VPN、網絡連接與共享</string>
     <string name="system_settings_new_nfc_page">新版 NFC 頁面</string>
     <string name="system_settings_new_nfc_page_desc">此功能會導致不支持的機型預設付款應用程式無法選中小米钱包</string>

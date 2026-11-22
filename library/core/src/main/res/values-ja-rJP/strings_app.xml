@@ -838,15 +838,6 @@
     <string name="system_settings_novelty_haptic_desc">サウンドとバイブレーション - 触覚フィードバックの設定があるデバイスのみ対応しています</string>
     <string name="system_settings_unlock_google_header">Google 項目をアンロック</string>
     <string name="system_settings_unlock_ui_mode">アプリのレイアウト最適化をアンロック</string>
-    <string name="system_settings_usb_mode">USB 接続時にポップアップウインドウを非表示</string>
-    <string name="system_settings_usb_mode_choose">USB のデフォルトオプション</string>
-    <string name="system_settings_usb_default">デフォルト</string>
-    <string name="system_usb_use_charging_only">充電のみ</string>
-    <string name="system_usb_use_file_transfers">ファイル転送</string>
-    <string name="system_usb_use_photo_transfers">写真転送</string>
-    <string name="system_usb_use_MIDI">MIDI モード</string>
-    <string name="system_usb_reverse_charge">リバース充電</string>
-    <string name="system_usb_tethering">USB テザリング</string>
     <string name="system_settings_connection_sharing_title">ネットワーク接続と共有</string>
     <string name="system_settings_new_nfc_page">新しい NFC ページ</string>
     <string name="system_settings_new_nfc_page_desc">これを有効にすると、サポートされていないモデルではデフォルトの支払いアプリとして Mi Wallet を選択できません</string>
