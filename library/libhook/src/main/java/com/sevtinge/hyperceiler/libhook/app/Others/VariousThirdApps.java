@@ -110,8 +110,12 @@ public class VariousThirdApps extends BaseLoad {
     }
 
     private void initMusicHooks() {
-        initHook(MusicHooks.INSTANCE, PrefsBridge.getBoolean("system_ui_statusbar_music_switch") && PrefsBridge.getBoolean("system_ui_statusbar_music_show_app"));
+        if (PrefsBridge.getBoolean("system_ui_statusbar_music_switch")
+            && PrefsBridge.getBoolean("system_ui_statusbar_music_show_app")) {
+            initHook(MusicHooks.INSTANCE);
+        }
     }
+
     private Set<String> getEnabledInputMethodPackages(Context context) {
         try {
             if (context == null) {
