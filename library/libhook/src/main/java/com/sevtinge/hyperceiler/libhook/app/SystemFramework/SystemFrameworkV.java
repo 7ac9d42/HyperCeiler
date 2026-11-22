@@ -135,8 +135,7 @@ public class SystemFrameworkV extends BaseLoad {
         initHook(new ThemeProvider(), PrefsBridge.getBoolean("system_framework_allow_third_theme"));
 
         // 其他
-        // 设备名称违规词校验：必须挂框架侧（system_server）的那套，
-        // 设置应用侧的那套由 SystemSettingsV 在 com.android.settings 进程里负责。
+        // 设备名称违规词校验：必须挂框架侧（system_server）的那套。
         initHook(new AntiQues(), PrefsBridge.getBoolean("system_settings_anti_ques"));
         initHook(new SystemLockApp(), PrefsBridge.getBoolean("system_framework_guided_access"));
         initHook(new ScreenRotation(), PrefsBridge.getBoolean("system_framework_screen_all_rotations"));
