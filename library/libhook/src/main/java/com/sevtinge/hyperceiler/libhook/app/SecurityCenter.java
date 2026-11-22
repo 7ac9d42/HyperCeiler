@@ -160,8 +160,5 @@ public class SecurityCenter extends BaseLoad {
 
         initHook(new PowerConsumptionRanking(), PrefsBridge.getBoolean("security_center_power_consumption_ranking"));
 
-        // reshook
-        initHook(SidebarLineCustom.INSTANCE, PrefsBridge.getBoolean("security_center_sidebar_line_color"));
-
     }
 }
