@@ -19,7 +19,6 @@
 package com.sevtinge.hyperceiler.libhook.rules.systemui.statusbar.icon.all;
 
 
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreAndroidVersion;
 
 import android.content.Context;
 import android.database.ContentObserver;
@@ -58,9 +57,7 @@ public class NotificationIconColumns extends BaseHook {
     }
 
     private void initHooks(int maxIconsNum) {
-        String observerClass = isMoreAndroidVersion(36)
-            ? "com.android.systemui.statusbar.policy.StatusBarIconObserver"
-            : "com.android.systemui.statusbar.policy.NotificationIconObserver";
+        String observerClass = "com.android.systemui.statusbar.policy.StatusBarIconObserver";
 
         hookAllConstructors(observerClass, new IMethodHook() {
             @Override

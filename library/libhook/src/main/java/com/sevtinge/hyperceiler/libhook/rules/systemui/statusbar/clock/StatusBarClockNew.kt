@@ -28,9 +28,7 @@ import android.view.View
 import android.widget.TextView
 import com.sevtinge.hyperceiler.common.utils.PrefsBridge
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
-import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreAndroidVersion
 import com.sevtinge.hyperceiler.libhook.utils.api.DisplayUtils.dp2px
-import com.sevtinge.hyperceiler.libhook.utils.hookapi.LazyClass.mNewClockClass
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.beforeHookMethod
 import io.github.lingqiqi5211.ezhooktool.core.callMethod
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.getObjectField
@@ -286,14 +284,6 @@ object StatusBarClockNew : BaseHook() {
             }
         }
 
-        if (!isMoreAndroidVersion(36)) {
-            // 在 Android 16 的 OS2.0.230.12.WOCCNXM 版本中，未发现此类名
-            mNewClockClass.beforeHookMethod("updateTime") {
-                runCatching {
-                    applyMiuiClockStyleAndFormat(it)
-                }
-            }
-        }
     }
 
     private fun applyMiuiClockStyleAndFormat(hook: HookParam) {

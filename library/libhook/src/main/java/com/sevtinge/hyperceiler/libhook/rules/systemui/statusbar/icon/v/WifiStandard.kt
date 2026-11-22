@@ -22,7 +22,6 @@ import com.sevtinge.hyperceiler.common.log.XposedLog
 import com.sevtinge.hyperceiler.common.utils.PrefsBridge
 import com.sevtinge.hyperceiler.common.utils.api.ProjectApi.isDebug
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
-import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreAndroidVersion
 import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreHyperOSVersion
 import io.github.lingqiqi5211.ezhooktool.xposed.common.HookParam
 import io.github.lingqiqi5211.ezhooktool.xposed.java.IMethodHook
@@ -59,19 +58,13 @@ object WifiStandard : BaseHook() {
             bridge.findMethod {
                 matcher {
                     declaredClass {
-                        if (isMoreAndroidVersion(36)) {
-                            className("WifiViewModelInject\$special\$", StringMatchType.Contains)
-                        } else {
-                            className("viewmodel.WifiViewModel\$special", StringMatchType.Contains)
-                        }
+                        className("WifiViewModelInject\$special\$", StringMatchType.Contains)
                     }
                     usingNumbers(5, 0)
                     addInvoke("Ljava/lang/Integer;-><init>(I)V")
 
-                    if (isMoreAndroidVersion(36)) {
-                        addUsingField {
-                            name("\$this_unsafeFlow")
-                        }
+                    addUsingField {
+                        name("\$this_unsafeFlow")
                     }
                 }
             }.singleOrNull()

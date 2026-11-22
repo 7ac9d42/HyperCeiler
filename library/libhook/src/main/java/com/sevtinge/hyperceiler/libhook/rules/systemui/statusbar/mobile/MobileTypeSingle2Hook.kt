@@ -148,11 +148,7 @@ object MobileTypeSingle2Hook : BaseHook() {
     @SuppressLint("MissingPermission")
     private fun hookMobileViewAndVM() {
         if (showMobileType || mobileNetworkType == 3) {
-            if (isMoreAndroidVersion(36)) {
-                loadClass("com.miui.systemui.statusbar.views.MobileTypeDrawable")
-            } else {
-                loadClass("com.android.systemui.statusbar.views.MobileTypeDrawable")
-            }.findMethod { name("measure") }.createHook {
+            loadClass("com.miui.systemui.statusbar.views.MobileTypeDrawable").findMethod { name("measure") }.createHook {
                 returnConstant(null)
             }
         }

@@ -32,7 +32,6 @@ import android.widget.TextView
 import androidx.core.util.TypedValueCompat.dpToPx
 import com.sevtinge.hyperceiler.common.log.XposedLog
 import com.sevtinge.hyperceiler.common.utils.PrefsBridge
-import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreAndroidVersion
 import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreHyperOSVersion
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.blur.MiBlurUtilsKt.chooseBackgroundBlurContainer
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.mSupportSV
@@ -235,18 +234,6 @@ object VolumeOrQSBrightnessValue {
 
             util.setVisOrGone(mSuperVolumeBg, !mExpanded) // 侧边音量条进度值 UI 显示
             util.setVisOrGone(superVolume, mExpanded) // All 场景二级音量条进度值 UI 显示
-
-            /*if (isMoreHyperOSVersion(3f)) {
-                // 为 All 二级进度值适配高级材质
-                val mContext = thisObj.getObjectField("mContext") as Context
-
-                superVolume.setTextColor(Color.WHITE)
-                val cacheKey = "$PLUGIN:miui_volume_icon_blend_colors_cc"
-                val colorArray = colorArrayCache.getOrPut(cacheKey) {
-                    mContext.resources.getIntArrayBy("miui_volume_icon_blend_colors_cc", PLUGIN)
-                }
-                util.setMiViewBlurAndBlendColor(superVolume, mExpanded, mContext, 3, colorArray, false)
-            }*/
         }
 
         // All 场景二级音量条百分比进度值计算显示
@@ -442,7 +429,7 @@ object VolumeOrQSBrightnessValue {
             topValue.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13f + 2f * sizeBgX)
         }
 
-        if (!isMoreAndroidVersion(36) || !isMoreHyperOSVersion(3f)) {
+        if (!isMoreHyperOSVersion(3f)) {
             // 修复展开动画错位之一
             Constructors.find(brightnessPanelSliderController).toList().createAfterHooks { param ->
                 val brightnessPanel = param.args.getOrNull(0) as? FrameLayout ?: return@createAfterHooks
