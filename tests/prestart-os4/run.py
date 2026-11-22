@@ -20,26 +20,19 @@ for version in ('7751','8583'):
   (out/'prestart_fixture.h').write_text(header)
   subprocess.run(['c++','-std=c++20','-O2','-Wall','-Wextra','-Werror','-I'+str(ROOT/'app/src/main/cpp'),'-I'+work,str(HERE/'native_test.cpp'),'-o',str(out/'native')],check=True)
   subprocess.run([str(out/'native')]+([str(source)]if source else[]),check=True)
-# Execute the actual request getter in both compiled backends. An old JNI true
-# must never override a disabled/expired Hyos lease. Actual lease scheduling and
-# stalled Binder races are covered by tests/hyos-control/run_native.py.
+# Execute the ordinary Native request getter with both JNI values and safe-mode states.
 native=(ROOT/'app/src/main/cpp/targets/home/hyperceiler_home.cpp').read_text()
-getter=native[native.index('bool hyperceiler_home_prestart_disabled() {'):native.index('\nvoid hyperceiler_home_runtime_options(')]
+getter=re.search(r'^bool hyperceiler_home_prestart_disabled\(\) \{.*?^\}',native,re.M|re.S).group()
 with tempfile.TemporaryDirectory(prefix='hc-prestart-auth-')as work:
  out=Path(work)
- source='#include <atomic>\n#include <cassert>\n#include <iostream>\nstd::atomic_bool g_disable_prestart{false};\nnamespace hyos_control {constexpr unsigned kDisablePrestart=4;bool lease=false;bool feature_enabled(unsigned flag){assert(flag==kDisablePrestart);return lease;}}\n'+getter+'''
-int main(){for(bool jni:{false,true})for(bool lease:{false,true}){g_disable_prestart=jni;hyos_control::lease=lease;
-#ifdef HYPERCEILER_HYOS_BACKEND
-assert(hyperceiler_home_prestart_disabled()==lease);
-#else
-assert(hyperceiler_home_prestart_disabled()==jni);
-#endif
+ source='#include <atomic>\n#include <cassert>\n#include <iostream>\nstd::atomic_bool g_disable_prestart{false};\nbool blocked=false;\nbool native_installation_blocked(){return blocked;}\n'+getter+'''
+int main(){for(bool jni:{false,true})for(bool safety:{false,true}){g_disable_prestart=jni;blocked=safety;
+assert(hyperceiler_home_prestart_disabled()==(jni&&!safety));
 }std::cout<<"prestart request getter PASS\\n";}
 '''
  (out/'getter.cpp').write_text(source)
- for mode in ([],['-DHYPERCEILER_HYOS_BACKEND']):
-  subprocess.run(['c++','-std=c++20','-Wall','-Wextra','-Werror']+mode+[str(out/'getter.cpp'),'-o',str(out/'getter')],check=True)
-  subprocess.run([str(out/'getter')],check=True)
+ subprocess.run(['c++','-std=c++20','-Wall','-Wextra','-Werror',str(out/'getter.cpp'),'-o',str(out/'getter')],check=True)
+ subprocess.run([str(out/'getter')],check=True)
 gate=ROOT/'library/core/src/main/java/com/sevtinge/hyperceiler/hooker/home/HomeOS4AdaptationGate.java'
 resources=sorted(set(re.findall(r'R\.xml\.(\w+)',gate.read_text())))
 stubs={

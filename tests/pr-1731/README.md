@@ -34,7 +34,7 @@
 ## HCS1 协议核对
 
 交易码 `0x00484353`，ACK `0x48435331`，长度固定 188 字节／47 个 int32 单元。
-生产 native decoder 是 `targets/hyos/hyos_snapshot.h`。
+当时的 companion native decoder 是 `targets/hyos/hyos_snapshot.h`，现已随固定伴侣退役。
 
 | 字节位置 | 内容 |
 | --- | --- |
@@ -68,7 +68,7 @@ HCL4 扩展布局与 HCY1 兼容接口的交易码、顺序和确认值未变；
 | `tests/home-startup-snapshot/run_java.py` | 57 项通过，包括真实预取线程、无通知续期、通知中途失效、完整标题／独立缩放及防御性复制 |
 | `tests/hyos-control/run_java.py` | 65 项通过 |
 | `tests/hyos-control/run_legacy_java.py` | endpoint、10 项 idle-cache、10 项 atomic-reload 均通过 |
-| `tests/hyos-snapshot/run.py` | native decoder/cache 172 项通过，Java 生产 writer 的六组报文逐字段交叉解码通过 |
+| 已退役的 companion native decoder 测试 | 当时 decoder/cache 172 项通过，Java 生产 writer 的六组报文逐字段交叉解码通过 |
 | `tests/home-startup-snapshot/run_mutations.py` | 四组破坏租约／退休身份／查询顺序／关闭 payload 的代码变体均被回归拒绝 |
 | `python3 tests/dock-title-os4/run.py` | 149 项解析器、26 项缓存协议、18 项 endpoint 检查通过 |
 | `:app:assembleDebug` | 完整 APK 构建成功，包含真实 Java/Kotlin 和 ARM64 native 编译 |
@@ -89,7 +89,6 @@ SHA-256：`c9129caa5561445e09a7e96d8b5ec13f4471546a8c61fe5ee147700c58015519`。
 ```sh
 python3 tests/pr-1731/run_native.py
 python3 tests/home-startup-snapshot/run_java.py --output /tmp/hcs-java-check
-python3 tests/hyos-snapshot/run.py --output /tmp/hcs-native-check --java-corpus /tmp/hcs-java-check/corpus
 python3 tests/hyos-control/run_java.py --output /tmp/hcy-java-check
 python3 tests/hyos-control/run_legacy_java.py --output /tmp/hcl-java-check
 python3 tests/home-startup-snapshot/run_mutations.py --output /tmp/hcs-mutations-check

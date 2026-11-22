@@ -6111,16 +6111,8 @@ void *worker(void *) {
          * can stay lost.
          */
         // Capacity is an independent source-word bank, absent from order. Repair it
-        // on the existing 500 ms pass, even without a new provider revision. The
-        // HYOS bootstrap is an atomic cache read, with no Binder/disk work, and
-        // expired/denied authorization must still restore the original words.
-        bool capacity_enabled=config.tweaks.hotseat_unlimited;
-#ifdef HYPERCEILER_HYOS_BACKEND
-        home_layout::Config capacity_config;
-        capacity_enabled=home_layout::query_bootstrap_config(capacity_config)
-            && capacity_config.tweaks.hotseat_unlimited;
-#endif
-        (void)sync_hotseat_capacity(capacity_enabled);
+        // on the existing 500 ms pass, even without a new provider revision.
+        (void)sync_hotseat_capacity(config.tweaks.hotseat_unlimited);
         bool live = bank_live(order);
         /*
          * Periodic generation proof, at the backstop cadence rather than per pass: one inventory for

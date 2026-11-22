@@ -3,9 +3,6 @@
 #include "home_widget_move.h"
 #include "home_endpoint_diagnostics.h"
 
-#ifdef HYPERCEILER_HYOS_BACKEND
-#include "targets/hyos/hyos_control.h"
-#else
 #include <android/binder_ibinder.h>
 #include <android/log.h>
 #include <android/binder_parcel.h>
@@ -28,10 +25,8 @@
 #include <vector>
 #include <cerrno>
 #include <sys/stat.h>
-#endif
 
 namespace home_layout {
-#ifndef HYPERCEILER_HYOS_BACKEND
 namespace {
 constexpr transaction_code_t kLayoutTransaction = 0x0048434C;
 constexpr int32_t kLayoutAck = 0x48434C34;
@@ -663,20 +658,8 @@ bool query_bootstrap_config(Config &result) {
     result = std::move(candidate);
     return true;
 }
-#else
-bool query_bootstrap_config(Config &result) {
-    // Loader-safe, bounded read of the same authenticated combined publication.
-    return hyos_control::layout_config(result);
-}
-#endif
 
 bool query_config(Config &result) {
-#ifdef HYPERCEILER_HYOS_BACKEND
-    // Unavailable/expired authorization publishes neutral values, never an old
-    // JNI/property/disk configuration or a second independent Binder revision.
-    (void) hyos_control::layout_config(result);
-    return true;
-#else
     std::lock_guard<std::mutex> lock(g_process_config.mutex);
     Config candidate;
     const bool from_binder = query_binder(candidate);
@@ -711,7 +694,6 @@ bool query_config(Config &result) {
     if (serialized != g_process_config.persisted && write_config_cache(candidate))
         g_process_config.persisted = std::move(serialized);
     return true;
-#endif
 }
 
 } // namespace home_layout

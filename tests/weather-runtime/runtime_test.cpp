@@ -151,7 +151,7 @@ void verify(){observe_snapshot("_kDartVmSnapshotData",(void*)(fx::dart_base+weat
 void installed(){CHECK(start_before_entry(fx::weather_base));CHECK(g_phase==Phase::Installed);CHECK(*fx::slot==(uintptr_t)hooked_device_level);CHECK(fx::ready_seen);CHECK(nhk::read_protection((uintptr_t)fx::slot)==PROT_READ);}
 void *call(int32_t s=1){return site_call((void*)0x34567,s,(void*)*fx::slot);}
 void wait_for(std::function<bool()>p){for(int i=0;i<200&&!p();++i)std::this_thread::sleep_for(std::chrono::milliseconds(5));CHECK(p());}
-void neutral(){weather_snapshot::Snapshot s;CHECK(!g_cache.read(fx::time_ns,s)||!s.available||!s.allowed);}
+void neutral(){weather_snapshot::Snapshot s;CHECK(!g_cache.load_snapshot(fx::time_ns,s)||!s.available||!s.allowed);}
 struct Case{std::string name;std::function<void()> run;};
 }
 int main(){std::vector<Case> cases;

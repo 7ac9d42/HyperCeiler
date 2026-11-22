@@ -6,7 +6,7 @@ Rust 三个 Hook 保留原函数调用，另从当前 Dart 镜像的 overview ge
 
 独立 HCT 事务 `0x00484354` 请求体为五个 int64，依次为递增序列、CLOCK_MONOTONIC 时间戳、四位状态、修订号和相同的确认修订号。状态低三位保留原协议，主最近任务在已观察到 Dart 状态后以第一位表达，涵盖竖屏与横屏，第二位只作为初始 Rust 兼容来源，第三位为独立最近任务窗口，第四位为四个 Hook 均已验证。Dart 状态已知时不再混入旧 Rust 主场景位，读取失败发布不可用，避免退出后误隐藏。只有全零探测允许修订号为零。回复为三个 int32，ACK `0x48435231`、配置可用、功能开启。旧端点不支持该事务时，仅关闭本功能，不重连或关闭原 Dock 通道。
 
-系统端只接受与主桌面 WindowState 的 Session UID/PID 相同的发送者，拒绝重放、回退修订、同修订不同状态、过期、未来时间及错误长度。源状态六秒过期，偏好沿用现有五秒发布租约。偏好放在 schema 4 Cursor 的可选 extras 中，仍来自同一次 getAll，旧列数、combined 188 字节协议和 231 项布局 bank 均不改变。
+系统端只接受与主桌面 WindowState 的 Session UID/PID 相同的发送者，拒绝重放、回退修订、同修订不同状态、过期、未来时间及错误长度。源状态六秒过期，偏好沿用现有五秒发布租约。偏好放在 schema 4 Cursor 的可选 extras 中，仍来自同一次 getAll，旧列数和 231 项布局 bank 均不改变。
 
 WMS Getter 策略只移除前台主桌面窗口请求的 statusBars 类型，不写回客户端字段。WM Handler 在全局锁内通知当前 InsetsPolicy，退出最近任务、关闭功能、切换窗口、锁屏、租约过期及清理时回归原请求。方法通过平台类型契约校验，不使用字段地址。当前真机 Android 17 的通知接口为 `onRequestedVisibleTypesChanged(InsetsTarget,int,ImeTracker.Token)`，保留旧平台单参数 `onInsetsModified` 的唯一匹配。
 
@@ -16,7 +16,7 @@ WMS Getter 策略只移除前台主桌面窗口请求的 statusBars 类型，不
 python3 tests/home-recents-statusbar-os4/run.py [可选的解出的 libapp_launcher.so ...]
 python3 tests/home-recents-statusbar-os4/run_policy.py
 python3 tests/home-recents-statusbar-os4/run_dart.py --adb [可选的解出的 libapp.so ...]
-JAVA_HOME=/path/to/jdk python3 tests/home-startup-snapshot/run_java.py --output /tmp/hcs-tests
+JAVA_HOME=/path/to/jdk python3 tests/home-startup-snapshot/run_java.py --suite recents --output /tmp/home-startup-snapshot
 ```
 
 `run.py` 覆盖原生重定位和拒绝场景、身份及租约、生产偏好发布。`run_policy.py` 编译真实 Kotlin 策略，模拟 WMS 类型、Handler 和 Hook 分发，覆盖进入退出、横屏与独立场景位、其他应用、锁屏、窗口不可见、开关、过期、进程切换和热重载清理。

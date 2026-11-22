@@ -3,7 +3,10 @@
 Target: Xiaomi 17 Pro Max (`popsicle`), `OS4.0.0.44.XPBCNXM`, Android 17 / API 37.
 Base: HyperCeiler r4669, `5e4686069dd7ab1f3697e256d5fc7d68fb73e317`.
 
-This draft proposes target-specific compatibility changes for upstream review.
+This archived draft describes target-specific changes proposed for upstream review.
+The old Home companion Native build is retired on the current branch. The APK
+retains the HCY1/HCS1 replies pending an upgrade compatibility decision. The
+separate Weather companion remains available for local builds.
 The scope below counts modified feature groups: related switches and parameters,
 and the two media-card locations, are grouped together. It does not represent
 complete HyperOS 4 coverage.
@@ -25,15 +28,19 @@ Preference initialization, framework-status publication, coherent native
 snapshots, expiry and native lifetime guards are supporting infrastructure and
 are not counted as additional user features.
 
-## Architecture and limits
+## Historical architecture and limits
+
+This section describes the archived draft, not the current build. The default
+APK still includes its own Home Native code; the separate Home companion is
+retired.
 
 - Java/Kotlin hooks target the reviewed OS4 shapes and preserve existing routes
   where applicable. Shape matching alone is not a runtime DEX identity proof.
   The shared ambient drawable also changes, including behavior used by older
   HyperOS versions where their original hook routes remain present.
-- Home and Weather use a **separate experimental native companion** with Zygisk
-  Next API 4 / Hyos Runtime API 1. Building or installing the APK alone does not
-  deliver these native paths. The APK's system scope supplies their configuration.
+- In the draft, Home and Weather used a **shared experimental native companion**
+  with Zygisk Next API 4 / Hyos Runtime API 1. The APK alone did not deliver those
+  companion paths; its system scope supplied their configuration.
 - Native paths depend on exact image/build IDs, instruction/import guards,
   startup ordering and expiring coherent snapshots. Mismatches are declined.
   The companion installer is restricted to the stated device/ROM.
@@ -87,27 +94,32 @@ be granted to the repository by the package owner.
 The stereo preference harness uses `defusedxml` to reject unsafe XML constructs.
 Install its Python dependency with `python3 -m pip install -r tests/requirements.txt`.
 
-For the optional companion, obtain the external Zygisk Next API header from
-commit `22fe320814656e7b44715b5f32c967ceb51cda08`. Its SHA-256 must be
+### Current Weather-only companion
+
+The old Home companion build instructions are in Git history.
+[`tools/build_hyos_companion.py`](../tools/build_hyos_companion.py) now builds
+and stages only the Weather companion (`HYPERCEILER_HYOS_WEATHER_ONLY=ON`).
+
+The external Zygisk Next API header is not bundled. Use `zygisk_next_api.h` from
+commit `22fe320814656e7b44715b5f32c967ceb51cda08`; the script requires SHA-256
 `957922aeec1bb31091cc37dca29267b7fa41e4e109f679af1526ee4c5e4325c8`.
-The SDK is not bundled. The reviewed toolchain is NDK 28.2.13676358 and CMake
-3.22.1. Supply actual absolute paths and fresh build/staging/report locations:
+The reviewed toolchain is NDK 28.2.13676358 and CMake 3.22.1, with Ninja.
+The default NDK host tag is `linux-x86_64`; use `--ndk-host-tag` if the NDK
+uses a different host directory. From the repository root, use a fresh build
+directory and unused staging and report paths:
 
 ```sh
 python3 tools/build_hyos_companion.py \
-  --source-dir . --build-dir /tmp/hc-hyos-build \
+  --source-dir . --build-dir /tmp/hc-weather-build \
   --sdk /path/to/zygisk-next-sdk --ndk /path/to/android-ndk \
   --cmake /path/to/cmake --ninja /path/to/ninja \
-  --stage /tmp/hc-hyos-stage --label test15 \
-  --report /tmp/hc-hyos-build-report.json
+  --stage /tmp/hc-weather-stage --label test15 \
+  --report /tmp/hc-weather-build-report.json
 ```
 
-The script builds and stages the library, installer metadata and required
-notices. It never installs anything. `--label` is packaging metadata, not a
-statement that the result matches a previously built test APK; record the exact
-Git commit used. Default NDK host tag is `linux-x86_64`; other hosts can supply
-`--ndk-host-tag`. The stage can be archived with its contents at the ZIP root
-after review.
+The script stages the library, installer metadata and notices without
+installing anything. The label is packaging metadata; record the exact Git
+commit used. A staged build does not verify installation or device behavior.
 
 ## Related contributions
 

@@ -40,7 +40,7 @@ def extract(out):
 def main():
  p=argparse.ArgumentParser();p.add_argument('--output',required=True,type=Path);a=p.parse_args();out=a.output.resolve();out.mkdir(parents=True,exist_ok=False)
  resource.setrlimit(resource.RLIMIT_CORE,(0,0));assert sha(ROM)==PIN
- sources=[Path(__file__).resolve(),W/'spacing_v3_fixture.cpp',W/'spacing_v3_probe.S',W/'pixel_provenance.py',ENGINE,test_paths.TEST_DATA_ROOT / 'acceptance/home-grid-next/dart-v5/extraction.json',test_paths.TEST_DATA_ROOT / 'acceptance/home-grid-next/snapshot-parser/objects.json',test_paths.TEST_DATA_ROOT / 'acceptance/home-grid-next/snapshot-parser/pool-scanned.json',test_paths.SOURCE_ROOT / 'app/src/main/cpp/targets/home/home_startup.cpp',test_paths.SOURCE_ROOT / 'library/core/src/main/res/xml/home_layout.xml']
+ sources=[Path(__file__).resolve(),W/'spacing_v3_fixture.cpp',W/'spacing_v3_probe.S',W/'pixel_provenance.py',ENGINE,test_paths.TEST_DATA_ROOT / 'acceptance/home-grid-next/dart-v5/extraction.json',test_paths.TEST_DATA_ROOT / 'acceptance/home-grid-next/snapshot-parser/objects.json',test_paths.TEST_DATA_ROOT / 'acceptance/home-grid-next/snapshot-parser/pool-scanned.json',test_paths.SOURCE_ROOT / 'library/core/src/main/res/xml/home_layout.xml']
  inputs={str(test_paths.report_path(x, R)):sha(x)for x in sources};report={'passed':False,'device_status':'NOT_TESTED','production_changed':False,'inputs_before':inputs,'rom':{'path':str(test_paths.report_path(ROM, R)),'sha256':PIN},'runs':[]}
  def save():(out/'report.json').write_text(json.dumps(report,indent=2)+'\n')
  report['provenance']=extract(out);report['pixel_native_binding']=prove();save()

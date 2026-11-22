@@ -3,7 +3,7 @@
 #include <array>
 #include <cstdint>
 namespace home_layout {
-// HCRC v1, optional tail of HCL4. HCS1's fixed authorization reply stays unchanged.
+// HCRC v1, optional tail of HCL4.
 constexpr int32_t kRecentMagic=0x48435243;
 constexpr int32_t kRecentWireCount=11;
 constexpr int32_t kRecentHeaderMagic=0x48435248; // HCRH v1, optional after infinite-scroll tail.

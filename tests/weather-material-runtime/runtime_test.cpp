@@ -36,7 +36,7 @@ bool original(const char*k,size_t n,bool d){++original_calls;seen_key=k;seen_len
 bool foreign(const char*,size_t,bool){return true;}
 void put(ws::Words&w,size_t at,int64_t x){w[at]=static_cast<int32_t>(uint64_t(x));w[at+1]=static_cast<int32_t>(uint64_t(x)>>32);}
 void publish(bool blur=true,bool allowed=true,int64_t deadline=0){ws::Words w{};w[0]=ws::kAck;w[1]=1;w[2]=allowed;put(w,3,17);put(w,5,1);if(allowed){put(w,7,deadline?deadline:now+4000000000LL);w[11]=blur;}w[9]=3;CHECK(cache.publish(w,now));}
-bool fresh(ws::Snapshot&s){++fresh_calls;if(fresh_event)fresh_event();return cache.read(now,s);}
+bool fresh(ws::Snapshot&s){++fresh_calls;if(fresh_event)fresh_event();return cache.load_snapshot(now,s);}
 uintptr_t dart_base(){++dart_calls;return dart;}
 void setup(){slot=(uintptr_t*)mmap(nullptr,4096,PROT_READ|PROT_WRITE,MAP_ANONYMOUS|MAP_PRIVATE,-1,0);CHECK(slot!=MAP_FAILED);*slot=(uintptr_t)original;CHECK(mprotect(slot,4096,PROT_READ)==0);base=(uintptr_t)&material_return-0x4402e4;publish();}
 void set_slot(uintptr_t value){CHECK(::mprotect(slot,4096,PROT_READ|PROT_WRITE)==0);__atomic_store_n(slot,value,__ATOMIC_RELEASE);CHECK(::mprotect(slot,4096,PROT_READ)==0);}

@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 3.22.1)
+
+if(HYPERCEILER_HYOS_BACKEND)
+    message(FATAL_ERROR
+        "HYPERCEILER_HYOS_BACKEND is retired. Remove it from the CMake cache or set it to OFF. "
+        "For the Weather companion, use -DHYPERCEILER_HYOS_WEATHER_ONLY=ON instead.")
+endif()
+
 project(HyperCeilerNative LANGUAGES CXX)
 
 option(HYPERCEILER_HYOS_WEATHER_ONLY "Build the separate Zygisk Next Weather companion" OFF)
 if(HYPERCEILER_HYOS_WEATHER_ONLY)
-    if(HYPERCEILER_HYOS_BACKEND)
-        message(FATAL_ERROR "Select only one Hyos companion per build directory")
-    endif()
     if(NOT HYPERCEILER_ZYGISK_NEXT_API_DIR)
         set(HYPERCEILER_ZYGISK_NEXT_API_DIR "${CMAKE_CURRENT_SOURCE_DIR}/nativehook")
     endif()
@@ -42,30 +46,6 @@ add_library(HyperCeilerNative SHARED
     nativehook/native_log.cpp
     nativehook/safe_mode.cpp
     targets/home/hyperceiler_home.cpp)
-
-option(HYPERCEILER_HYOS_BACKEND "Build the separate Zygisk Next native-only companion" OFF)
-if(HYPERCEILER_HYOS_BACKEND)
-    if(NOT HYPERCEILER_ZYGISK_NEXT_API_DIR)
-        set(HYPERCEILER_ZYGISK_NEXT_API_DIR "${CMAKE_CURRENT_SOURCE_DIR}/nativehook")
-    endif()
-    set_target_properties(HyperCeilerNative PROPERTIES OUTPUT_NAME HyperCeilerHyos)
-    if(NOT EXISTS "${HYPERCEILER_ZYGISK_NEXT_API_DIR}/zygisk_next_api.h")
-        message(FATAL_ERROR "Supply the pinned Zygisk Next API 4 SDK header directory")
-    endif()
-    target_sources(HyperCeilerNative PRIVATE targets/hyos/hyos_entry.cpp targets/hyos/hyos_control.cpp
-        targets/hyos/hyos_app_entry_arm64.S
-        targets/hyos/hyos_report_runtime.cpp
-        targets/weather/weather_runtime.cpp
-        targets/weather/weather_material_runtime.cpp
-        targets/weather/weather_card_runtime.cpp
-        targets/weather/weather_card_lifetime.cpp
-        targets/weather/weather_card_arm64.S
-        targets/home/home_startup.cpp targets/home/home_startup_arm64.S
-        targets/home/recents_runtime.cpp targets/home/recents_gateway_arm64.S
-        targets/home/home_report_hooks.cpp targets/home/home_report_dart_arm64.S)
-    target_include_directories(HyperCeilerNative PRIVATE ${HYPERCEILER_ZYGISK_NEXT_API_DIR})
-    target_compile_definitions(HyperCeilerNative PRIVATE HYPERCEILER_HYOS_BACKEND=1)
-endif()
 
 # The Dart-side trampolines are hand-written: they follow the Dart AOT register
 # rules (x15 stack, x16/x17 scratch) rather than AAPCS, so the layout feature needs
@@ -136,10 +116,8 @@ target_compile_options(HyperCeilerNative PRIVATE
 target_link_libraries(HyperCeilerNative PRIVATE android binder_ndk log)
 
 # SystemUI's isolated palette backend has no Home/Hyos initialization contract.
-# It is loaded on demand by AmbientNativeColorOS4 and is absent from the companion.
-if(NOT HYPERCEILER_HYOS_BACKEND)
-    add_library(HyperCeilerAmbientOS4 SHARED targets/systemui/ambient_color_os4.cpp)
-    target_compile_features(HyperCeilerAmbientOS4 PRIVATE cxx_std_20)
-    target_compile_options(HyperCeilerAmbientOS4 PRIVATE -Wall -Wextra -Werror -fvisibility=hidden)
-    target_link_libraries(HyperCeilerAmbientOS4 PRIVATE dl log)
-endif()
+# It is loaded on demand by AmbientNativeColorOS4.
+add_library(HyperCeilerAmbientOS4 SHARED targets/systemui/ambient_color_os4.cpp)
+target_compile_features(HyperCeilerAmbientOS4 PRIVATE cxx_std_20)
+target_compile_options(HyperCeilerAmbientOS4 PRIVATE -Wall -Wextra -Werror -fvisibility=hidden)
+target_link_libraries(HyperCeilerAmbientOS4 PRIVATE dl log)

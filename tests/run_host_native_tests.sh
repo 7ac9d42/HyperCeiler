@@ -2,10 +2,9 @@
 # Host test runner for the NativeHookRuntime (app/src/main/cpp/nativehook/) and
 # the desktop Dart hook's host-testable layers.
 #
-# Compiles and runs every host test outside Android. On Linux (CI) it also
-# builds DockNativeArm64Test with its assembly harness; on macOS that one is
-# skipped (needs <sys/eventfd.h> and GNU as directives), and the page-guard
-# reader compiles with the -DNHK_NO_PROC_MAPS fallback.
+# Compiles and runs host tests outside Android. WeatherBoundedReadsTest needs
+# Linux syscall definitions, and DockNativeArm64Test also needs an ARM64 host.
+# The page-guard reader uses -DNHK_NO_PROC_MAPS on non-Linux hosts.
 #
 # Usage:
 #   tests/run_host_native_tests.sh [libapp.so ...]
@@ -91,10 +90,17 @@ else
     && run NativeHookFlutterImageTest
 fi
 
+HOST_OS="$(uname -s)"
+if [[ "$HOST_OS" == "Linux" ]]; then
+  build WeatherBoundedReadsTest "$ROOT/tests/nativehook/WeatherBoundedReadsTest.cpp" \
+    && run WeatherBoundedReadsTest
+else
+  printf 'SKIP WeatherBoundedReadsTest (needs Linux syscall definitions; host is %s)\n' "$HOST_OS"
+fi
+
 # --- Assembly harness: needs Linux *and* an aarch64 host. ---
 # The harness executes ARM64 instructions, so it cannot run under an x86_64
 # runner: the OS check alone was not enough (ubuntu-latest is x86_64).
-HOST_OS="$(uname -s)"
 HOST_ARCH="$(uname -m)"
 if [[ "$HOST_OS" == "Linux" && "$HOST_ARCH" == "aarch64" ]]; then
   build DockNativeArm64Test "$ROOT/tests/home-dock-window/DockNativeArm64Test.cpp" \
