@@ -1364,14 +1364,6 @@
     <string name="trustservice_disable_mrm">Risikoerkennungen deaktivieren</string>
     <string name="trustservice_disable_mrm_desc">Experimentelle Funktion. Die Nutzung dieser Funktion ist möglicherweise nicht im Einklang mit lokalen oder nationalen Gesetzen.</string>
     <!--Weather-->
-    <string name="weather">Wetter</string>
-    <string name="weather_device_level_title">Animationslevel</string>
-    <string name="weather_device_level_title_low">Niedrig</string>
-    <string name="weather_device_level_title_middle">Mittel</string>
-    <string name="weather_device_level_title_high">Hoch</string>
-    <string name="weather_card_display_type_title">Karten-Anzeigetyp</string>
-    <string name="weather_card_display_type_title_2">Heller Modus</string>
-    <string name="weather_card_display_type_title_3">Dunkler Modus</string>
     <!--Analytics-->
     <string name="analytics">Analytik</string>
     <string name="analytics_fuck_guard">Schutz entfernen</string>

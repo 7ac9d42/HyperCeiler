@@ -367,13 +367,6 @@
         app:inflatedXml="@xml/voicetrigger"/>
 
     <header
-        android:fragment="com.sevtinge.hyperceiler.hooker.WeatherFragment"
-        android:icon="@drawable/ic_default"
-        android:id="@+id/weather"
-        android:summary="com.miui.weather2"
-        android:title="@string/weather" />
-
-    <header
         android:fragment="com.sevtinge.hyperceiler.hooker.AiasstFragment"
         android:icon="@drawable/ic_default"
         android:id="@+id/aiasst"

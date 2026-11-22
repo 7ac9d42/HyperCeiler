@@ -1409,14 +1409,6 @@
     <string name="trustservice_disable_mrm">Desativar detecções de risco</string>
     <string name="trustservice_disable_mrm_desc">Recurso experimental. Você não pode usar esse recurso em violação às leis locais ou nacionais.</string>
     <!--Weather-->
-    <string name="weather">Clima</string>
-    <string name="weather_device_level_title">Nível da animação</string>
-    <string name="weather_device_level_title_low">Baixa</string>
-    <string name="weather_device_level_title_middle">Média</string>
-    <string name="weather_device_level_title_high">Alta</string>
-    <string name="weather_card_display_type_title">Tipo de exibição do cartão</string>
-    <string name="weather_card_display_type_title_2">Modo claro</string>
-    <string name="weather_card_display_type_title_3">Modo escuro</string>
     <!--Analytics-->
     <string name="analytics">Analytics</string>
     <string name="analytics_fuck_guard">Remover proteção</string>

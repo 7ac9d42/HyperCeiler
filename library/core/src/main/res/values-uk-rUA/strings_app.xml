@@ -1356,14 +1356,6 @@
     <string name="trustservice_disable_mrm">Вимкнути виявлення ризиків</string>
     <string name="trustservice_disable_mrm_desc">Експериментальна функція. Ви не можете використовувати цю функцію в порушення місцевих або національних законів.</string>
     <!--Weather-->
-    <string name="weather">Погода</string>
-    <string name="weather_device_level_title">Рівень анімації</string>
-    <string name="weather_device_level_title_low">Низький</string>
-    <string name="weather_device_level_title_middle">Середній</string>
-    <string name="weather_device_level_title_high">Високий</string>
-    <string name="weather_card_display_type_title">Тип відображення картки</string>
-    <string name="weather_card_display_type_title_2">Світлий режим</string>
-    <string name="weather_card_display_type_title_3">Темний режим</string>
     <!--Analytics-->
     <string name="analytics">Аналітика</string>
     <string name="analytics_fuck_guard">Видалити захист</string>

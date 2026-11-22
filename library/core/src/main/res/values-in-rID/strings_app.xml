@@ -1081,12 +1081,6 @@
     <string name="trustservice_disable_mrm">Nonaktifkan deteksi risiko</string>
     <string name="trustservice_disable_mrm_desc">Fitur eksperimental. Anda tidak boleh menggunakan fitur ini dengan melanggar hukum lokal atau nasional.</string>
     <!--Weather-->
-    <string name="weather">Cuaca</string>
-    <string name="weather_device_level_title">Tingkat Animasi</string>
-    <string name="weather_device_level_title_low">Rendah</string>
-    <string name="weather_device_level_title_middle">Tengah</string>
-    <string name="weather_device_level_title_high">Tinggi</string>
-    <string name="weather_card_display_type_title_2">Mode terang</string>
     <!--Analytics-->
     <!--AI Translate-->
     <string name="aiasst">Terjemahan AI</string>

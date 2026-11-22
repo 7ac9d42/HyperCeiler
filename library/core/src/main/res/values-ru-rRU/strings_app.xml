@@ -1412,14 +1412,6 @@
     <string name="trustservice_disable_mrm">Отключить отслеживание рисков</string>
     <string name="trustservice_disable_mrm_desc">Экспериментальные функции. Вы не можете использовать эту функцию в нарушение местных или национальных законов.</string>
     <!--Weather-->
-    <string name="weather">Погода</string>
-    <string name="weather_device_level_title">Уровень анимации</string>
-    <string name="weather_device_level_title_low">Низкий</string>
-    <string name="weather_device_level_title_middle">Средний</string>
-    <string name="weather_device_level_title_high">Высокий</string>
-    <string name="weather_card_display_type_title">Тип отображения карты</string>
-    <string name="weather_card_display_type_title_2">Светлый режим</string>
-    <string name="weather_card_display_type_title_3">Темный режим</string>
     <!--Analytics-->
     <string name="analytics">Аналитика</string>
     <string name="analytics_fuck_guard">Снять защиту</string>

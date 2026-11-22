@@ -1401,14 +1401,6 @@
     <string name="trustservice_disable_mrm">تعطيل اكتشاف المخاطر</string>
     <string name="trustservice_disable_mrm_desc">ميزة تجريبية. قد لا تستخدم هذه الميزة في انتهاك للقوانين المحلية أو الوطنية.</string>
     <!--Weather-->
-    <string name="weather">الطقس</string>
-    <string name="weather_device_level_title">مستوى الرسوم المتحركة</string>
-    <string name="weather_device_level_title_low">منخفض</string>
-    <string name="weather_device_level_title_middle">متوسط</string>
-    <string name="weather_device_level_title_high">عالي</string>
-    <string name="weather_card_display_type_title">نوع عرض البطاقة</string>
-    <string name="weather_card_display_type_title_2">وضع الضوء</string>
-    <string name="weather_card_display_type_title_3">وضع الظلام</string>
     <!--Analytics-->
     <string name="analytics">التحليلات</string>
     <string name="analytics_fuck_guard">إزالة الحماية</string>

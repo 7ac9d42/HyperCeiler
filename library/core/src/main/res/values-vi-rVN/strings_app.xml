@@ -1414,14 +1414,6 @@
     <string name="trustservice_disable_mrm">Tắt phát hiện rủi ro</string>
     <string name="trustservice_disable_mrm_desc">Tính năng thử nghiệm. Bạn có thể không sử dụng được tính năng này vì vi phạm luật pháp địa phương hoặc quốc gia.</string>
     <!--Weather-->
-    <string name="weather">Thời tiết</string>
-    <string name="weather_device_level_title">Tốc độ của hoạt ảnh</string>
-    <string name="weather_device_level_title_low">Thấp</string>
-    <string name="weather_device_level_title_middle">Trung bình</string>
-    <string name="weather_device_level_title_high">Cao</string>
-    <string name="weather_card_display_type_title">Loại thẻ hiển thị</string>
-    <string name="weather_card_display_type_title_2">Chế độ sáng</string>
-    <string name="weather_card_display_type_title_3">Chế độ tối</string>
     <!--Analytics-->
     <string name="analytics">Phân tích</string>
     <string name="analytics_fuck_guard">Gỡ bảo vệ</string>
@@ -1621,8 +1613,6 @@
     <string name="system_ui_control_center_media_control_progress_thumb_non">Ẩn</string>
     <string name="mediaeditor_unlock_cloud_custom_photo_desc">Chỉ hỗ trợ các phiên bản 2.0.9.0.6 trở lên và có thể bị ảnh hưởng bởi cấu hình Xiaomi Cloud Control.</string>
     <string name="security_center_disable_safepay_auto_check">Tắt tính năng kiểm tra tự động cho các ứng dụng</string>
-    <string name="weather_unlock_blur_title">Mở khóa các vật liệu tiên tiến toàn cầu</string>
-    <string name="weather_unlock_blur_desc">Chỉ một số phiên bản nhất định được hỗ trợ và thiết bị cần chạy hệ điều hành HyperOS3 trở lên</string>
     <string name="misound_bluetooth_category">Hiệu ứng âm thanh</string>
     <string name="misound_bluetooth_lock_selection">Khóa lựa chọn hiệu ứng âm thanh</string>
     <string name="misound_bluetooth_lock_selection_desc">Không nên chuyển đổi hiệu ứng âm thanh khi đang kết nối tai nghe</string>

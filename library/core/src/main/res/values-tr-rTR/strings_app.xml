@@ -1180,14 +1180,6 @@
     <string name="trustservice_disable_mrm">Risk algılamalarını devre dışı bırak</string>
     <string name="trustservice_disable_mrm_desc">Deneysel özellik. Bu özelliği yerel veya ulusal yasaları ihlal ederek kullanamazsınız.</string>
     <!--Weather-->
-    <string name="weather">Hava durumu</string>
-    <string name="weather_device_level_title">Animasyon hızı</string>
-    <string name="weather_device_level_title_low">Düşük</string>
-    <string name="weather_device_level_title_middle">Orta</string>
-    <string name="weather_device_level_title_high">Yüksek</string>
-    <string name="weather_card_display_type_title">Kart görüntüleme türü</string>
-    <string name="weather_card_display_type_title_2">Işık modu</string>
-    <string name="weather_card_display_type_title_3">Karanlık mod</string>
     <!--Analytics-->
     <string name="analytics">Analitik</string>
     <string name="analytics_fuck_guard">Korumayı kaldır</string>

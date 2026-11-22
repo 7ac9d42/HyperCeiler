@@ -1307,14 +1307,6 @@
     <string name="trustservice_disable_mrm">Wyłącz wykrywanie ryzyka</string>
     <string name="trustservice_disable_mrm_desc">Funkcja eksperymentalna. Nie możesz używać tej funkcji z naruszeniem przepisów lokalnych lub krajowych.</string>
     <!--Weather-->
-    <string name="weather">Pogoda</string>
-    <string name="weather_device_level_title">Poziom animacji</string>
-    <string name="weather_device_level_title_low">Niski</string>
-    <string name="weather_device_level_title_middle">Średni</string>
-    <string name="weather_device_level_title_high">Wysoki</string>
-    <string name="weather_card_display_type_title">Typ wyświetlania karty</string>
-    <string name="weather_card_display_type_title_2">Jasny motyw</string>
-    <string name="weather_card_display_type_title_3">Ciemny motyw</string>
     <!--Analytics-->
     <string name="analytics">Analityka</string>
     <string name="analytics_fuck_guard">Usuń ochronę</string>

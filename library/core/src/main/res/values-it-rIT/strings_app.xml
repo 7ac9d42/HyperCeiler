@@ -1045,14 +1045,6 @@
     <string name="trustservice_disable_mrm">Disabilita rilevamenti dei rischi</string>
     <string name="trustservice_disable_mrm_desc">Funzionalità sperimentali. Non è consentito utilizzare questa funzionalità in violazione delle leggi locali o nazionali.</string>
     <!--Weather-->
-    <string name="weather">Meteo</string>
-    <string name="weather_device_level_title">Livello animazione</string>
-    <string name="weather_device_level_title_low">Basso</string>
-    <string name="weather_device_level_title_middle">Medio</string>
-    <string name="weather_device_level_title_high">Alto</string>
-    <string name="weather_card_display_type_title">Tipo di visualizzazione scheda</string>
-    <string name="weather_card_display_type_title_2">Modalità chiara</string>
-    <string name="weather_card_display_type_title_3">Modalità scura</string>
     <!--Analytics-->
     <!--AI Translate-->
     <string name="aiasst">Traduzione AI</string>

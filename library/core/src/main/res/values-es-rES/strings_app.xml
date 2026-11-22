@@ -1149,13 +1149,6 @@
     <string name="trustservice_disable_mrm">No detecta riesgos</string>
     <string name="trustservice_disable_mrm_desc">Característica experimental. No puede utilizarla en violación de las leyes locales o nacionales.</string>
     <!--Weather-->
-    <string name="weather">Clima</string>
-    <string name="weather_device_level_title">Nivel de animación</string>
-    <string name="weather_device_level_title_low">Bajo</string>
-    <string name="weather_device_level_title_middle">Medio</string>
-    <string name="weather_device_level_title_high">Alto</string>
-    <string name="weather_card_display_type_title_2">Modo claro</string>
-    <string name="weather_card_display_type_title_3">Modo oscuro</string>
     <!--Analytics-->
     <string name="analytics">Análisis</string>
     <!--AI Translate-->

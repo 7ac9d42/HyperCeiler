@@ -1583,16 +1583,6 @@
     <string name="trustservice_disable_mrm">禁用风险检测</string>
     <string name="trustservice_disable_mrm_desc">实验性功能，不得使用此功能进行违反当地及国家法律条文规定的行为</string>
     <!--天气-->
-    <string name="weather">天气</string>
-    <string name="weather_device_level_title">动画等级</string>
-    <string name="weather_device_level_title_low">低</string>
-    <string name="weather_device_level_title_middle">中</string>
-    <string name="weather_device_level_title_high">高</string>
-    <string name="weather_card_display_type_title">卡片显示样式</string>
-    <string name="weather_card_display_type_title_2">浅色模式</string>
-    <string name="weather_card_display_type_title_3">深色模式</string>
-    <string name="weather_unlock_blur_title">解锁全局高级材质</string>
-    <string name="weather_unlock_blur_desc">仅支持部分版本，且设备需要在 HyperOS3 及以上版本</string>
     <!--Analytics-->
     <string name="analytics">Analytics</string>
     <string name="analytics_fuck_guard">禁止收集遥测数据</string>

@@ -1632,16 +1632,6 @@
     <string name="trustservice_disable_mrm">Disable risk detections</string>
     <string name="trustservice_disable_mrm_desc">Experimental feature. You may not use this feature in violation of local or national laws.</string>
     <!--Weather-->
-    <string name="weather">Weather</string>
-    <string name="weather_device_level_title">Animation level</string>
-    <string name="weather_device_level_title_low">Low</string>
-    <string name="weather_device_level_title_middle">Middle</string>
-    <string name="weather_device_level_title_high">High</string>
-    <string name="weather_card_display_type_title">Card display type</string>
-    <string name="weather_card_display_type_title_2">Light mode</string>
-    <string name="weather_card_display_type_title_3">Dark mode</string>
-    <string name="weather_unlock_blur_title">Unlock global advanced materials</string>
-    <string name="weather_unlock_blur_desc">Only supported on some versions, and the device must be on HyperOS 3 or later</string>
     <!--Analytics-->
     <string name="analytics">Analytics</string>
     <string name="analytics_fuck_guard">Remove guard</string>

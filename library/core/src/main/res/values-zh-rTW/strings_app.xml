@@ -1467,14 +1467,6 @@
     <string name="trustservice_disable_mrm">停用風險偵測</string>
     <string name="trustservice_disable_mrm_desc">實驗性功能。您不得在違反當地或國家法律的情況下使用此功能。</string>
     <!--Weather-->
-    <string name="weather">天氣</string>
-    <string name="weather_device_level_title">動畫等級</string>
-    <string name="weather_device_level_title_low">低</string>
-    <string name="weather_device_level_title_middle">中</string>
-    <string name="weather_device_level_title_high">高</string>
-    <string name="weather_card_display_type_title">卡片顯示類型</string>
-    <string name="weather_card_display_type_title_2">淺色模式</string>
-    <string name="weather_card_display_type_title_3">深色模式</string>
     <!--Analytics-->
     <string name="analytics">Analytics</string>
     <string name="analytics_fuck_guard">移除保護</string>
