@@ -760,14 +760,6 @@
     <string name="home_folder_anim_3">Chiudi velocità 1</string>
     <string name="home_folder_anim_4">Chiudi velocità 2</string>
     <string name="home_drawer">Cassetto</string>
-    <string name="home_drawer_all">Rimuovi la scheda \"Tutto\"</string>
-    <string name="home_drawer_all_desc">Rimossa la scheda \"Tutto\" per raggruppare le app nel cassetto</string>
-    <string name="home_drawer_editor">Nascondi il pulsante \"Modifica\"</string>
-    <string name="home_drawer_editor_desc">Rimosso il pulsante \"Modifica\" dalla scheda App nel drawer</string>
-    <string name="home_drawer_blur">Abilita la sfocatura della visualizzazione del contenitore di tutte le app</string>
-    <string name="home_drawer_blur_desc">Imposta la trasparenza dello sfondo del drawer delle app al 100% per utilizzare questa funzione</string>
-    <string name="home_drawer_pinyin">Disposto in ordine piny</string>
-    <string name="home_drawer_pinyin_more">Quando la lingua è non in cinese semplificato, le app nel drawer sono comunque organizzate in base al Pinyin</string>
     <string name="home_title">Icona e titolo</string>
     <string name="home_title_icon_title">Icona</string>
     <string name="home_title_icon_animation_title">Animazione icona</string>

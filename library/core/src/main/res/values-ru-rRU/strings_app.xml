@@ -1056,15 +1056,6 @@
     <string name="home_folder_anim_3">Отскок при закрытии</string>
     <string name="home_folder_anim_4">Замедление при закрытии</string>
     <string name="home_drawer">Контейнер приложений</string>
-    <string name="home_drawer_all">Удалить вкладку \"Все\"</string>
-    <string name="home_drawer_all_desc">Удалена вкладка \"Все\" для группировки приложений в меню</string>
-    <string name="home_drawer_editor">Скрыть кнопку \"Редактировать\"</string>
-    <string name="home_drawer_editor_desc">Кнопка «Редактировать» была удалена из вкладки Приложения в Панели инструментов</string>
-    <string name="home_drawer_blur">Включить размытие в \"Контейнер приложений\"</string>
-    <string name="home_drawer_blur_super">Нечеткий премиум-материал</string>
-    <string name="home_drawer_blur_desc">Установите прозрачность фона Контейнера приложений на 100%, чтобы использовать эту функцию</string>
-    <string name="home_drawer_pinyin">Расположены в порядке pinyin</string>
-    <string name="home_drawer_pinyin_more">Если язык не является упрощенным китайским, приложения в панели управления по-прежнему будут расположены в соответствии с Pinyin.</string>
     <string name="home_title">Иконка и название</string>
     <string name="home_title_icon_title">Значок</string>
     <string name="home_title_icon_animation_title">Анимация иконок</string>

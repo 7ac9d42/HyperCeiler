@@ -1045,15 +1045,6 @@
     <string name="home_folder_anim_3">سرعة الإغلاق 1</string>
     <string name="home_folder_anim_4">سرعة الإغلاق 2</string>
     <string name="home_drawer">الدَرج</string>
-    <string name="home_drawer_all">إزالة تبويب \"الكل\"</string>
-    <string name="home_drawer_all_desc">إزالة علامة التبويب \"الكل\" في درج التطبيقات</string>
-    <string name="home_drawer_editor">إخفاء زر \"تحرير\"</string>
-    <string name="home_drawer_editor_desc">إزالة زر \"تحرير\" من تبويب التطبيقات في الدَرج</string>
-    <string name="home_drawer_blur">ضبابية الدرج</string>
-    <string name="home_drawer_blur_super">مواد فاخرة ضبابية في الدَرج</string>
-    <string name="home_drawer_blur_desc">يرجى تعيين شفافية خلفية الدَرج إلى 100% لاستخدام هذه الميزة</string>
-    <string name="home_drawer_pinyin">ترتيب حسب ترتيب البينيين</string>
-    <string name="home_drawer_pinyin_more">عندما لا تكون اللغة الصينية المبسطة، يتم ترتيب التطبيقات في الدَرج حسب Pinyin.</string>
     <string name="home_title">الأيقونة والعنوان</string>
     <string name="home_title_icon_title">الأيقونة</string>
     <string name="home_title_icon_animation_title">رسوم الأيقونة</string>

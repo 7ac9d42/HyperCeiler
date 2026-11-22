@@ -1053,15 +1053,6 @@
     <string name="home_folder_anim_3">Velocidade de encerramento 1</string>
     <string name="home_folder_anim_4">Velocidade de encerramento 2</string>
     <string name="home_drawer">Gaveta de apps</string>
-    <string name="home_drawer_all">Remover aba Todos os apps</string>
-    <string name="home_drawer_all_desc">Remova a aba Todos os apps para agrupar apps na gaveta</string>
-    <string name="home_drawer_editor">Ocultar botão Editar</string>
-    <string name="home_drawer_editor_desc">Remova o botão Editar da guia de apps na gaveta</string>
-    <string name="home_drawer_blur">Blur da gaveta</string>
-    <string name="home_drawer_blur_super">Texturas avançadas na gaveta</string>
-    <string name="home_drawer_blur_desc">Por favor, defina a transparência do fundo da Gaveta de apps para 100% para usar este recurso.</string>
-    <string name="home_drawer_pinyin">Organizar em ordem Pinyin</string>
-    <string name="home_drawer_pinyin_more">Quando o idioma não é o Chinês Simplificado, os apps na gaveta ainda serão organizados de acordo com o Pinyin.</string>
     <string name="home_title">Ícone e nome</string>
     <string name="home_title_icon_title">Ícone</string>
     <string name="home_title_icon_animation_title">Animação dos ícones</string>

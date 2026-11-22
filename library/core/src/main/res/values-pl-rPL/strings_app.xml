@@ -968,15 +968,6 @@
     <string name="home_folder_anim_3">Prędkość zamknięcia 1</string>
     <string name="home_folder_anim_4">Prędkość zamykania 2</string>
     <string name="home_drawer">Szuflada</string>
-    <string name="home_drawer_all">Usuń zakładkę \"Wszystkie\"</string>
-    <string name="home_drawer_all_desc">Usuwa zakładkę \"Wszystkie\" dla grupowania aplikacji w szufladzie</string>
-    <string name="home_drawer_editor">Ukryj przycisk \"Edytuj\"</string>
-    <string name="home_drawer_editor_desc">Usuwa przycisk \"Edytuj\" z zakładki Aplikacje w szufladzie</string>
-    <string name="home_drawer_blur">Włącz rozmycie widoku kontenera dla wszystkich aplikacji</string>
-    <string name="home_drawer_blur_super">Rozmyty materiał premium</string>
-    <string name="home_drawer_blur_desc">Proszę ustawić przezroczystość tła szuflady aplikacji na 100%, aby użyć tej funkcji.</string>
-    <string name="home_drawer_pinyin">Ułożenie w kolejności Pinyin</string>
-    <string name="home_drawer_pinyin_more">Gdy językiem nie jest uproszczony chiński, aplikacje w szufladzie są nadal uporządkowane według Pinyin.</string>
     <string name="home_title">Ikona i tytuł</string>
     <string name="home_title_icon_title">Ikona</string>
     <string name="home_title_icon_animation_title">Animacja ikony</string>

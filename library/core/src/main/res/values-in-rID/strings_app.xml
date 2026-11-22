@@ -789,15 +789,6 @@
     <string name="home_folder_anim_3">Tutup kecepatan 1</string>
     <string name="home_folder_anim_4">Tutup kecepatan 2</string>
     <string name="home_drawer">Laci</string>
-    <string name="home_drawer_all">Hapus tab \"Semua\".</string>
-    <string name="home_drawer_all_desc">Menghapus tab \"Semua\" untuk mengelompokkan aplikasi di laci</string>
-    <string name="home_drawer_editor">Sembunyikan Tombol \"Edit\".</string>
-    <string name="home_drawer_editor_desc">Menghapus tombol \"Edit\" dari tab Aplikasi di panel samping</string>
-    <string name="home_drawer_blur">Aktifkan Blur Tampilan Kontainer Semua Aplikasi</string>
-    <string name="home_drawer_blur_super">Drawer fuzzy premium material</string>
-    <string name="home_drawer_blur_desc">Harap atur transparansi latar belakang laci aplikasi menjadi 100% untuk menggunakan fitur ini</string>
-    <string name="home_drawer_pinyin">Disusun dalam urutan pinyin</string>
-    <string name="home_drawer_pinyin_more">Jika bahasanya bukan bahasa Mandarin Sederhana, aplikasi di laci masih disusun berdasarkan Pinyin</string>
     <string name="home_title">Ikon dan Judul</string>
     <string name="home_title_icon_title">Ikon</string>
     <string name="home_title_icon_animation_title">Animasi Ikon</string>

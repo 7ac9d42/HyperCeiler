@@ -1011,15 +1011,6 @@
     <string name="home_folder_anim_3">Schließgeschwindigkeit 1</string>
     <string name="home_folder_anim_4">Schließgeschwindigkeit 2</string>
     <string name="home_drawer">App-Übersicht</string>
-    <string name="home_drawer_all">\"Alle\"-Tab entfernen</string>
-    <string name="home_drawer_all_desc">Der \"Alle\"-Tab zum Gruppieren von Apps in der Schublade wurde entfernt</string>
-    <string name="home_drawer_editor">\"Bearbeiten\"-Button ausblenden</string>
-    <string name="home_drawer_editor_desc">Der \"Bearbeiten\"-Button wurde aus dem Apps-Tab in der Schublade entfernt</string>
-    <string name="home_drawer_blur">Schubladen-Unschärfe</string>
-    <string name="home_drawer_blur_super">Erweiterte Texturen in Schublade</string>
-    <string name="home_drawer_blur_desc">Bitte setzen Sie die App-Schubladen-Hintergrundtransparenz auf 100% um diese Funktion zu verwenden</string>
-    <string name="home_drawer_pinyin">In Pinyin-Reihenfolge anordnen</string>
-    <string name="home_drawer_pinyin_more">Wenn die Sprache nicht vereinfachtes Chinesisch ist, werden die Apps in der Schublade trotzdem nach Pinyin angeordnet.</string>
     <string name="home_title">Icon und Titel</string>
     <string name="home_title_icon_title">Icon</string>
     <string name="home_title_icon_animation_title">Icon-Animation</string>

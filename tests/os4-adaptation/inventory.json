@@ -644,62 +644,6 @@
       "title": "隐藏抽屉搜索框",
       "status": "declared_adapted_requires_evidence",
       "dependency": null
-    },
-    {
-      "page": "home_drawer",
-      "key": "prefs_key_home_drawer_all",
-      "title": "移除 \\\"全部\\\" 分页",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_drawer",
-      "key": "prefs_key_home_drawer_editor",
-      "title": "移除 \\\"编辑\\\" 按钮",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_drawer",
-      "key": "prefs_key_home_drawer_blur",
-      "title": "抽屉模糊",
-      "status": "replaced_or_legacy_hidden",
-      "dependency": null
-    },
-    {
-      "page": "home_drawer",
-      "key": "prefs_key_home_drawer_blur_super",
-      "title": "抽屉模糊高级材质",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_drawer",
-      "key": "prefs_key_home_drawer_blur_super_radius",
-      "title": "圆角",
-      "status": "ui_gate_unadapted",
-      "dependency": "prefs_key_home_drawer_blur_super"
-    },
-    {
-      "page": "home_drawer",
-      "key": "prefs_key_drawer_background_blur_degree",
-      "title": "模糊程度",
-      "status": "ui_gate_unadapted",
-      "dependency": "prefs_key_home_drawer_blur_super"
-    },
-    {
-      "page": "home_drawer",
-      "key": "prefs_key_home_drawer_blur_super_bg_color",
-      "title": "背景颜色",
-      "status": "ui_gate_unadapted",
-      "dependency": "prefs_key_home_drawer_blur_super"
-    },
-    {
-      "page": "home_drawer",
-      "key": "prefs_key_home_drawer_pinyin",
-      "title": "按拼音顺序排列",
-      "status": "ui_gate_unadapted",
-      "dependency": null
     }
   ]
 }

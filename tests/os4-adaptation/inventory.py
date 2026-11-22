@@ -12,7 +12,7 @@ for file in ('strings_app.xml','strings.xml'):
   if node.tag=='string':strings[node.get('name')]=''.join(node.itertext())
 android='{http://schemas.android.com/apk/res/android}';app='{http://schemas.android.com/apk/res-auto}'
 pages={'home_title_new':'ADAPTED_TITLE_KEYS','home_recent':'ADAPTED_RECENT_KEYS','home_other_new':'ADAPTED_OTHER_KEYS','home_gesture':'ADAPTED_GESTURE_KEYS','home_drawer':None}
-replaced={'prefs_key_home_title_icon_size_enable','prefs_key_home_title_icon_size','prefs_key_home_recent_hide_clean_up','prefs_key_always_show_clean_up','prefs_key_home_drawer_blur'}
+replaced={'prefs_key_home_title_icon_size_enable','prefs_key_home_title_icon_size','prefs_key_home_recent_hide_clean_up','prefs_key_always_show_clean_up'}
 rows=[]
 for page,group in pages.items():
  allowed=sets[group] if group else {'prefs_key_home_drawer_hide_search'}

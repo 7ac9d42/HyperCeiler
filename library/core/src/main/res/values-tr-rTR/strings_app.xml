@@ -915,11 +915,6 @@
     <string name="home_folder_anim_3">Kapanış hızı 1</string>
     <string name="home_folder_anim_4">Kapanış hızı 2</string>
     <string name="home_drawer">Çekmece</string>
-    <string name="home_drawer_all">Tüm sekmeleri kaldır</string>
-    <string name="home_drawer_all_desc">Çekmecedeki uygulamaları gruplamak için \"Tümü\" sekmesi kaldırıldı</string>
-    <string name="home_drawer_editor_desc">Çekmecedeki Uygulamalar sekmesinden \"Düzenle\" düğmesi kaldırıldı</string>
-    <string name="home_drawer_blur">Tüm Uygulamalar Kapsayıcı Görünümü Bulanıklığını Etkinleştir</string>
-    <string name="home_drawer_blur_desc">Bu özelliği kullanmak için lütfen uygulama çekmecesi arka plan saydamlığını %100 olarak ayarlayın</string>
     <string name="home_title">Simge ve başlık</string>
     <string name="home_title_icon_title">Simge</string>
     <string name="home_title_icon_animation_title">İkon animasyonu</string>

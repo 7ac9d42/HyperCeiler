@@ -1008,15 +1008,6 @@
     <string name="home_folder_anim_3">Швидкість закриття 1</string>
     <string name="home_folder_anim_4">Швидкість закриття 2</string>
     <string name="home_drawer">Меню додатків</string>
-    <string name="home_drawer_all">Видалити вкладку \"Всі\"</string>
-    <string name="home_drawer_all_desc">Видалено вкладку \"Всі\" для групування додатків у меню</string>
-    <string name="home_drawer_editor">Приховати кнопку \"Редагувати\"</string>
-    <string name="home_drawer_editor_desc">Видалено кнопку \"Редагувати\" з вкладки \"Додатки\" в меню</string>
-    <string name="home_drawer_blur">Розмиття меню додатків</string>
-    <string name="home_drawer_blur_super">Розширені текстури в меню додатків</string>
-    <string name="home_drawer_blur_desc">Будь ласка, встановіть прозорість фону меню додатків на 100% для використання цієї функції</string>
-    <string name="home_drawer_pinyin">Сортувати за Піньїнем</string>
-    <string name="home_drawer_pinyin_more">Коли мова не спрощена китайська, додатки в меню все одно будуть сортуватися за Піньїнем.</string>
     <string name="home_title">Іконка та назва</string>
     <string name="home_title_icon_title">Іконка</string>
     <string name="home_title_icon_animation_title">Анімація іконки</string>

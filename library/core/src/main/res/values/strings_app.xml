@@ -1246,15 +1246,6 @@
     <string name="home_folder_anim_3">Close speed 1</string>
     <string name="home_folder_anim_4">Close speed 2</string>
     <string name="home_drawer">Drawer</string>
-    <string name="home_drawer_all">Remove \"All\" tab</string>
-    <string name="home_drawer_all_desc">Removed the \"All\" tab for grouping apps in the drawer</string>
-    <string name="home_drawer_editor">Hide \"Edit\" button</string>
-    <string name="home_drawer_editor_desc">Removed the \"Edit\" button from the Apps tab in the drawer</string>
-    <string name="home_drawer_blur">Drawer blur</string>
-    <string name="home_drawer_blur_super">Advanced textures in drawer</string>
-    <string name="home_drawer_blur_desc">Please set App drawer background transparency to 100% to use this feature</string>
-    <string name="home_drawer_pinyin">Arrange in Pinyin order</string>
-    <string name="home_drawer_pinyin_more">When the language isn\'t Simplified Chinese, the apps in the drawer will still arrange according to Pinyin.</string>
     <string name="home_title">Icon and title</string>
     <string name="home_title_icon_title">Icon</string>
     <string name="home_title_icon_animation_title">Icon animation</string>

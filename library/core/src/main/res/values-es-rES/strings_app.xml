@@ -851,14 +851,6 @@
     <string name="home_folder_anim_3">Velocidad de cierre 1</string>
     <string name="home_folder_anim_4">Velocidad de cierre 2</string>
     <string name="home_drawer">Cajón</string>
-    <string name="home_drawer_all">Quitar pestaña \"Todos\"</string>
-    <string name="home_drawer_all_desc">Quitar pestaña \"Todos\" de grupos de aplicaciones en Cajón</string>
-    <string name="home_drawer_editor">Ocultar el botón de Editar</string>
-    <string name="home_drawer_editor_desc">Ocultar el botón de Editar desde las pestañas en Cajón</string>
-    <string name="home_drawer_blur">Activar desenfoque de Cajón</string>
-    <string name="home_drawer_blur_desc">Ajuste la transparencia del fondo de Cajón al 100% para utilizar esta característica</string>
-    <string name="home_drawer_pinyin">Ordenado en pinyin chino</string>
-    <string name="home_drawer_pinyin_more">Debido esta función activada, aunque no se use el chino simplificado en el sistema, las aplicaciones se organizarán según pinyin chino</string>
     <string name="home_title">Icono y nombre</string>
     <string name="home_title_icon_title">Icono</string>
     <string name="home_title_icon_animation_title">Animación de iconos</string>

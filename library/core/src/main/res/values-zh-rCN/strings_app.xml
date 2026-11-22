@@ -1196,15 +1196,6 @@
     <string name="home_folder_anim_3">关闭时回弹幅度</string>
     <string name="home_folder_anim_4">关闭时慢放速度</string>
     <string name="home_drawer">抽屉</string>
-    <string name="home_drawer_all">移除 \"全部\" 分页</string>
-    <string name="home_drawer_all_desc">移除抽屉栏内应用分组的 \"全部\" 分页</string>
-    <string name="home_drawer_editor">移除 \"编辑\" 按钮</string>
-    <string name="home_drawer_editor_desc">移除抽屉栏内应用分页的 \"编辑\" 按钮</string>
-    <string name="home_drawer_blur_super">抽屉模糊高级材质</string>
-    <string name="home_drawer_blur">抽屉模糊</string>
-    <string name="home_drawer_blur_desc">需将应用程序抽屉的背景透明度设置为 100%</string>
-    <string name="home_drawer_pinyin">按拼音顺序排列</string>
-    <string name="home_drawer_pinyin_more">非简体中文语言时抽屉内应用仍按照拼音排列</string>
     <string name="home_title">图标与标题</string>
     <string name="home_title_icon_title">图标</string>
     <string name="home_title_icon_animation_title">图标动画</string>

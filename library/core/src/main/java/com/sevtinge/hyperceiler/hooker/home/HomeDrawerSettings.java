@@ -18,7 +18,6 @@
 */
 package com.sevtinge.hyperceiler.hooker.home;
 
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreHyperOSVersion;
 import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isHyperOSVersion;
 
 import com.sevtinge.hyperceiler.core.R;
@@ -34,11 +33,6 @@ public class HomeDrawerSettings extends DashboardFragment {
     @Override
     public void initPrefs() {
         findPreference("prefs_key_home_drawer_hide_search").setVisible(isHyperOSVersion(4f));
-        if (isHyperOSVersion(4f)) {
-            findPreference("prefs_key_home_drawer_blur").setVisible(false);
-        } else {
-            setPreVisible(findPreference("prefs_key_home_drawer_blur"), !isMoreHyperOSVersion(3f));
-        }
         HomeOS4AdaptationGate.apply(getPreferenceScreen(), getPreferenceScreenResId());
     }
 }

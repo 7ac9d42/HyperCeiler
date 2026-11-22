@@ -1057,15 +1057,6 @@
     <string name="home_folder_anim_3">Tốc độ đóng 1</string>
     <string name="home_folder_anim_4">Tốc độ đóng 2</string>
     <string name="home_drawer">Ngăn ứng dụng</string>
-    <string name="home_drawer_all">Xoá tab \"Tất cả\"</string>
-    <string name="home_drawer_all_desc">Xoá tab \"Tất cả\"trong ngăn kéo</string>
-    <string name="home_drawer_editor">Xoá nút \"Sửa\"</string>
-    <string name="home_drawer_editor_desc">Xoá nút \"Sửa\" trong ngăn kéo</string>
-    <string name="home_drawer_blur">Bật chế độ làm mờ Ngăn chứa ứng dụng</string>
-    <string name="home_drawer_blur_super">Ngăn kéo mờ họa tiết nâng cao</string>
-    <string name="home_drawer_blur_desc">Vui lòng đặt độ trong suốt của nền ngăn kéo ứng dụng thành 100% để sử dụng tính năng này</string>
-    <string name="home_drawer_pinyin">Sắp xếp thứ tự theo bính âm</string>
-    <string name="home_drawer_pinyin_more">Khi ngôn ngữ không phải là tiếng Trung giản thể, các ứng dụng trong ngăn vẫn được sắp xếp theo bính âm</string>
     <string name="home_title">Biểu tượng và tiêu đề</string>
     <string name="home_title_icon_title">Biểu tượng</string>
     <string name="home_title_icon_animation_title">Hoạt ảnh biểu tượng</string>
