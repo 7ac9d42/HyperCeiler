@@ -923,16 +923,10 @@
     <string name="lpa_custom_imei_desc">Переконайтеся, що ви правильно ввели IMEI. Неправильний IMEI може призвести до недоступності або ненормальної роботи eSIM. Ми не несемо відповідальності за будь-які наслідки, що виникають у зв\'язку з цим.</string>
     <!--Gallery-->
     <string name="gallery">Галерея</string>
-    <string name="gallery_enable_hdr_enhanced">Розблокувати відображення HDR-покращених зображень</string>
-    <string name="gallery_enable_pdf">Розблокувати створення PDF</string>
-    <string name="gallery_enable_ocr">Розблокувати OCR</string>
-    <string name="gallery_enable_ocr_form">Розблокувати сканування форми</string>
     <string name="gallery_enable_id_photo">Розблокувати ID</string>
     <string name="gallery_enable_photo_movie">Розблокувати кліп</string>
     <string name="gallery_enable_video_post">Розблокувати відеоефекти</string>
     <string name="gallery_enable_video_editor">Розблокувати відеоредактор</string>
-    <string name="gallery_enable_un_privacy_watermark">Зняти обмеження на кількість слів у водяному знаку конфіденційності</string>
-    <string name="gallery_enable_un_privacy_watermark_more">Увімкнення трохи збільшить щільність водяного знака для розміщення більшої кількості слів</string>
     <string name="gallery_enable_magic_matting">Розблокувати вирізання</string>
     <string name="gallery_backup_server">Сервер резервного копіювання</string>
     <string name="gallery_backup_server_xiaomi">Xiaomi Хмара</string>

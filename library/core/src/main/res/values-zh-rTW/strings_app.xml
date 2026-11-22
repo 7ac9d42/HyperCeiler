@@ -1017,16 +1017,10 @@
     <string name="lpa_custom_imei_desc">確保您輸入的 IMEI 正確。 IMEI 不正確可能會導致 eSIM 不可用或異常。由此產生的任何後果我們不承擔任何責任。</string>
     <!--Gallery-->
     <string name="gallery">相簿</string>
-    <string name="gallery_enable_hdr_enhanced">解鎖超動態顯示</string>
-    <string name="gallery_enable_pdf">解鎖生成 PDF</string>
-    <string name="gallery_enable_ocr">解鎖提取文字</string>
-    <string name="gallery_enable_ocr_form">解鎖提取表格</string>
     <string name="gallery_enable_id_photo">解鎖證件照</string>
     <string name="gallery_enable_photo_movie">解鎖照片電影</string>
     <string name="gallery_enable_video_post">解鎖影片特效</string>
     <string name="gallery_enable_video_editor">解鎖影片剪輯</string>
-    <string name="gallery_enable_un_privacy_watermark">解除隱私浮水印字數限制</string>
-    <string name="gallery_enable_un_privacy_watermark_more">開啟會稍微增加浮水印的密度，這是為了適應更長的字數</string>
     <string name="gallery_enable_magic_matting">解鎖魔法摳圖</string>
     <string name="gallery_backup_server">備份服務提供商</string>
     <string name="gallery_backup_server_xiaomi">小米雲服務</string>

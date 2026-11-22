@@ -38,6 +38,5 @@ public class EnablePhotoMovie extends BaseHook {
         } catch (Throwable t) {
             findAndHookMethod("com.miui.mediaeditor.api.MediaEditorApiHelper", "isPhotoMovieAvailable", hook);
         }
-        findAndHookMethod("com.miui.gallery.domain.DeviceFeature", "isDeviceSupportPhotoMovie", hook);
     }
 }

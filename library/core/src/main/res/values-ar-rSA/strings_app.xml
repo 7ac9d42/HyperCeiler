@@ -958,16 +958,10 @@
     <string name="lpa_custom_imei_desc">تأكد من إدخال IMEI بشكل صحيح. قد يتسبب IMEI غير الصحيح في عدم توفر eSIM أو حدوث مشكلة. نحن غير مسؤولين عن أي عواقب ناتجة عن ذلك.</string>
     <!--Gallery-->
     <string name="gallery">المعرض</string>
-    <string name="gallery_enable_hdr_enhanced">فتح العرض بنطاق ديناميكي عالٍ</string>
-    <string name="gallery_enable_pdf">فتح إنشاء PDF</string>
-    <string name="gallery_enable_ocr">فتح OCR</string>
-    <string name="gallery_enable_ocr_form">فتح مسح الجدول</string>
     <string name="gallery_enable_id_photo">فتح صورة الهوية</string>
     <string name="gallery_enable_photo_movie">فتح مقطع الفيديو</string>
     <string name="gallery_enable_video_post">فتح تأثيرات الفيديو</string>
     <string name="gallery_enable_video_editor">فتح محرر الفيديو</string>
-    <string name="gallery_enable_un_privacy_watermark">إزالة الحد من العلامة المائية للخصوصية</string>
-    <string name="gallery_enable_un_privacy_watermark_more">تمكينها سيزيد قليلاً من كثافة العلامة المائية لاستيعاب العد النصي الأطول</string>
     <string name="gallery_enable_magic_matting">فتح القطع</string>
     <string name="gallery_backup_server">خادم النسخ الاحتياطي</string>
     <string name="gallery_backup_server_xiaomi">Xiaomi Cloud</string>

@@ -970,16 +970,10 @@
     <string name="lpa_custom_imei_desc">Hãy đảm bảo bạn đã nhập đúng IMEI. IMEI không đúng có thể khiến eSIM không khả dụng hoặc bất thường. Chúng tôi không chịu trách nhiệm cho bất kỳ hậu quả nào phát sinh từ đó.</string>
     <!--Gallery-->
     <string name="gallery">Thư viện</string>
-    <string name="gallery_enable_hdr_enhanced">Mở khóa hiển thị Ultra Dynamic</string>
-    <string name="gallery_enable_pdf">Mở khóa tạo PDF</string>
-    <string name="gallery_enable_ocr">Mở khóa OCR</string>
-    <string name="gallery_enable_ocr_form">Mở khóa quét biểu mẫu</string>
     <string name="gallery_enable_id_photo">Mở khóa ID</string>
     <string name="gallery_enable_photo_movie">Mở khóa Clip</string>
     <string name="gallery_enable_video_post">Mở khóa Hiệu ứng video</string>
     <string name="gallery_enable_video_editor">Mở khóa Chỉnh sửa video</string>
-    <string name="gallery_enable_un_privacy_watermark">Xóa giới hạn chữ ở hình mờ cá nhân</string>
-    <string name="gallery_enable_un_privacy_watermark_more">Việc kích hoạt nó sẽ tăng nhẹ mật độ hình mờ để phù hợp với số lượng từ dài hơn</string>
     <string name="gallery_enable_magic_matting">Mở khóa Cắt</string>
     <string name="gallery_backup_server">Máy chủ sao lưu</string>
     <string name="gallery_backup_server_xiaomi">Dịch vụ đám mây Xiaomi</string>
@@ -1619,8 +1613,6 @@
     <string name="system_ui_lock_screen_keep_notification_title">Giữ thông báo sau khi mở khóa</string>
     <string name="system_ui_lock_screen_keep_notification_desc">Sau khi mở khóa, thông báo trên màn hình khóa sẽ không tự động xóa cho đến khi được xóa thủ công.</string>
     <string name="system_ui_status_bar_hide_icon_desc">Cần chọn thêm phạm vi “Chụp màn hình” để có hiệu lực</string>
-    <string name="gallery_longer_trashbin_time">Kéo dài thời gian lưu giữ nội dung đã xóa gần đây lên 365 ngày</string>
-    <string name="gallery_longer_trashbin_time_desc">Tính năng thử nghiệm, chỉ hỗ trợ người dùng Trung Quốc Đại lục.</string>
     <string name="help_current_system_version">Phiên bản hệ thống hiện tại của bạn là:</string>
     <string name="help_full_support_desc">Phiên bản ứng dụng hiện tại hoàn toàn tương thích với các phiên bản hệ thống sau:</string>
     <string name="help_support_version_desc_5">Phiên bản hệ thống hiện tại không tương thích.</string>

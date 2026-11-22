@@ -926,16 +926,10 @@
     <string name="lpa_custom_imei_desc">Stellen Sie sicher, dass Sie die IMEI korrekt eingegeben haben. Eine falsche IMEI kann dazu führen, dass die eSIM nicht verfügbar oder abnormal ist. Wir sind nicht verantwortlich für daraus entstehende Konsequenzen.</string>
     <!--Gallery-->
     <string name="gallery">Galerie</string>
-    <string name="gallery_enable_hdr_enhanced">HDR-verbesserte Bildanzeige freischalten</string>
-    <string name="gallery_enable_pdf">PDF erstellen freischalten</string>
-    <string name="gallery_enable_ocr">OCR freischalten</string>
-    <string name="gallery_enable_ocr_form">Formular scannen freischalten</string>
     <string name="gallery_enable_id_photo">Ausweis freischalten</string>
     <string name="gallery_enable_photo_movie">Clip freischalten</string>
     <string name="gallery_enable_video_post">Videoeffekte freischalten</string>
     <string name="gallery_enable_video_editor">Video-Editor freischalten</string>
-    <string name="gallery_enable_un_privacy_watermark">Wortlimit des Datenschutz-Wasserzeichens entfernen</string>
-    <string name="gallery_enable_un_privacy_watermark_more">Die Aktivierung wird die Wasserzeichen-Dichte leicht erhöhen um längere Wortzahlen unterzubringen</string>
     <string name="gallery_enable_magic_matting">Ausschnitt freischalten</string>
     <string name="gallery_backup_server">Backup-Server</string>
     <string name="gallery_backup_server_xiaomi">Xiaomi Cloud</string>

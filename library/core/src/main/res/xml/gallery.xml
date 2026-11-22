@@ -27,35 +27,6 @@
             android:title="@string/gallery_backup_server"
             app:entries="@array/gallery_backup_server_entries"
             app:entryValues="@array/gallery_backup_server_values" />
-
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_gallery_enable_hdr_enhanced"
-            android:title="@string/gallery_enable_hdr_enhanced" />
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="@string/feature">
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_gallery_enable_pdf"
-            android:title="@string/gallery_enable_pdf" />
-
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_gallery_enable_ocr"
-            android:title="@string/gallery_enable_ocr" />
-
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_gallery_enable_ocr_form"
-            android:title="@string/gallery_enable_ocr_form" />
-
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_gallery_longer_trashbin_time"
-            android:summary="@string/gallery_longer_trashbin_time_desc"
-            android:title="@string/gallery_longer_trashbin_time" />
-
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/recommend">
@@ -82,23 +53,6 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/editor">
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_gallery_enable_un_privacy_watermark"
-            android:summary="@string/gallery_enable_un_privacy_watermark_more"
-            android:title="@string/gallery_enable_un_privacy_watermark" />
-
-        <com.sevtinge.hyperceiler.prefs.SeekBarPreferenceNoTitle
-            android:defaultValue="14"
-            android:dependency="prefs_key_gallery_enable_un_privacy_watermark"
-            android:key="prefs_key_gallery_enable_un_privacy_watermark_value"
-            android:layout="@layout/miuix_preference_widget_seekbar_compat_no_title"
-            app:defaultValueTitle="@string/array_default"
-            app:format="%s"
-            app:maxValue="50"
-            app:showSeekBarValue="true"
-            app:stepValue="1" />
-
         <SwitchPreference
             android:defaultValue="false"
             android:key="prefs_key_gallery_enable_magic_matting"

@@ -1151,23 +1151,15 @@
     <string name="lpa_custom_imei_desc">Make sure you\'ve entered the IMEI correctly. An incorrect IMEI may cause the eSIM to be unavailable or abnormal. We\'re not responsible for any consequences arising therefrom.</string>
     <!--Gallery-->
     <string name="gallery">Gallery</string>
-    <string name="gallery_enable_hdr_enhanced">Unlock display HDR enhanced image</string>
-    <string name="gallery_enable_pdf">Unlock Create PDF</string>
-    <string name="gallery_enable_ocr">Unlock OCR</string>
-    <string name="gallery_enable_ocr_form">Unlock scan form</string>
     <string name="gallery_enable_id_photo">Unlock ID</string>
     <string name="gallery_enable_photo_movie">Unlock Clip</string>
     <string name="gallery_enable_video_post">Unlock Video effects</string>
     <string name="gallery_enable_video_editor">Unlock Video editor</string>
-    <string name="gallery_enable_un_privacy_watermark">Remove the privacy watermark word limit</string>
-    <string name="gallery_enable_un_privacy_watermark_more">Enabling it will slightly increase the watermark density to accommodate longer word counts</string>
     <string name="gallery_enable_magic_matting">Unlock Cutout</string>
     <string name="gallery_backup_server">Backup server</string>
     <string name="gallery_backup_server_xiaomi">Xiaomi Cloud</string>
     <string name="gallery_backup_server_google">Google</string>
     <string name="gallery_backup_server_onedrive">Google &amp; OneDrive</string>
-    <string name="gallery_longer_trashbin_time">Extend the automatic deletion time for trash bin to 365 days</string>
-    <string name="gallery_longer_trashbin_time_desc">Experimental feature. Only for China Mainland users.</string>
     <!--System security components-->
     <string name="guard_provider_hyperos">System security components</string>
     <string name="guard_provider_disable_upload_applist">Prevent automatic upload of installed app list</string>

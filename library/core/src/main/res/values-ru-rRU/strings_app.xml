@@ -969,16 +969,10 @@
     <string name="lpa_custom_imei_desc">Убедитесь, что вы правильно ввели IMEI. Неправильный IMEI может привести к недоступности или ненормальной работе eSIM. Мы не несем ответственности за любые последствия, возникающие в результате этого.</string>
     <!--Gallery-->
     <string name="gallery">Галерея</string>
-    <string name="gallery_enable_hdr_enhanced">HDR</string>
-    <string name="gallery_enable_pdf">Создать PDF</string>
-    <string name="gallery_enable_ocr">Распознавание текста</string>
-    <string name="gallery_enable_ocr_form">Распознавание таблиц</string>
     <string name="gallery_enable_id_photo">Фото ID</string>
     <string name="gallery_enable_photo_movie">Ролик из фото</string>
     <string name="gallery_enable_video_post">Видеоэффекты</string>
     <string name="gallery_enable_video_editor">Редактор видео</string>
-    <string name="gallery_enable_un_privacy_watermark">Удалить лимит слов с ватермарков</string>
-    <string name="gallery_enable_un_privacy_watermark_more">Включение этого параметра немного увеличит плотность водяных знаков для размещения большего количества слов</string>
     <string name="gallery_enable_magic_matting">Убрать фон</string>
     <string name="gallery_backup_server">Резервный сервер</string>
     <string name="gallery_backup_server_xiaomi">Облачный сервис Xiaomi</string>
@@ -1618,8 +1612,6 @@
     <string name="system_ui_lock_screen_keep_notification_title">Оставлять уведомления после разблокировки</string>
     <string name="system_ui_lock_screen_keep_notification_desc">Уведомления на экране блокировки не будут автоматически очищены после разблокировки до тех пор, пока они не будут удалены вручную</string>
     <string name="system_ui_status_bar_hide_icon_desc">Вам также необходимо дополнительно выбрать область /Снимок экрана/, чтобы это вступило в силу.</string>
-    <string name="gallery_longer_trashbin_time">Увеличить время автоматического удаления корзины до 365 дней</string>
-    <string name="gallery_longer_trashbin_time_desc">Экспериментальная функция. Только для пользователей из материкового Китая.</string>
     <string name="health_disable_splash_ad">Отключить всплывающую рекламу</string>
     <string name="help_full_support_desc">Данная версия приложения полностью совместима с текущей версией прошивки</string>
     <string name="system_ui_status_bar_follow_title">Status bar following (experimental)</string>

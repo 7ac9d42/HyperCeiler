@@ -1101,23 +1101,15 @@
     <string name="creation_unlock">解除手机端使用限制</string>
     <!--相册-->
     <string name="gallery">相册</string>
-    <string name="gallery_enable_hdr_enhanced">解锁超动态显示</string>
-    <string name="gallery_enable_pdf">解锁生成 PDF</string>
-    <string name="gallery_enable_ocr">解锁提取文字</string>
-    <string name="gallery_enable_ocr_form">解锁提取表格</string>
     <string name="gallery_enable_id_photo">解锁证件照</string>
     <string name="gallery_enable_photo_movie">解锁照片电影</string>
     <string name="gallery_enable_video_post">解锁视频特效</string>
     <string name="gallery_enable_video_editor">解锁 Mi 剪辑</string>
-    <string name="gallery_enable_un_privacy_watermark">解除隐私水印字数限制</string>
-    <string name="gallery_enable_un_privacy_watermark_more">开启会略微增加水印密度，这是为了适应更长的字数</string>
     <string name="gallery_enable_magic_matting">解锁魔法抠图</string>
     <string name="gallery_backup_server">备份服务提供商</string>
     <string name="gallery_backup_server_xiaomi">小米云服务</string>
     <string name="gallery_backup_server_google">Google</string>
     <string name="gallery_backup_server_onedrive">Google 与 OneDrive</string>
-    <string name="gallery_longer_trashbin_time">延长最近删除内容保留时间至 365 天</string>
-    <string name="gallery_longer_trashbin_time_desc">实验性功能，仅支持中国大陆用户</string>
     <!--MIUI 安全组件-->
     <string name="guard_provider_hyperos">系统安全组件</string>
     <string name="guard_provider_disable_upload_applist">阻止自动上传已安装应用列表</string>

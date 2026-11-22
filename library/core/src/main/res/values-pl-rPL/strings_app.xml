@@ -883,16 +883,10 @@
     <string name="lpa_custom_imei_desc">Upewnij się, że poprawnie wprowadzono numer IMEI. Nieprawidłowy numer IMEI może spowodować, że eSIM będzie niedostępne lub będzie działało nieprawidłowo. Nie ponosimy odpowiedzialności za żadne konsekwencje wynikające z tego.</string>
     <!--Gallery-->
     <string name="gallery">Galeria</string>
-    <string name="gallery_enable_hdr_enhanced">Odblokuj wyświetlanie HDR</string>
-    <string name="gallery_enable_pdf">Odblokuj tworzenie PDF</string>
-    <string name="gallery_enable_ocr">Odblokuj OCR</string>
-    <string name="gallery_enable_ocr_form">Odblokuj skanowanie tabeli</string>
     <string name="gallery_enable_id_photo">Odblokuj ID</string>
     <string name="gallery_enable_photo_movie">Odblokuj klip</string>
     <string name="gallery_enable_video_post">Odblokuj efekty wideo</string>
     <string name="gallery_enable_video_editor">Odblokuj edytor wideo</string>
-    <string name="gallery_enable_un_privacy_watermark">Usuń limit słów na znaku wodnym prywatności</string>
-    <string name="gallery_enable_un_privacy_watermark_more">Włączenie tej funkcji nieznacznie zwiększy gęstość znaku wodnego, aby umożliwić dłuższe teksty</string>
     <string name="gallery_enable_magic_matting">Odblokuj wycięcie</string>
     <string name="gallery_backup_server">Zapasowy serwer</string>
     <string name="gallery_backup_server_xiaomi">Chmura Xiaomi</string>

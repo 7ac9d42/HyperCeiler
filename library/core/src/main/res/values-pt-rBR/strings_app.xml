@@ -966,16 +966,10 @@
     <string name="lpa_custom_imei_desc">Certifique-se de inserir o IMEI corretamente. Um IMEI incorreto pode fazer com que o eSIM fique indisponível ou anormal. Não somos responsáveis ​​por quaisquer consequências daí decorrentes.</string>
     <!--Gallery-->
     <string name="gallery">Galeria</string>
-    <string name="gallery_enable_hdr_enhanced">Desbloquear exibição de imagem HDR aprimorada</string>
-    <string name="gallery_enable_pdf">Desbloquear Criar PDF</string>
-    <string name="gallery_enable_ocr">Desbloquear Reconhecer texto</string>
-    <string name="gallery_enable_ocr_form">Desbloquear formulário de digitalização</string>
     <string name="gallery_enable_id_photo">Desbloquear Identificação</string>
     <string name="gallery_enable_photo_movie">Desbloquear Clipe</string>
     <string name="gallery_enable_video_post">Desbloquear Efeitos de vídeo</string>
     <string name="gallery_enable_video_editor">Desbloquear Editor de vídeo</string>
-    <string name="gallery_enable_un_privacy_watermark">Remover limite de palavras da marca d\'água de proteção</string>
-    <string name="gallery_enable_un_privacy_watermark_more">Ao ativá-lo, aumentará ligeiramente a densidade da marca d\'água para acomodar contagens de palavras mais longas.</string>
     <string name="gallery_enable_magic_matting">Desbloquear Recorte</string>
     <string name="gallery_backup_server">Servidor de backup</string>
     <string name="gallery_backup_server_xiaomi">Xiaomi Cloud</string>
