@@ -1,6 +1,37 @@
 cmake_minimum_required(VERSION 3.22.1)
 project(HyperCeilerNative LANGUAGES CXX)
 
+option(HYPERCEILER_HYOS_WEATHER_ONLY "Build the separate Zygisk Next Weather companion" OFF)
+if(HYPERCEILER_HYOS_WEATHER_ONLY)
+    if(HYPERCEILER_HYOS_BACKEND)
+        message(FATAL_ERROR "Select only one Hyos companion per build directory")
+    endif()
+    if(NOT HYPERCEILER_ZYGISK_NEXT_API_DIR)
+        set(HYPERCEILER_ZYGISK_NEXT_API_DIR "${CMAKE_CURRENT_SOURCE_DIR}/nativehook")
+    endif()
+    if(NOT EXISTS "${HYPERCEILER_ZYGISK_NEXT_API_DIR}/zygisk_next_api.h")
+        message(FATAL_ERROR "Supply the pinned Zygisk Next API 4 SDK header directory")
+    endif()
+    enable_language(ASM)
+    add_library(HyperCeilerWeatherHyos SHARED
+        nativehook/native_log.cpp
+        nativehook/safe_mode.cpp
+        targets/hyos/hyos_weather_entry.cpp
+        targets/hyos/hyos_app_entry_arm64.S
+        targets/weather/weather_runtime.cpp
+        targets/weather/weather_material_runtime.cpp
+        targets/weather/weather_card_runtime.cpp
+        targets/weather/weather_card_lifetime.cpp
+        targets/weather/weather_card_arm64.S)
+    set_target_properties(HyperCeilerWeatherHyos PROPERTIES OUTPUT_NAME HyperCeilerHyos)
+    target_include_directories(HyperCeilerWeatherHyos PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR} ${HYPERCEILER_ZYGISK_NEXT_API_DIR})
+    target_compile_features(HyperCeilerWeatherHyos PRIVATE cxx_std_20)
+    target_compile_options(HyperCeilerWeatherHyos PRIVATE -Wall -Wextra -Werror -fvisibility=hidden)
+    target_link_libraries(HyperCeilerWeatherHyos PRIVATE android binder_ndk dl log)
+    return()
+endif()
+
 # Layout: nativehook/ holds the target-agnostic hook infrastructure; targets/
 # holds the per-feature entry points and resolvers that bind it to one host.
 # The root include dir keeps `nativehook/...` includes valid from any target.

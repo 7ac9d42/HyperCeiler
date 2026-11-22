@@ -99,7 +99,7 @@ run(
         "-DANDROID_PLATFORM=android-35",
         "-DANDROID_STL=c++_static",
         "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
-        "-DHYPERCEILER_HYOS_BACKEND=ON",
+        "-DHYPERCEILER_HYOS_WEATHER_ONLY=ON",
         "-DHYPERCEILER_ZYGISK_NEXT_API_DIR=" + str(sdk),
     ],
 )
@@ -158,7 +158,7 @@ shutil.copy2(
     "SDK header SHA256: "
     + expected_sdk
     + "\nhttps://github.com/LSPosed/ZygiskNext/blob/22fe320814656e7b44715b5f32c967ceb51cda08/zygisk_next_api.h\n"
-    "The companion contains the project native code, Apache-2.0 launcher tweaks, "
+    "The companion contains the project native code "
     "and the statically linked NDK C++ runtime; retain the accompanying source licenses and LLVM notice.\n"
 )
 run("installer-syntax", ["sh", "-n", stage / "customize.sh"])
@@ -181,7 +181,7 @@ report = dict(
     device_status="NOT_TESTED",
     limitations=[
         "Installable staging is not a completed device installation or injection test.",
-        "Startup-only Dart layouts can miss their initial computation; no full feature or long-term stability guarantee.",
+        "Startup-only Weather hooks can miss their initial window; no full feature or long-term stability guarantee.",
     ],
 )
 a.report.write_text(json.dumps(report, indent=2) + "\n")
