@@ -19,7 +19,6 @@
 package com.sevtinge.hyperceiler.libhook.rules.systemui.controlcenter.media3
 
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
-import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreAndroidVersion
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.getStaticObjectField
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.beforeHookMethod
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.setObjectField
@@ -27,30 +26,16 @@ import io.github.lingqiqi5211.ezhooktool.xposed.dsl.setObjectField
 object NewUnlockCustomActions : BaseHook() {
 
     override fun init() {
-        if (isMoreAndroidVersion(36)) {
-            val managerClass = findClassIfExists(
-                "com.miui.systemui.notification.NotificationSettingsManager"
-            ) ?: return
+        val managerClass = findClassIfExists(
+            "com.miui.systemui.notification.NotificationSettingsManager"
+        ) ?: return
 
-            findClassIfExists(
-                $$$"com.android.systemui.media.controls.domain.pipeline.MediaActionsKt$$ExternalSyntheticLambda0"
-            )?.beforeHookMethod("invoke", Any::class.java) {
-                val instance = managerClass.getStaticObjectField("sINSTANCE") ?: return@beforeHookMethod
-                instance.setObjectField("mHiddenCustomActionsList", ArrayList<Any>())
-                instance.setObjectField("mHiddenCustomActionsListLocal", ArrayList<Any>())
-            }
-        } else {
-            findClassIfExists(
-                $$"com.android.systemui.media.controls.domain.pipeline.LegacyMediaDataManagerImpl$createActionsFromState$customActions$1"
-            )?.beforeHookMethod("invoke", Any::class.java) {
-                val managerClass = findClassIfExists(
-                    "com.miui.systemui.notification.NotificationSettingsManager"
-                ) ?: findClassIfExists(
-                    "com.android.systemui.statusbar.notification.NotificationSettingsManager"
-                ) ?: return@beforeHookMethod
-                val instance = managerClass.getStaticObjectField("sINSTANCE") ?: return@beforeHookMethod
-                instance.setObjectField("mHiddenCustomActionsList", ArrayList<Any>())
-            }
+        findClassIfExists(
+            $$$"com.android.systemui.media.controls.domain.pipeline.MediaActionsKt$$ExternalSyntheticLambda0"
+        )?.beforeHookMethod("invoke", Any::class.java) {
+            val instance = managerClass.getStaticObjectField("sINSTANCE") ?: return@beforeHookMethod
+            instance.setObjectField("mHiddenCustomActionsList", ArrayList<Any>())
+            instance.setObjectField("mHiddenCustomActionsListLocal", ArrayList<Any>())
         }
     }
 }

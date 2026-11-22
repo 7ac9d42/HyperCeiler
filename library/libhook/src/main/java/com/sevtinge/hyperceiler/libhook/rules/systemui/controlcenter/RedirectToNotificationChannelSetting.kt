@@ -25,7 +25,6 @@ import android.service.notification.StatusBarNotification
 import android.widget.ImageView
 import com.sevtinge.hyperceiler.common.log.XposedLog
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
-import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreAndroidVersion
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.Dependency
 import io.github.lingqiqi5211.ezhooktool.core.findMethod
 import io.github.lingqiqi5211.ezhooktool.core.findMethodOrNull
@@ -47,11 +46,6 @@ object RedirectToNotificationChannelSetting : BaseHook() {
 
     override fun init() {
         // hyperos fix by yife
-        val clazzModalController = if (isMoreAndroidVersion(36)) {
-            findClass("com.android.systemui.statusbar.notification.modal.IModalController")
-        } else {
-            findClass("com.android.systemui.statusbar.notification.modal.ModalController")
-        }
         val clazzCommandQueue = findClass("com.android.systemui.statusbar.CommandQueue")
         clazzMiuiNotificationMenuRow.findMethod { name("createMenuViews") }
             .createHook {
@@ -65,14 +59,6 @@ object RedirectToNotificationChannelSetting : BaseHook() {
                     mIcon.setOnClickListener {
                         startChannelNotificationSettings(mSbn)
                         runCatching {
-                            if (!isMoreAndroidVersion(36)) {
-                                val modalController =
-                                    Dependency.getDependencyInner(clazzModalController)
-                                        ?: return@setOnClickListener
-                                callMethod(
-                                    modalController, "animExitModal", 50L, true, "MORE", false
-                                )
-                            }
                             val commandQueue =
                                 Dependency.getDependencyInner(clazzCommandQueue)
                                     ?: return@setOnClickListener

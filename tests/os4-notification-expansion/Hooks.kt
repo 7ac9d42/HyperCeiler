@@ -1,8 +1,8 @@
 package io.github.lingqiqi5211.ezhooktool.xposed.dsl
 
+import io.github.lingqiqi5211.ezhooktool.xposed.common.HookParam
 import java.lang.reflect.Method
 
-data class HookParam(val thisObject: Any, val args: Array<Any?>)
 object RegisteredHooks {
     val callbacks = linkedMapOf<Method, (HookParam) -> Unit>()
     fun invoke(name: String, count: Int, receiver: Any, vararg args: Any?) {

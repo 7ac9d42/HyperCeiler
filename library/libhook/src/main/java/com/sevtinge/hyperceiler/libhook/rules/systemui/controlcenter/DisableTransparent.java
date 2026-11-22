@@ -18,8 +18,6 @@
  */
 package com.sevtinge.hyperceiler.libhook.rules.systemui.controlcenter;
 
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreAndroidVersion;
-
 import android.content.Context;
 
 import com.sevtinge.hyperceiler.libhook.base.BaseHook;
@@ -31,22 +29,13 @@ public class DisableTransparent extends BaseHook {
     @Override
     public void init() {
         // from https://www.coolapk.com/feed/52893204?shareKey=YTA3MTRkZGJmYTJmNjVlNmI4MTY~&shareUid=1499664&shareFrom=com.coolapk.app_5.3
-        if (isMoreAndroidVersion(36)) {
-            findAndHookMethod("com.android.systemui.statusbar.notification.row.NotificationRowContentBinderInjectorImpl", "isTransparent", Context.class,
-            new IMethodHook() {
-                @Override
-                public void before(HookParam param) {
-                    param.setResult(false);
-                }
-            });
-        } else {
-            findAndHookMethod("com.android.systemui.statusbar.notification.row.NotificationContentInflaterInjector", "isTransparent", new IMethodHook() {
-                @Override
-                public void before(HookParam param) {
-                    param.setResult(false);
-                }
-            });
-        }
+        findAndHookMethod("com.android.systemui.statusbar.notification.row.NotificationRowContentBinderInjectorImpl", "isTransparent", Context.class,
+        new IMethodHook() {
+            @Override
+            public void before(HookParam param) {
+                param.setResult(false);
+            }
+        });
 
     }
 }

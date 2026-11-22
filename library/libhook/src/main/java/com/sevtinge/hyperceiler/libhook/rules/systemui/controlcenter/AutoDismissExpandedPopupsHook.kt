@@ -21,7 +21,6 @@ package com.sevtinge.hyperceiler.libhook.rules.systemui.controlcenter
 import io.github.lingqiqi5211.ezhooktool.xposed.common.HookParam
 import com.sevtinge.hyperceiler.common.utils.PrefsBridge
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
-import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreAndroidVersion
 import io.github.lingqiqi5211.ezhooktool.core.callMethod
 import io.github.lingqiqi5211.ezhooktool.core.callMethodOrNull
 import io.github.lingqiqi5211.ezhooktool.core.findAllMethods
@@ -41,12 +40,8 @@ object AutoDismissExpandedPopupsHook : BaseHook() {
         PrefsBridge.getInt("system_ui_control_center_expand_notification_show_time", 45) * 100L
     }
     private val mHeadsUpEntryPhoneClass by lazy {
-        if (isMoreAndroidVersion(36)) {
-            // Android 16 合并了 HeadsUpManagerPhone，不再继承
-            loadClass($$"com.android.systemui.statusbar.notification.headsup.HeadsUpManagerImpl$HeadsUpEntry")
-        } else {
-            loadClass($$"com.android.systemui.statusbar.phone.HeadsUpManagerPhone$HeadsUpEntryPhone")
-        }
+        // Android 16 合并了 HeadsUpManagerPhone，不再继承
+        loadClass($$"com.android.systemui.statusbar.notification.headsup.HeadsUpManagerImpl$HeadsUpEntry")
     }
 
     override fun init() {
