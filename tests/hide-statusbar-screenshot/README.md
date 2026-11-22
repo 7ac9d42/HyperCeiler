@@ -19,7 +19,7 @@ Coverage:
 - 没有开始广播的结束广播不会强行显示状态栏；
 - 隐藏前就已不可见时恢复成 INVISIBLE（保留上游“记住隐藏前可见性”的语义）；
 - 截屏期间窗口 Surface 被重建时，收尾不会留下 0 alpha；
-- SDK ≥ 37 走 `MiuiPhoneStatusBarView#onAttachedToWindow` 分支。
+- SDK 36 冷启动走 `MiuiCollapsedStatusBarFragment#onViewCreated`，SDK 37 走 `MiuiPhoneStatusBarView#onAttachedToWindow`；两条路径都验证 receiver 注册、隐藏和恢复。
 
 Source guards 另外检查 `SystemUIB` 只注册一次该规则、`BaseLoad` 仍会拦下重复注册、
 规则状态仍是进程内共享而不是实例字段。

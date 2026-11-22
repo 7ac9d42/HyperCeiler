@@ -18,8 +18,6 @@
 */
 package com.sevtinge.hyperceiler.libhook.rules.systemui.lockscreen
 
-import android.app.KeyguardManager
-import android.content.Context
 import android.graphics.Color
 import android.graphics.Outline
 import android.graphics.drawable.LayerDrawable
@@ -27,7 +25,6 @@ import android.view.View
 import android.view.ViewOutlineProvider
 import android.widget.ImageView
 import com.sevtinge.hyperceiler.common.utils.PrefsBridge
-import com.sevtinge.hyperceiler.libhook.base.BaseHook
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.blur.BlurUtils.createBlurDrawable
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.blur.MiBlurUtilsKt.addMiBackgroundBlendColor
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.blur.MiBlurUtilsKt.clearMiBackgroundBlendColor
@@ -35,79 +32,11 @@ import com.sevtinge.hyperceiler.libhook.utils.hookapi.blur.MiBlurUtilsKt.setMiBa
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.blur.MiBlurUtilsKt.setMiBackgroundBlurRadius
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.blur.MiBlurUtilsKt.setMiViewBlurMode
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.blur.MiBlurUtilsKt.setPassWindowBlurEnabled
-import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.Keyguard.keyguardBottomAreaInjector
-import io.github.lingqiqi5211.ezhooktool.core.findAllMethods
-import io.github.lingqiqi5211.ezhooktool.xposed.common.HookParam
-import io.github.lingqiqi5211.ezhooktool.xposed.dsl.createHooks
-import io.github.lingqiqi5211.ezhooktool.xposed.dsl.getObjectFieldAs
-import io.github.lingqiqi5211.ezhooktool.xposed.dsl.getObjectFieldOrNullAs
-import io.github.lingqiqi5211.ezhooktool.xposed.dsl.setBooleanField
 
-object BlurButton : BaseHook() {
-    private val removeRight by lazy {
-        PrefsBridge.getBoolean("system_ui_lock_screen_hide_camera")
-    }
+object BlurButton {
     private val radius by lazy {
         PrefsBridge.getInt("system_ui_lock_screen_blur_button_radius", 40)
     }
-    private val hyperBlur by lazy {
-        PrefsBridge.getBoolean("system_ui_lock_screen_hyper_blur_button")
-    }
-    private val blurBotton by lazy {
-        isTransparencyLow(PrefsBridge.getInt("system_ui_lock_screen_blur_button_bg_color", 0))
-    }
-
-    override fun init() {
-        // by StarVoyager
-        keyguardBottomAreaInjector.findAllMethods {
-            filter { name in setOf("updateLeftIcon", "updateRightIcon") }
-        }.createHooks {
-                after { param ->
-                    runCatching {
-                        if (hyperBlur) hyperBlur(param) else systemBlur(param)
-                        if (blurBotton) param.thisObject.setBooleanField(
-                            "mBottomIconRectIsDeep",
-                            isColorDark(PrefsBridge.getInt("system_ui_lock_screen_blur_button_bg_color", 0))
-                        )
-                    }
-                }
-            }
-    }
-
-    private fun systemBlur(param: HookParam) {
-        val mLeftAffordanceView: ImageView =
-            param.thisObject.getObjectFieldOrNullAs<ImageView>("mLeftButton")!!
-        val mRightAffordanceView: ImageView =
-            param.thisObject.getObjectFieldOrNullAs<ImageView>("mRightButton")!!
-        // Your blur logic
-        val context = param.thisObject.getObjectFieldAs("mContext") as Context
-        val keyguardManager =
-            context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-
-        if (keyguardManager.isKeyguardLocked) {
-            mLeftAffordanceView.background = setNewBackgroundBlur(mLeftAffordanceView)
-            mRightAffordanceView.background = if (!removeRight) {
-                setNewBackgroundBlur(mRightAffordanceView)
-            } else null
-        } else {
-            mLeftAffordanceView.background = null
-            mRightAffordanceView.background = null
-        }
-
-    }
-
-    private fun hyperBlur(param: HookParam) {
-        val mLeftAffordanceView: ImageView =
-            param.thisObject.getObjectFieldOrNullAs<ImageView>("mLeftButton")!!
-        val mRightAffordanceView: ImageView =
-            param.thisObject.getObjectFieldOrNullAs<ImageView>("mRightButton")!!
-
-        addHyBlur(mLeftAffordanceView)
-        if (!removeRight) {
-            addHyBlur(mRightAffordanceView)
-        }
-    }
-
     fun setNewBackgroundBlur(imageView: ImageView): LayerDrawable {
         val blurDrawable = createBlurDrawable(
             imageView, 40, 100, Color.argb(60, 255, 255, 255)

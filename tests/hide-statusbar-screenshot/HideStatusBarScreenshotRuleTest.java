@@ -36,7 +36,8 @@ public final class HideStatusBarScreenshotRuleTest {
         "com.android.systemui.statusbar.phone.MiuiPhoneStatusBarView#onAttachedToWindow";
 
     public static void main(String[] args) {
-        restoresAfterSingleRegistration();
+        restoresAfterSingleRegistration(36, LEGACY_TARGET);
+        restoresAfterSingleRegistration(37, OS4_TARGET);
         duplicateRegistrationOfSameViewKeepsOneReceiver();
         staleReceiverAfterHotReloadDoesNotReHide();
         legacyImplementationWouldStayHidden();
@@ -45,19 +46,19 @@ public final class HideStatusBarScreenshotRuleTest {
         strayFinishedKeepsForeignHiddenStatusBar();
         alreadyHiddenStatusBarStaysHidden();
         recreatedWindowSurfaceDoesNotStayHidden();
-        os4BranchHooksAttachedToWindow();
-        System.out.println("Hide status bar on screenshot: single/duplicated registration, hot reload, "
+        System.out.println("Hide status bar on screenshot: SDK 36/37 lifecycle, duplicate registration, hot reload, "
             + "view recreation, repeated start, stray finish and already hidden cases passed");
     }
 
     /** 只注册一次时：开始隐藏、结束恢复。 */
-    private static void restoresAfterSingleRegistration() {
+    private static void restoresAfterSingleRegistration(int sdk, String target) {
         reset();
+        Build.VERSION.SDK_INT = sdk;
         View statusBar = new View(HOST_CONTEXT);
         install(new HideStatusBarBeforeScreenshot(), statusBar);
 
-        check(BaseHook.hookTargets.size() == 1 && LEGACY_TARGET.equals(BaseHook.hookTargets.get(0)),
-            "SDK 35 应 hook 旧状态栏 fragment");
+        check(BaseHook.hookTargets.size() == 1 && target.equals(BaseHook.hookTargets.get(0)),
+            "SDK " + sdk + " 应 hook " + target);
         check(ContextCompat.registered.size() == 1, "应只注册一个 receiver");
         check(alphaOf(statusBar) == 1.0f, "初始窗口 alpha 应为 1");
 
@@ -188,22 +189,6 @@ public final class HideStatusBarScreenshotRuleTest {
         check(statusBar.getVisibility() == View.INVISIBLE, "应恢复成隐藏前的 INVISIBLE");
     }
 
-    /** SDK >= 37 走 onAttachedToWindow 分支。 */
-    private static void os4BranchHooksAttachedToWindow() {
-        reset();
-        Build.VERSION.SDK_INT = 37;
-        View statusBar = new View(HOST_CONTEXT);
-        install(new HideStatusBarBeforeScreenshot(), statusBar);
-
-        check(BaseHook.hookTargets.size() == 1 && OS4_TARGET.equals(BaseHook.hookTargets.get(0)),
-            "SDK 37 应 hook MiuiPhoneStatusBarView#onAttachedToWindow");
-
-        broadcast(false);
-        check(statusBar.getVisibility() == View.INVISIBLE, "OS4 分支也要隐藏");
-        broadcast(true);
-        check(statusBar.getVisibility() == View.VISIBLE, "OS4 分支也要恢复");
-    }
-
     /** 截屏期间窗口 Surface 被重建时，收尾不能留下 0 alpha。 */
     private static void recreatedWindowSurfaceDoesNotStayHidden() {
         reset();
@@ -246,7 +231,7 @@ public final class HideStatusBarScreenshotRuleTest {
         BaseHook.installedHooks.clear();
         ContextCompat.registered.clear();
         XposedLog.messages.clear();
-        Build.VERSION.SDK_INT = 35;
+        Build.VERSION.SDK_INT = 37;
     }
 
     private static void check(boolean condition, String message) {

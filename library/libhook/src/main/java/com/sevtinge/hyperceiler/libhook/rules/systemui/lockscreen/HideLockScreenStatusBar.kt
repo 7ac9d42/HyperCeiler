@@ -19,7 +19,6 @@
 package com.sevtinge.hyperceiler.libhook.rules.systemui.lockscreen
 
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
-import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreAndroidVersion
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.StateFlowHelper.newReadonlyStateFlow
 import io.github.lingqiqi5211.ezhooktool.core.callMethod
 import io.github.lingqiqi5211.ezhooktool.core.findMethod
@@ -40,12 +39,8 @@ object HideLockScreenStatusBar : BaseHook() {
                             .callMethod("get")!!
                             .getObjectField("mKeyguardStatusBarViewController")
 
-                    if (isMoreAndroidVersion(36)) {
-                        mKeyguardStatusBar!!.getObjectField("mKeyguardStatusBarViewModel")!!
-                            .setObjectField("isVisible", newReadonlyStateFlow(false))
-                    } else {
-                        mKeyguardStatusBar!!.setObjectField("mKeyguardStatusBarAnimateAlpha", 0.0f)
-                    }
+                    mKeyguardStatusBar!!.getObjectField("mKeyguardStatusBarViewModel")!!
+                        .setObjectField("isVisible", newReadonlyStateFlow(false))
                 }
 
             }

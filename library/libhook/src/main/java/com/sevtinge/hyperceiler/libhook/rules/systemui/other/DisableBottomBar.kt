@@ -20,7 +20,6 @@ package com.sevtinge.hyperceiler.libhook.rules.systemui.other
 
 import android.view.View
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
-import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreAndroidVersion
 import io.github.lingqiqi5211.ezhooktool.core.findMethod
 import io.github.lingqiqi5211.ezhooktool.core.loadClass
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.createHook
@@ -32,38 +31,30 @@ object DisableBottomBar : BaseHook() {
     private val lastAlpha = WeakHashMap<View, Float>()
 
     override fun init() {
-        if (isMoreAndroidVersion(36)) {
-            // 隐藏小窗小白条，外加沉浸
-            loadClass("com.android.wm.shell.multitasking.miuimultiwinswitch.miuiwindowdecor.decoration.MiuiDecorationInfo").findMethod { name("getFreeformBottomCaptionHeight") }
-                .createHook {
-                    returnConstant(0)
-                }
+        // 隐藏小窗小白条，外加沉浸
+        loadClass("com.android.wm.shell.multitasking.miuimultiwinswitch.miuiwindowdecor.decoration.MiuiDecorationInfo").findMethod { name("getFreeformBottomCaptionHeight") }
+            .createHook {
+                returnConstant(0)
+            }
 
-            loadClass("com.android.wm.shell.multitasking.miuimultiwinswitch.miuiwindowdecor.decoration.MiuiDecorationBottom").findMethod { name("getBottomCaptionHeight") }
-                .createHook {
-                    after {
-                        // 只要一碰小白条这个方法就会疯狂执行，猫猫问号？
-                        val mode = it.thisObject.getObjectFieldOrNullAs<Int>("mWindowingMode") ?: return@after
-                        val host = it.thisObject.getObjectFieldOrNull("mMiuiDecorationRootViewHost") ?: return@after
-                        val view = host.getObjectFieldOrNullAs<View>("mMiuiDecorationBottomView") ?: return@after
+        loadClass("com.android.wm.shell.multitasking.miuimultiwinswitch.miuiwindowdecor.decoration.MiuiDecorationBottom").findMethod { name("getBottomCaptionHeight") }
+            .createHook {
+                after {
+                    // 只要一碰小白条这个方法就会疯狂执行，猫猫问号？
+                    val mode = it.thisObject.getObjectFieldOrNullAs<Int>("mWindowingMode") ?: return@after
+                    val host = it.thisObject.getObjectFieldOrNull("mMiuiDecorationRootViewHost") ?: return@after
+                    val view = host.getObjectFieldOrNullAs<View>("mMiuiDecorationBottomView") ?: return@after
 
-                        val desiredAlpha = if (mode == 5) 0f else 1f
+                    val desiredAlpha = if (mode == 5) 0f else 1f
 
-                        val prev = lastAlpha[view]
-                        if (prev != null && prev == desiredAlpha) return@after
-                        lastAlpha[view] = desiredAlpha
+                    val prev = lastAlpha[view]
+                    if (prev != null && prev == desiredAlpha) return@after
+                    lastAlpha[view] = desiredAlpha
 
-                        view.post {
-                            view.alpha = desiredAlpha
-                        }
+                    view.post {
+                        view.alpha = desiredAlpha
                     }
                 }
-
-        } else {
-            loadClass("com.android.wm.shell.multitasking.miuimultiwinswitch.miuiwindowdecor.MiuiBottomDecoration").findMethod { name("createBottomCaption") }
-                .createHook {
-                    returnConstant(null)
-                }
-        }
+            }
     }
 }
