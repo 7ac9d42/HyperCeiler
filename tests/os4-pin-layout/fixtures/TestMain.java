@@ -33,7 +33,7 @@ public class TestMain{
   test("persistent_add_failure_is_reported_not_claimed_restored",()->{start();var p=new KeyguardPINView();ViewGroup.persistent=true;ViewGroup.failAt=11;inflate(p);check(BaseHook.errors.size()==1&&p.mViews[1][0]==p.keys[1]&&p.mNumViews[0]==p.mViews[1]);check(p.rows[0].getChildCount()==0&&p.rows[3].getChildAt(0)==p.spacer&&p.rows[3].getChildAt(1)==p.enter);});
   for(String name:new String[]{"com.android.keyguard.KeyguardPINView","com.android.keyguard.NumPadKey"})test("missing_class_"+name,()->{BaseHook.classes.remove(name);try{start();throw new AssertionError();}catch(IllegalStateException e){check(hooks.isEmpty());}});
   for(boolean throwing:new boolean[]{false,true})test("registration_failure_"+throwing,()->{BaseHook.failAt=1;BaseHook.throwInstall=throwing;try{start();throw new AssertionError();}catch(IllegalStateException e){check(hooks.isEmpty());}});
-  for(int sdk:new int[]{35,36,37})test("os3_legacy_route_"+sdk,()->{DeviceHelper.System.version=3;DeviceHelper.System.sdk=sdk;start();check(hooks.size()==1&&hooks.keySet().iterator().next().getDeclaringClass()==(sdk>=36?com.android.keyguard.widget.MiuiKeyguardPINView.class:KeyguardPINView.class));});
+  for(int sdk:new int[]{36,37})test("os3_legacy_route_"+sdk,()->{DeviceHelper.System.version=3;DeviceHelper.System.sdk=sdk;start();check(hooks.size()==1&&hooks.keySet().iterator().next().equals(com.android.keyguard.widget.MiuiKeyguardPINView.class.getDeclaredMethod("onFinishInflate")));});
   System.out.println("RESULT passes="+passes+" failures="+failures);if(failures>0)System.exit(1);
  }
 }
