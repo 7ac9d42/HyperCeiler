@@ -18,7 +18,6 @@
 */
 package com.sevtinge.hyperceiler.libhook.rules.systemframework.others;
 
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreAndroidVersion;
 import static com.sevtinge.hyperceiler.libhook.base.BaseHook.findAndHookConstructor;
 import static com.sevtinge.hyperceiler.libhook.base.BaseHook.setBooleanField;
 
@@ -32,7 +31,6 @@ public class ThermalBrightness extends BaseHook {
     public final String displayPowerControllerImpl = "com.android.server.display.DisplayPowerControllerImpl";
     public final String automaticBrightnessControllerImpl = "com.android.server.display.AutomaticBrightnessControllerImpl";
     public final String thermalBrightnessController = "com.android.server.display.ThermalBrightnessController";
-    public final String temperatureController = "com.android.server.display.TemperatureController";
     public final String thermalHelper = "com.android.server.audio.MultimediaMiPerception.utils.ThermalHelper";
     public final String thermalObserver = "com.android.server.display.ThermalObserver";
 
@@ -69,38 +67,20 @@ public class ThermalBrightness extends BaseHook {
             XposedLog.e(TAG, getPackageName(), "No found class: " + e);
         }
 
-        if (isMoreAndroidVersion(36)) {
-            try {
-                findClass(thermalHelper).getDeclaredMethod("updateTemperature");
-                findAndHookMethod(thermalHelper,
-                    "updateTemperature", new IMethodHook() {
-                        @Override
-                        public void before(HookParam param) {
-                            param.setResult(null);
-                        }
+        try {
+            findClass(thermalHelper).getDeclaredMethod("updateTemperature");
+            findAndHookMethod(thermalHelper,
+                "updateTemperature", new IMethodHook() {
+                    @Override
+                    public void before(HookParam param) {
+                        param.setResult(null);
                     }
-                );
-            } catch (NoSuchMethodException e) {
-                XposedLog.e(TAG, getPackageName(), "Don't Have updateTemperature: " + e);
-            } catch (Throwable ne) {
-                XposedLog.e(TAG, getPackageName(), "Class not found: " + ne);
-            }
-        } else {
-            try {
-                findClass(temperatureController).getDeclaredMethod("updateTemperature");
-                findAndHookMethod(temperatureController,
-                    "updateTemperature", new IMethodHook() {
-                        @Override
-                        public void before(HookParam param) {
-                            param.setResult(null);
-                        }
-                    }
-                );
-            } catch (NoSuchMethodException e) {
-                XposedLog.e(TAG, getPackageName(), "Don't Have updateTemperature: " + e);
-            } catch (Throwable ne) {
-                XposedLog.e(TAG, getPackageName(), "Class not found: " + ne);
-            }
+                }
+            );
+        } catch (NoSuchMethodException e) {
+            XposedLog.e(TAG, getPackageName(), "Don't Have updateTemperature: " + e);
+        } catch (Throwable ne) {
+            XposedLog.e(TAG, getPackageName(), "Class not found: " + ne);
         }
 
         try {

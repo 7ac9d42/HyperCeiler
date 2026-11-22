@@ -39,7 +39,6 @@ public class OtherSettings extends DashboardFragment {
     Preference mCleanShareApps;
     Preference mCleanOpenApps;
     Preference mCleanProcessTextApps;
-    Preference mAutoStart;
     Preference mClipboardWhitelistApps;
     SwitchPreference mVerifyDisable;
     RecommendPreference mRecommend;
@@ -55,17 +54,8 @@ public class OtherSettings extends DashboardFragment {
         mCleanShareApps = findPreference("prefs_key_system_framework_clean_share_apps");
         mCleanOpenApps = findPreference("prefs_key_system_framework_clean_open_apps");
         mCleanProcessTextApps = findPreference("prefs_key_system_framework_clean_process_text_apps");
-        mAutoStart = findPreference("prefs_key_system_framework_auto_start_apps");
         mClipboardWhitelistApps = findPreference("prefs_key_system_framework_clipboard_whitelist_apps");
         mVerifyDisable = findPreference("prefs_key_system_framework_disable_verify_can_ve_disabled");
-
-        mAutoStart.setOnPreferenceClickListener(preference -> {
-            Intent intent = new Intent(getActivity(), SubPickerActivity.class);
-            intent.putExtra("mode", LAUNCHER_MODE);
-            intent.putExtra("key", preference.getKey());
-            startActivity(intent);
-            return true;
-        });
 
         mCleanShareApps.setOnPreferenceClickListener(preference -> {
             Intent intent = new Intent(getActivity(), SubPickerActivity.class);
