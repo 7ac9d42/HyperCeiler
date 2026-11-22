@@ -220,7 +220,6 @@
     <string name="system_ui_statusbar_indicator_bold">Жирний</string>
     <!--Multi-list Array-->
     <string name="array_close">Закрити</string>
-    <string name="array_hide">Приховати</string>
     <string name="array_default">За замовчуванням</string>
     <string name="array_align_left">Ліворуч</string>
     <string name="array_align_right">Праворуч</string>
@@ -508,7 +507,6 @@
     <string name="system_ui_lock_screen_scramble_pin">Випадковий PIN-код</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">Випадковий порядок клавіатури PIN-коду</string>
     <string name="system_ui_lock_screen_default_theme">Підтримується лише тема за замовчуванням</string>
-    <string name="system_ui_lock_screen_hide_camera">Приховати камеру</string>
     <string name="system_ui_lock_screen_current">Струм</string>
     <string name="system_ui_lock_screen_blur_button">Розмиття кнопок екрана блокування</string>
     <string name="system_ui_lock_screen_blur_button_desc">Після ввімкнення фон камери та кнопки ярлика розмивається, що може призвести до високого споживання енергії.\nПідтримується лише тема за замовчуванням.</string>
@@ -704,7 +702,6 @@
     <string name="system_ui_control_center_rounded_rect">Плитка з закругленими кутами</string>
     <string name="system_ui_control_center_rounded_rect_radius">Радіус закруглення</string>
     <string name="system_ui_control_center_fix_tiles_list">Розблокувати приховані плитки центру керування</string>
-    <string name="system_ui_shade_header_gradient_blur">Розмити верхню частину центру керування та шторки сповіщень</string>
     <string name="system_ui_control_center_hide_operator">Налаштувати назву оператора</string>
     <string name="system_ui_control_center_hide_delimiter">Приховати роздільники назви оператора</string>
     <string name="system_ui_control_center_hide_display_device_name">Відображати назву пристрою</string>

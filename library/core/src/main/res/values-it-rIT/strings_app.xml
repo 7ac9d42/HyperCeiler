@@ -384,7 +384,6 @@
     <string name="system_ui_lock_screen_scramble_pin">Pin Casuale</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">Ordine tastiera PIN casuale</string>
     <string name="system_ui_lock_screen_default_theme">Supporta solo il tema predefinito</string>
-    <string name="system_ui_lock_screen_hide_camera">Nascondi fotocamera</string>
     <string name="system_ui_lock_screen_current">Attuale</string>
     <string name="system_ui_lock_screen_blur_button">Sfoca pulsanti fotocamera e carrello intelligente</string>
     <string name="system_ui_lock_screen_double_lock">Doppio tocco per bloccare lo schermo</string>

@@ -39,10 +39,8 @@
     <string name="system_cc_showpct_style_2">Explizit</string>
     <!--System Framework-->
     <string name="system_framework_phone_network_title">Netzwerkeinstellungen</string>
-    <string name="system_ui_hide_navigation_bar">Gestenlinie ausblenden</string>
     <string name="system_ui_hide_navigation_bar_toast">Nicht zur Schaltflächennavigation wechseln</string>
     <string name="system_ui_hide_navigation_bar_toast_2">Gestenlinien nicht verstecken</string>
-    <string name="system_ui_hide_navigation_bar_more">Bitte starten Sie System Launcher und System UI neu (Geltungsbereiche)</string>
     <string name="system_framework_guided_access_status">Statusleiste ausblenden, wenn die App angepinnt ist</string>
     <string name="system_framework_guided_access_status_more">Der Beendigungsmodus ändert sich zu langem Drücken des Power-Buttons. Die Statusleiste bleibt ausgeblendet, bis du den Sperrmodus verlässt</string>
     <string name="system_framework_guided_access">Angepinnte Apps</string>

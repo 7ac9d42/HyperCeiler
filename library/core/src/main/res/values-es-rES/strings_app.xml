@@ -453,7 +453,6 @@
     <string name="system_ui_lock_screen_scramble_pin">PIN aleatorio</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">Orden aleatorio del teclado PIN</string>
     <string name="system_ui_lock_screen_default_theme">Soporte solo tema predeterminado</string>
-    <string name="system_ui_lock_screen_hide_camera">Ocultar la cámara</string>
     <string name="system_ui_lock_screen_current">Corriente</string>
     <string name="system_ui_lock_screen_blur_button">Desenfocar los botones de cámara y pantalla inteligente</string>
     <string name="system_ui_lock_screen_blur_button_radius">Radio del fondo</string>

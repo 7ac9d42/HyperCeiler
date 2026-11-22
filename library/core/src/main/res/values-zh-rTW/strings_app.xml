@@ -280,7 +280,6 @@
     <string name="system_ui_statusbar_indicator_bold">加粗</string>
     <!--Multi-list Array-->
     <string name="array_close">關閉</string>
-    <string name="array_hide">隱藏</string>
     <string name="array_default">預設</string>
     <string name="array_align_left">左側</string>
     <string name="array_align_right">右側</string>
@@ -576,7 +575,6 @@
     <string name="system_ui_lock_screen_scramble_pin">亂序 PIN</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">隨機更改 PIN 鍵盤順序</string>
     <string name="system_ui_lock_screen_default_theme">僅支援預設主題</string>
-    <string name="system_ui_lock_screen_hide_camera">停用相機</string>
     <string name="system_ui_lock_screen_current">當前</string>
     <string name="system_ui_lock_screen_blur_button">相機和智慧助理按鈕背景模糊</string>
     <string name="system_ui_lock_screen_blur_button_desc">啟用後，鎖定螢幕上的相機和負一螢幕按鈕背景會變得模糊，可能會導致功耗較高。\n僅支援預設主題。</string>
@@ -790,7 +788,6 @@
     <string name="system_ui_control_center_show_weather_city">顯示地區</string>
     <string name="system_ui_control_center_disable_device_managed">隱藏網路監控提示</string>
     <string name="system_ui_control_center_hide_edit_botton">隱藏編輯按鈕</string>
-    <string name="system_ui_control_center_tile_super_blur">控制中心磁貼高級材質</string>
     <string name="system_ui_control_center_mute_visible_notice">開啟螢幕時靜音</string>
     <string name="system_ui_control_center_unimportant_notification">禁止折疊到歷史通知中</string>
     <string name="system_ui_control_center_expand_notification">展開通知</string>
@@ -798,7 +795,6 @@
     <string name="system_ui_control_center_rounded_rect">圓角矩形磁貼</string>
     <string name="system_ui_control_center_rounded_rect_radius">圓角大小</string>
     <string name="system_ui_control_center_fix_tiles_list">停用隱藏極暗磁貼</string>
-    <string name="system_ui_shade_header_gradient_blur">通知與控制中心頭部漸變模糊</string>
     <string name="system_ui_control_center_hide_operator">運營商名稱自訂</string>
     <string name="system_ui_control_center_hide_delimiter">只隱藏分隔線</string>
     <string name="system_ui_control_center_hide_display_device_name">顯示裝置名稱</string>

@@ -68,10 +68,8 @@
     <string name="misound_bluetooth_type_keep">Keep Current</string>
     <!--System Framework-->
     <string name="system_framework_phone_network_title">Network settings</string>
-    <string name="system_ui_hide_navigation_bar">Hide gesture line</string>
     <string name="system_ui_hide_navigation_bar_toast">Don\'t switch to button navigation</string>
     <string name="system_ui_hide_navigation_bar_toast_2">Don\'t hide gesture lines</string>
-    <string name="system_ui_hide_navigation_bar_more">Please restart the System launcher and System UI scopes</string>
     <string name="system_framework_guided_access_status">Enhanced shielding</string>
     <string name="system_framework_guided_access_status_more">When pinned, hide status bar and gesture line until unpinned</string>
     <string name="system_framework_guided_access_tile">QS tile entry</string>

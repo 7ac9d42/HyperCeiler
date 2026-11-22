@@ -230,7 +230,6 @@
     <string name="unlock_ai_wallpaper">Desbloquear acesso ao plano de fundo IA</string>
     <!--Multi-list Array-->
     <string name="array_close">Fechar</string>
-    <string name="array_hide">Ocultar</string>
     <string name="array_default">Padrão</string>
     <string name="array_align_left">Esquerda</string>
     <string name="array_align_right">Direita</string>
@@ -531,7 +530,6 @@
     <string name="system_ui_lock_screen_scramble_pin">PIN aleatório</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">Ordem aleatória do teclado PIN</string>
     <string name="system_ui_lock_screen_default_theme">Suporta apenas o tema padrão</string>
-    <string name="system_ui_lock_screen_hide_camera">Ocultar câmera</string>
     <string name="system_ui_lock_screen_current">Corrente</string>
     <string name="system_ui_lock_screen_blur_button">Desfocar botões da Tela de bloqueio</string>
     <string name="system_ui_lock_screen_blur_button_desc">Após ativar, o fundo da câmera e do botão de atalho fica desfocado, o que pode causar alto consumo de energia.\nSuporta apenas o tema padrão.</string>
@@ -732,7 +730,6 @@
     <string name="system_ui_control_center_show_weather_city">Exibir cidade</string>
     <string name="system_ui_control_center_disable_device_managed">Ocultar solicitações de monitoramento de rede</string>
     <string name="system_ui_control_center_hide_edit_botton">Ocultar botão Editar</string>
-    <string name="system_ui_control_center_tile_super_blur">Texturas avançadas em blocos QS</string>
     <string name="system_ui_control_center_mute_visible_notice">Silenciar quando a tela estiver ligada</string>
     <string name="system_ui_control_center_unimportant_notification">Bloquear notificação sem importância automaticamente</string>
     <string name="system_ui_control_center_expand_notification">Expandir notificações</string>
@@ -742,7 +739,6 @@
     <string name="system_ui_control_center_rounded_rect">Retângulo arredondado</string>
     <string name="system_ui_control_center_rounded_rect_radius">Raio arredondado</string>
     <string name="system_ui_control_center_fix_tiles_list">Desbloquear blocos ocultos do centro de controle</string>
-    <string name="system_ui_shade_header_gradient_blur">Desfocar parte superior do centro de controle e da Área de notificações</string>
     <string name="system_ui_control_center_hide_operator">Personalizar nome da operadora</string>
     <string name="system_ui_control_center_hide_delimiter">Ocultar divisores de nomes de operadoras</string>
     <string name="system_ui_control_center_hide_display_device_name">Exibir nome do dispositivo</string>

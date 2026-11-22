@@ -288,7 +288,6 @@
     <string name="unlock_ai_wallpaper">解锁 AI 壁纸入口</string>
     <!--多列表 Array-->
     <string name="array_close">关闭</string>
-    <string name="array_hide">隐藏</string>
     <string name="array_default">默认</string>
     <string name="array_align_left">左侧</string>
     <string name="array_align_right">右侧</string>
@@ -607,7 +606,6 @@
     <string name="system_ui_lock_screen_scramble_pin">乱序 PIN</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">随机更改 PIN 键盘顺序</string>
     <string name="system_ui_lock_screen_default_theme">仅支持默认主题</string>
-    <string name="system_ui_lock_screen_hide_camera">隐藏相机</string>
     <string name="system_ui_lock_screen_current">当前电流</string>
     <string name="system_ui_lock_screen_blur_button">锁屏按钮背景模糊</string>
     <string name="system_ui_lock_screen_blur_button_desc">启用后相机和负一屏按钮的背景带有模糊，可能存在功耗偏高的情况，仅支持默认主题</string>
@@ -860,7 +858,6 @@
     <string name="system_ui_control_center_show_weather_city">显示地区</string>
     <string name="system_ui_control_center_disable_device_managed">隐藏网络监控提示</string>
     <string name="system_ui_control_center_hide_edit_botton">隐藏编辑按钮</string>
-    <string name="system_ui_control_center_tile_super_blur">磁贴高级材质</string>
     <string name="system_ui_control_center_unimportant_notification">禁止折叠为历史通知</string>
     <string name="system_ui_control_center_mute_visible_notice">亮屏时静音</string>
     <string name="system_ui_control_center_expand_notification">展开通知</string>
@@ -870,7 +867,6 @@
     <string name="system_ui_control_center_rounded_rect">圆角矩形磁贴</string>
     <string name="system_ui_control_center_rounded_rect_radius">圆角大小</string>
     <string name="system_ui_control_center_fix_tiles_list">补全磁贴列表</string>
-    <string name="system_ui_shade_header_gradient_blur">通知与控制中心头部渐变模糊</string>
     <string name="system_ui_control_center_hide_operator">运营商名称自定义</string>
     <string name="system_ui_control_center_hide_delimiter">隐藏分隔线</string>
     <string name="system_ui_control_center_hide_name">隐藏全部名称</string>

@@ -386,7 +386,6 @@
     <string name="system_ui_lock_screen_scramble_pin">PIN acak</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">Acak urutan papan tombol PIN</string>
     <string name="system_ui_lock_screen_default_theme">Hanya mendukung tema default</string>
-    <string name="system_ui_lock_screen_hide_camera">Sembunyikan kamera</string>
     <string name="system_ui_lock_screen_current">Saat ini</string>
     <string name="system_ui_lock_screen_blur_button">Kamera buram dan tombol layar pintar</string>
     <string name="system_ui_lock_screen_double_lock">Ketuk dua kali layar kunci</string>

@@ -228,7 +228,6 @@
     <string name="system_ui_statusbar_indicator_bold">خط عريض</string>
     <!--Multi-list Array-->
     <string name="array_close">إغلاق</string>
-    <string name="array_hide">إخفاء</string>
     <string name="array_default">الافتراضي</string>
     <string name="array_align_left">يسار</string>
     <string name="array_align_right">يمين</string>
@@ -526,7 +525,6 @@
     <string name="system_ui_lock_screen_scramble_pin">رمز PIN عشوائي</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">ترتيب لوحة مفاتيح PIN عشوائيا</string>
     <string name="system_ui_lock_screen_default_theme">يدعم الثيم الافتراضي فقط</string>
-    <string name="system_ui_lock_screen_hide_camera">إخفاء زر الكاميرا</string>
     <string name="system_ui_lock_screen_current">الحالي</string>
     <string name="system_ui_lock_screen_blur_button">تمويه أزرار شاشة القفل</string>
     <string name="system_ui_lock_screen_blur_button_desc">بعد التمكين، يتم تمويه خلفية زر الكاميرا وزر الشاشة السلبية على شاشة القفل، مما قد يؤدي إلى استهلاك طاقة مرتفع.\nيدعم الثيم الافتراضي فقط.</string>
@@ -726,7 +724,6 @@
     <string name="system_ui_control_center_show_weather_city">عرض المدينة</string>
     <string name="system_ui_control_center_disable_device_managed">إخفاء إشعارات مراقبة الشبكة</string>
     <string name="system_ui_control_center_hide_edit_botton">إخفاء زر التحرير</string>
-    <string name="system_ui_control_center_tile_super_blur">بطاقات عالية الضبابية</string>
     <string name="system_ui_control_center_mute_visible_notice">كتم الصوت عند تشغيل الشاشة</string>
     <string name="system_ui_control_center_unimportant_notification">منع دمج الإشعارات غير المهمة في الإشعارات السابقة</string>
     <string name="system_ui_control_center_expand_notification">توسيع الإشعارات</string>
@@ -736,7 +733,6 @@
     <string name="system_ui_control_center_rounded_rect">مربع مستدير الزوايا</string>
     <string name="system_ui_control_center_rounded_rect_radius">نصف قطر الزوايا المستديرة</string>
     <string name="system_ui_control_center_fix_tiles_list">تعطيل إخفاء البلاطات الداكنة جدًا</string>
-    <string name="system_ui_shade_header_gradient_blur">ضبابية تدرج رأس الظل</string>
     <string name="system_ui_control_center_hide_operator">تخصيص اسم الشبكة</string>
     <string name="system_ui_control_center_hide_delimiter">إخفاء الفواصل فقط</string>
     <string name="system_ui_control_center_hide_display_device_name">إخفاء اسم الجهاز</string>

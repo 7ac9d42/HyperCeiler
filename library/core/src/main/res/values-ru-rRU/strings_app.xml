@@ -232,7 +232,6 @@
     <string name="unlock_ai_wallpaper">Разблокировать ИИ обои</string>
     <!--Multi-list Array-->
     <string name="array_close">Отключить</string>
-    <string name="array_hide">Скрыть</string>
     <string name="array_default">Стандарт</string>
     <string name="array_align_left">Слева</string>
     <string name="array_align_right">Справа</string>
@@ -534,7 +533,6 @@
     <string name="system_ui_lock_screen_scramble_pin">Случайный PIN</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">Случайный порядок клавиатуры PIN-кода</string>
     <string name="system_ui_lock_screen_default_theme">Поддерживает только тему по умолчанию</string>
-    <string name="system_ui_lock_screen_hide_camera">Скрыть камеру</string>
     <string name="system_ui_lock_screen_current">Текущий</string>
     <string name="system_ui_lock_screen_blur_button">Размытие кнопок экрана блокировки</string>
     <string name="system_ui_lock_screen_blur_button_desc">После включения фон камеры и кнопки отрицательного экрана на экране блокировки размыты, что может привести к высокому энергопотреблению. Поддерживается только тема по умолчанию.</string>
@@ -735,7 +733,6 @@
     <string name="system_ui_control_center_show_weather_city">Показать город</string>
     <string name="system_ui_control_center_disable_device_managed">Скрыть запросы мониторинга сети</string>
     <string name="system_ui_control_center_hide_edit_botton">Скрыть кнопку редактирования</string>
-    <string name="system_ui_control_center_tile_super_blur">Супер размытие плитки</string>
     <string name="system_ui_control_center_mute_visible_notice">Без звука при включенном экране</string>
     <string name="system_ui_control_center_unimportant_notification">Сворачивание уведомлений в историю запрещено</string>
     <string name="system_ui_control_center_expand_notification">Развернуть уведомления</string>
@@ -745,7 +742,6 @@
     <string name="system_ui_control_center_rounded_rect">Плитка с закругленными углами</string>
     <string name="system_ui_control_center_rounded_rect_radius">Округленный радиус</string>
     <string name="system_ui_control_center_fix_tiles_list">Отключить скрытие очень темных плиток</string>
-    <string name="system_ui_shade_header_gradient_blur">Теневое размытие в заголовке</string>
     <string name="system_ui_control_center_hide_operator">Настройка имени оператора</string>
     <string name="system_ui_control_center_hide_delimiter">Скрывать только разделители</string>
     <string name="system_ui_control_center_hide_display_device_name">Отображение имени устройства</string>

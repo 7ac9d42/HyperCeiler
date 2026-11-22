@@ -222,7 +222,6 @@
     <string name="system_ui_statusbar_indicator_bold">Fett</string>
     <!--Multi-list Array-->
     <string name="array_close">Schließen</string>
-    <string name="array_hide">Ausblenden</string>
     <string name="array_default">Standard</string>
     <string name="array_align_left">Links</string>
     <string name="array_align_right">Rechts</string>
@@ -514,7 +513,6 @@
     <string name="system_ui_lock_screen_scramble_pin">Zufällige PIN</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">PIN-Tastatur-Reihenfolge randomisieren</string>
     <string name="system_ui_lock_screen_default_theme">Nur Standard-Theme unterstützen</string>
-    <string name="system_ui_lock_screen_hide_camera">Kamera ausblenden</string>
     <string name="system_ui_lock_screen_current">Strom</string>
     <string name="system_ui_lock_screen_blur_button">Sperrbildschirm-Buttons unscharf machen</string>
     <string name="system_ui_lock_screen_blur_button_desc">Nach der Aktivierung wird der Hintergrund der Kamera- und Verknüpfungstasten unscharf, was hohen Stromverbrauch verursachen kann.\nUnterstützt nur Standard-Theme.</string>
@@ -697,7 +695,6 @@
     <string name="system_ui_control_center_show_weather_city">Stadt anzeigen</string>
     <string name="system_ui_control_center_disable_device_managed">Netzwerküberwachungs-Hinweise ausblenden</string>
     <string name="system_ui_control_center_hide_edit_botton">Bearbeiten-Button ausblenden</string>
-    <string name="system_ui_control_center_tile_super_blur">Erweiterte Texturen auf QS-Kacheln</string>
     <string name="system_ui_control_center_mute_visible_notice">Stumm wenn Bildschirm an ist</string>
     <string name="system_ui_control_center_unimportant_notification">Unwichtige Benachrichtigungen automatisch blockieren</string>
     <string name="system_ui_control_center_expand_notification">Benachrichtigungen erweitern</string>
@@ -707,7 +704,6 @@
     <string name="system_ui_control_center_rounded_rect">Abgerundete Rechteck-Kachel</string>
     <string name="system_ui_control_center_rounded_rect_radius">Abgerundeter Radius</string>
     <string name="system_ui_control_center_fix_tiles_list">Versteckte Kontrollzentrum-Kacheln freischalten</string>
-    <string name="system_ui_shade_header_gradient_blur">Oberteil von Kontrollzentrum und Benachrichtigungsleiste unscharf machen</string>
     <string name="system_ui_control_center_hide_operator">Anbieter-Name anpassen</string>
     <string name="system_ui_control_center_hide_delimiter">Anbieter-Name-Trennzeichen ausblenden</string>
     <string name="system_ui_control_center_hide_display_device_name">Gerätename anzeigen</string>

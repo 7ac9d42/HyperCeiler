@@ -39,10 +39,8 @@
     <string name="system_cc_showpct_style_2">Belirgin</string>
     <!--System Framework-->
     <string name="system_framework_phone_network_title">Ağ ayarları</string>
-    <string name="system_ui_hide_navigation_bar">Gezinme çubuğunu gizle</string>
     <string name="system_ui_hide_navigation_bar_toast">Gezinme tuşlarını değiştirme</string>
     <string name="system_ui_hide_navigation_bar_toast_2">Hareket çizgilerini gizleme</string>
-    <string name="system_ui_hide_navigation_bar_more">Lütfen Sistem başlatıcısını ve Sistem arayüzü kapsamlarını yeniden başlatın</string>
     <string name="system_framework_guided_access_status">Uygulama sabit iken durum çubuğunu gizle</string>
     <string name="system_framework_guided_access_status_more">Çıkış yolu güç düğmesine uzun basma olarak değişecek ve siz kilit modundan çıkana kadar durum çubuğu gizlenecektir</string>
     <string name="system_framework_guided_access">Sabit uygulamalar</string>

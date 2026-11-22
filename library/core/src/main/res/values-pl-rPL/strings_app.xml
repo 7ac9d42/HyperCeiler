@@ -499,7 +499,6 @@
     <string name="system_ui_lock_screen_scramble_pin">Losowy PIN</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">Zmienia losowo układ przyciskowy PIN</string>
     <string name="system_ui_lock_screen_default_theme">Obsługuje tylko domyślny motyw</string>
-    <string name="system_ui_lock_screen_hide_camera">Ukryj aparat</string>
     <string name="system_ui_lock_screen_current">Przepływ</string>
     <string name="system_ui_lock_screen_blur_button">Rozmycie przycisków ekranu blokady</string>
     <string name="system_ui_lock_screen_blur_button_desc">Po włączeniu tło przycisków na ekranie blokady będą rozmyte, co może powodować wysokie zużycie energii.\nObsługiwany tylko domyślny motyw.</string>
@@ -675,7 +674,6 @@
     <string name="system_ui_control_center_rounded_rect">Zaokrąglony prostokątny kafelek</string>
     <string name="system_ui_control_center_rounded_rect_radius">Zaokrąglony promień</string>
     <string name="system_ui_control_center_fix_tiles_list">Wyłącz ukrycie niezwykle ciemnych kafelków</string>
-    <string name="system_ui_shade_header_gradient_blur">Rozmycie gradientu nagłówka</string>
     <string name="system_ui_control_center_hide_operator">Dostosuj nazwę operatora</string>
     <string name="system_ui_control_center_hide_delimiter">Tylko separatory są ukryte</string>
     <string name="system_ui_control_center_hide_display_device_name">Wyświetl nazwę urządzenia</string>

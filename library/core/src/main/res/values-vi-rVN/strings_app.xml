@@ -232,7 +232,6 @@
     <string name="unlock_ai_wallpaper">Mở khóa quyền truy cập hình nền AI</string>
     <!--Multi-list Array-->
     <string name="array_close">Đóng</string>
-    <string name="array_hide">Ẩn</string>
     <string name="array_default">Mặc định</string>
     <string name="array_align_left">Bên trái</string>
     <string name="array_align_right">Bên phải</string>
@@ -534,7 +533,6 @@
     <string name="system_ui_lock_screen_scramble_pin">Mã PIN ngẫu nhiên</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">Sắp xếp Mã PIN ngẫu nhiên</string>
     <string name="system_ui_lock_screen_default_theme">Chỉ hỗ trợ chủ đề mặc định</string>
-    <string name="system_ui_lock_screen_hide_camera">Ẩn Camera</string>
     <string name="system_ui_lock_screen_current">Hiện tại</string>
     <string name="system_ui_lock_screen_blur_button">Làm mờ phím tắt và thông báo</string>
     <string name="system_ui_lock_screen_blur_button_desc">Sau khi bật, nền của camera và nút màn hình điều hướng trên Màn hình khóa sẽ bị mờ, có thể gây tốn điện năng.\nChỉ hỗ trợ chủ đề mặc định.</string>
@@ -736,7 +734,6 @@
     <string name="system_ui_control_center_show_weather_city">Hiện thị thành phố</string>
     <string name="system_ui_control_center_disable_device_managed">Ẩn lời nhắc giám sát mạng</string>
     <string name="system_ui_control_center_hide_edit_botton">Ẩn nút sửa</string>
-    <string name="system_ui_control_center_tile_super_blur">Ô siêu mờ</string>
     <string name="system_ui_control_center_mute_visible_notice">Tắt âm thông báo khi màn hình bật</string>
     <string name="system_ui_control_center_unimportant_notification">Thu gọn vào thông báo lịch sử bị cấm</string>
     <string name="system_ui_control_center_expand_notification">Mở rộng thông báo</string>
@@ -746,7 +743,6 @@
     <string name="system_ui_control_center_rounded_rect">Ô hình chữ nhật bo tròn</string>
     <string name="system_ui_control_center_rounded_rect_radius">Góc bo tròn</string>
     <string name="system_ui_control_center_fix_tiles_list">Tắt ẩn các ô cực tối</string>
-    <string name="system_ui_shade_header_gradient_blur">Làm mờ tiêu đề bóng mờ</string>
     <string name="system_ui_control_center_hide_operator">Tùy chỉnh tên nhà mạng</string>
     <string name="system_ui_control_center_hide_delimiter">Ẩn dấu phân cách giữa tên nhà mạng</string>
     <string name="system_ui_control_center_hide_display_device_name">Hiện tên thiết bị</string>

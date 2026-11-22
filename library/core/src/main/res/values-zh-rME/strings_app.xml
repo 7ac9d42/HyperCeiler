@@ -474,7 +474,6 @@
     <string name="system_ui_lock_screen_scramble_pin">不随机PIN</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">随机更改 PIN 键盘顺序</string>
     <string name="system_ui_lock_screen_default_theme">还是默认主题</string>
-    <string name="system_ui_lock_screen_hide_camera">防止版本T0污蔑</string>
     <string name="system_ui_lock_screen_current">当前电流</string>
     <string name="system_ui_lock_screen_blur_button">糊上锁屏按钮</string>
     <string name="system_ui_lock_screen_blur_button_radius">背景圆角</string>

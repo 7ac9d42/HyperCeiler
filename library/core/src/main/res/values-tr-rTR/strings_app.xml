@@ -227,7 +227,6 @@
     <string name="system_ui_statusbar_indicator_bold">Kalın</string>
     <!--Multi-list Array-->
     <string name="array_close">Kapat</string>
-    <string name="array_hide">Gizle</string>
     <string name="array_default">Varsayılan</string>
     <string name="array_align_left">Sol</string>
     <string name="array_align_right">Sağ</string>
@@ -511,7 +510,6 @@
     <string name="system_ui_lock_screen_scramble_pin">Rastgele PIN</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">PIN tuş takımı sırasını randomize etme</string>
     <string name="system_ui_lock_screen_default_theme">Yalnızca varsayılan temayı destekleyin</string>
-    <string name="system_ui_lock_screen_hide_camera">Camerayı gizle</string>
     <string name="system_ui_lock_screen_current">Mevcut</string>
     <string name="system_ui_lock_screen_blur_button">Bulanıklaştırma Kilit ekranı düğmeleri</string>
     <string name="system_ui_lock_screen_blur_button_radius">Arka plan bulanıklaştırma yarıçapı</string>

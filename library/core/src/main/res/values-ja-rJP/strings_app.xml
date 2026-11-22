@@ -232,7 +232,6 @@
     <string name="unlock_ai_wallpaper">AI 壁紙へのアクセスをアンロック</string>
     <!--Multi-list Array-->
     <string name="array_close">閉じる</string>
-    <string name="array_hide">非表示</string>
     <string name="array_default">デフォルト</string>
     <string name="array_align_left">左</string>
     <string name="array_align_right">右</string>
@@ -534,7 +533,6 @@
     <string name="system_ui_lock_screen_scramble_pin">ランダム PIN</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">PIN キーパッドの順序をランダムにします</string>
     <string name="system_ui_lock_screen_default_theme">デフォルトのテーマのみをサポートします</string>
-    <string name="system_ui_lock_screen_hide_camera">カメラを非表示</string>
     <string name="system_ui_lock_screen_current">電流</string>
     <string name="system_ui_lock_screen_blur_button">ロック画面のボタンをぼかす</string>
     <string name="system_ui_lock_screen_blur_button_desc">有効にすると、カメラとショートカットボタンの背景がぼやけるため、消費電力が増える可能性があります。\nデフォルトのテーマのみをサポートします。</string>
@@ -735,7 +733,6 @@
     <string name="system_ui_control_center_show_weather_city">都市を表示</string>
     <string name="system_ui_control_center_disable_device_managed">ネットワーク監視のプロンプトを非表示</string>
     <string name="system_ui_control_center_hide_edit_botton">編集ボタンを隠す</string>
-    <string name="system_ui_control_center_tile_super_blur">クイック設定タイルの高度なテクスチャ設定</string>
     <string name="system_ui_control_center_mute_visible_notice">画面点灯時にミュート</string>
     <string name="system_ui_control_center_unimportant_notification">重要度の低い通知を自動的にブロック</string>
     <string name="system_ui_control_center_expand_notification">通知を展開</string>
@@ -745,7 +742,6 @@
     <string name="system_ui_control_center_rounded_rect">丸みを帯びた長方形のタイル</string>
     <string name="system_ui_control_center_rounded_rect_radius">角丸の半径</string>
     <string name="system_ui_control_center_fix_tiles_list">さらに輝度を下げるタイルの非表示を無効化</string>
-    <string name="system_ui_shade_header_gradient_blur">コントロールセンターと通知シェードの上部をぼかす</string>
     <string name="system_ui_control_center_hide_operator">キャリア名のカスタマイズ</string>
     <string name="system_ui_control_center_hide_delimiter">区切り文字のみ非表示</string>
     <string name="system_ui_control_center_hide_display_device_name">デバイス名の表示</string>

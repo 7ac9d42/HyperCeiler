@@ -42,10 +42,8 @@
     <string name="system_cc_showpct_style_2">明確的</string>
     <!--System Framework-->
     <string name="system_framework_phone_network_title">網路設定</string>
-    <string name="system_ui_hide_navigation_bar">隱藏手勢提示線</string>
     <string name="system_ui_hide_navigation_bar_toast">不要切換到導航按鈕</string>
     <string name="system_ui_hide_navigation_bar_toast_2">不隱藏手勢提示線</string>
-    <string name="system_ui_hide_navigation_bar_more">請重新啟動係統桌面惡系統界面作用域</string>
     <string name="system_framework_guided_access_status">增強屏蔽</string>
     <string name="system_framework_guided_access_status_more">固定期間隱藏狀態欄與手勢提示線，退出固定後自動恢復</string>
     <string name="system_framework_guided_access_tile">添加磁貼</string>

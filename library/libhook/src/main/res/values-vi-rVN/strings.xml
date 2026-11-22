@@ -51,10 +51,8 @@
     <string name="media_control_button_mode_2">Nút phát nằm ở phía ngoài cùng bên trái</string>
     <!--System Framework-->
     <string name="system_framework_phone_network_title">Cài đặt mạng</string>
-    <string name="system_ui_hide_navigation_bar">Ẩn thanh cử chỉ</string>
     <string name="system_ui_hide_navigation_bar_toast">Không chuyển sang điều hướng bằng nút</string>
     <string name="system_ui_hide_navigation_bar_toast_2">Không ẩn thanh cử chỉ</string>
-    <string name="system_ui_hide_navigation_bar_more">Vui lòng khởi động lại trình Khởi chạy hệ thống và các phạm vi Giao diện người dùng hệ thống</string>
     <string name="system_framework_guided_access_status">Ẩn thanh trạng thái khi ứng dụng được ghim</string>
     <string name="system_framework_guided_access_status_more">Cách thoát sẽ thay đổi thành nhấn giữ nút nguồn. Thanh trạng thái sẽ ẩn cho đến khi bạn thoát khỏi chế độ khóa</string>
     <string name="system_framework_guided_access">Ứng dụng đã cố định</string>
