@@ -19,29 +19,16 @@
 package com.sevtinge.hyperceiler.libhook.rules.systemframework.freeform
 
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
-import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreAndroidVersion
-import io.github.lingqiqi5211.ezhooktool.core.findAllMethods
 import io.github.lingqiqi5211.ezhooktool.core.findMethod
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.createHook
-import io.github.lingqiqi5211.ezhooktool.xposed.dsl.createHooks
 
 class FreeFormCount : BaseHook() {
     override fun init() {
         val clazzMiuiFreeFormStackDisplayStrategy =
             findClass("com.android.server.wm.MiuiFreeFormStackDisplayStrategy")
 
-        if (isMoreAndroidVersion(36)) {
-            clazzMiuiFreeFormStackDisplayStrategy.findMethod { name("getMaxMiuiFreeFormStackCount") }.createHook {
-                    returnConstant(256)
-                }
-        } else {
-            // GetMaxMiuiFreeFormStackCount
-            clazzMiuiFreeFormStackDisplayStrategy.findAllMethods { filter { name in setOf(
-                    "getMaxMiuiFreeFormStackCount",
-                    "getMaxMiuiFreeFormStackCountForFlashBack"
-                ) } }.createHooks {
-                returnConstant(256)
-            }
+        clazzMiuiFreeFormStackDisplayStrategy.findMethod { name("getMaxMiuiFreeFormStackCount") }.createHook {
+            returnConstant(256)
         }
     }
 }

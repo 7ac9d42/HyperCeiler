@@ -18,8 +18,6 @@
  */
 package com.sevtinge.hyperceiler.libhook.rules.systemframework.corepatch;
 
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreAndroidVersion;
-
 import com.sevtinge.hyperceiler.common.log.XposedLog;
 import com.sevtinge.hyperceiler.libhook.base.BaseHook;
 import io.github.lingqiqi5211.ezhooktool.xposed.java.IMethodHook;
@@ -49,8 +47,8 @@ public class DisablePersistent extends BaseHook {
             XposedLog.w(TAG, getPackageName(), "Not found class: " + packageName);
         }
 
-        findAndHookMethod("com.android.server.pm.InstallPackageHelper", isMoreAndroidVersion(36) ?
-            "preparePackage" : "preparePackageLI", "com.android.server.pm.InstallRequest", new IMethodHook() {
+        findAndHookMethod("com.android.server.pm.InstallPackageHelper",
+            "preparePackage", "com.android.server.pm.InstallRequest", new IMethodHook() {
             @Override
             public void before(HookParam param) {
                 isInstall = true;
