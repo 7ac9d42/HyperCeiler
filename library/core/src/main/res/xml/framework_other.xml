@@ -144,12 +144,6 @@
 
         <SwitchPreference
             android:defaultValue="false"
-            android:key="prefs_key_system_framework_other_disable_cleaner"
-            android:summary="@string/system_framework_other_disable_cleaner_desc"
-            android:title="@string/system_framework_other_disable_cleaner" />
-
-        <SwitchPreference
-            android:defaultValue="false"
             android:key="prefs_key_system_framework_other_disable_gesture_monitor"
             android:summary="@string/system_framework_other_disable_gesture_monitor_desc"
             android:title="@string/system_framework_other_disable_gesture_monitor" />
