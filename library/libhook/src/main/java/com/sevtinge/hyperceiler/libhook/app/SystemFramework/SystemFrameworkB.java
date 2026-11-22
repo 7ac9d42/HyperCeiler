@@ -127,10 +127,8 @@ public class SystemFrameworkB extends BaseLoad {
         initHook(new DisableFreeformBlackList(), PrefsBridge.getBoolean("system_framework_disable_freeform_blacklist"));
         initHook(new FreeformBubble(), PrefsBridge.getBoolean("system_framework_freeform_bubble"));
         initHook(new UnForegroundPin(), PrefsBridge.getBoolean("system_framework_freeform_foreground_pin"));
-        /*initHook(new StickyFloatingWindows(), PrefsBridge.getBoolean("system_framework_freeform_sticky"));
-        initHook(new AllowAutoStart(), PrefsBridge.getBoolean("system_framework_auto_start_apps_menu"));
-        initHook(MultiFreeFormSupported.INSTANCE, PrefsBridge.getBoolean("system_framework_freeform_recents_to_small_freeform"));
-        initHook(new OpenAppInFreeForm(), PrefsBridge.getBoolean("system_framework_freeform_jump"));*/
+        /*initHook(new AllowAutoStart(), PrefsBridge.getBoolean("system_framework_auto_start_apps_menu"));
+        initHook(MultiFreeFormSupported.INSTANCE, PrefsBridge.getBoolean("system_framework_freeform_recents_to_small_freeform"));*/
 
         // 音量
         initHook(new VolumeDefaultStream(), PrefsBridge.getStringAsInt("system_framework_default_volume_stream", 0) != 0);
