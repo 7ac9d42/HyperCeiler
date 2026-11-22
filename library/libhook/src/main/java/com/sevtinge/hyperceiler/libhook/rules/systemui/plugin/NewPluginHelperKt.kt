@@ -35,7 +35,6 @@ import com.sevtinge.hyperceiler.libhook.rules.systemui.plugin.systemui.HideEditB
 import com.sevtinge.hyperceiler.libhook.rules.systemui.plugin.systemui.NewBrightnessPct
 import com.sevtinge.hyperceiler.libhook.rules.systemui.plugin.systemui.NewShowVolumePct
 import com.sevtinge.hyperceiler.libhook.rules.systemui.plugin.systemui.QSColor
-import com.sevtinge.hyperceiler.libhook.rules.systemui.plugin.systemui.QsTileSuperBlur
 import com.sevtinge.hyperceiler.libhook.rules.systemui.plugin.systemui.StartCollpasedColumnPress
 import com.sevtinge.hyperceiler.libhook.rules.systemui.plugin.systemui.UnlockCarSicknessTile
 import com.sevtinge.hyperceiler.libhook.rules.systemui.plugin.systemui.VolumeOrQSBrightnessValue
@@ -184,10 +183,6 @@ object NewPluginHelperKt : BaseHook() {
 
                 if (PrefsBridge.getBoolean("system_ui_control_center_hide_edit_botton")) {
                     enabledLoaders.add(Pair("HideEditButton", HideEditButton::initHideEditButton))
-                }
-
-                if (PrefsBridge.getBoolean("system_ui_control_center_tile_super_blur")) {
-                    enabledLoaders.add(Pair("QsTileSuperBlur", QsTileSuperBlur::initQsTileSuperBlur))
                 }
 
                 if (PrefsBridge.getBoolean("system_ui_control_center_rounded_rect")) {

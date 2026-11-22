@@ -18,10 +18,7 @@
 */
 package com.sevtinge.hyperceiler.hooker.systemui;
 
-
 import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.Miui.isPad;
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreHyperOSVersion;
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreSmallVersion;
 
 import androidx.preference.SwitchPreference;
 
@@ -29,7 +26,6 @@ import com.sevtinge.hyperceiler.core.R;
 import com.sevtinge.hyperceiler.dashboard.DashboardFragment;
 
 public class LockScreenSettings extends DashboardFragment {
-    SwitchPreference mHideRightButton; // 隐藏右侧按钮
     SwitchPreference mBlurButton; // 锁屏模糊按钮
 
     @Override
@@ -39,16 +35,10 @@ public class LockScreenSettings extends DashboardFragment {
 
     @Override
     public void initPrefs() {
-        mHideRightButton = findPreference("prefs_key_system_ui_lock_screen_hide_camera");
         mBlurButton = findPreference("prefs_key_system_ui_lock_screen_blur_button");
 
         if (isPad()) {
-            setFuncHint(mHideRightButton, 1);
             setFuncHint(mBlurButton, 1);
-        } else if (isMoreHyperOSVersion(3f)) {
-            setPreVisible(mHideRightButton, false);
-        } else if (isMoreSmallVersion(200, 2f)) {
-            setFuncHint(mHideRightButton, 2);
         }
     }
 }

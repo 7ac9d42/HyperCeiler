@@ -31,18 +31,4 @@
             app:entryValues="@array/status_bar_icon_mode_value" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/system_ui_navigation_handle_title">
-        <SwitchPreference
-            android:defaultValue="false"
-            android:disableDependentsState="true"
-            android:key="prefs_key_system_ui_hide_navigation_bar"
-            android:summary="@string/system_ui_hide_navigation_bar_more"
-            android:title="@string/system_ui_hide_navigation_bar" />
-
-        <!--navigation_handle_horizontal_margin 30-->
-
-        <!--navigation_handle_sample_horizontal_margin 10-->
-
-    </PreferenceCategory>
-
 </PreferenceScreen>
