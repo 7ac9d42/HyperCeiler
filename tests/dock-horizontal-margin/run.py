@@ -35,7 +35,7 @@ with tempfile.TemporaryDirectory(prefix='hc-dock-horizontal-') as folder:
     (out/'actual_cache.h').write_text('namespace home_layout {\nconstexpr char kCacheMagic[]={\'H\',\'C\',\'L\',\'C\'};constexpr uint32_t kCacheVersion='+version+';\n'+source[start:end]+'\n}\n')
     run([os.environ.get('CXX',shutil.which('c++')),'-std=c++20','-O1','-g','-fsanitize=address,undefined','-I'+str(cpp),'-I'+str(root/'tests/home-layout-native'),'-I'+str(out),here/'native_test.cpp','-o',out/'native'])
     run([out/'native'])
-    stubs=[p for p in (root/'tests/home-layout-native/stubs').rglob('*.java') if p.name!='ContentResolver.java']
+    stubs=[p for p in (root/'tests/home-layout-native/stubs').rglob('*.java') if p.name not in ('ContentResolver.java','ModuleLog.java')]
     stubs += list((root/'tests/hyos-control/java').rglob('*.java'))
     stubs += [root/'tests/home-dock-window/stubs/android/os'/f for f in ['Binder.java','IBinder.java','Parcel.java']]
     prod=[lib/f for f in ['base/FrameworkHookGate.java','provider/HomeLayoutPrefsSnapshot.java','provider/HomeGesturePrefsSnapshot.java','rules/home/dock/HomeLayoutNativeEndpointOS4.java']]

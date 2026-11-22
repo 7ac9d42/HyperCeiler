@@ -13,6 +13,7 @@ std::atomic_uint64_t g_dock_horizontal_hits{0},g_dock_horizontal_applied{0};
 home_layout::GridFieldOffsets g_grid_field{0x1b,0x23,0x0b,0x37,0x3f,0x2b,0x33,0x17,0x13,0x0f,0x07};
 home_dynamic::GeometryFrame g_geometry_frame[]{kWorkspaceFrame,kOccupiedFrame,kHotseatFrame};
 home_layout::WorkspaceRenderSnapshot rendered_workspace;
+static bool rate_limited(std::atomic_uint64_t&, unsigned) { return false; }
 #define __android_log_print(...) ((void)0)
 #define ANDROID_LOG_INFO 4
 #include "actual_callback.h"
@@ -55,9 +56,12 @@ int main(){
         config.knobs[4]={true,-10};std::vector<uint8_t> raw;serialize_config(config,raw);Config restored;
         c(parse_config(raw,restored)&&restored.dock_horizontal==delta&&restored.knobs[4].delta_dp==-10&&restored.infinite_scroll);
         for(size_t remove=1;remove<=20;++remove){auto bad=raw;bad.resize(bad.size()-remove);c(!parse_config(bad,restored));}
-        auto old=raw;old.resize(old.size()-8);old[4]=19;
+        constexpr size_t recent_header_bytes=2*sizeof(uint32_t);
+        constexpr size_t infinite_scroll_bytes=2*sizeof(uint32_t);
+        constexpr size_t dock_horizontal_bytes=3*sizeof(uint32_t);
+        auto old=raw;old.resize(old.size()-recent_header_bytes-infinite_scroll_bytes);old[4]=19;
         c(parse_config(old,restored)&&restored.dock_horizontal==delta&&!restored.infinite_scroll);
-        old=raw;old.resize(old.size()-20);old[4]=18;
+        old.resize(old.size()-dock_horizontal_bytes);old[4]=18;
         c(parse_config(old,restored)&&restored.dock_horizontal==0&&restored.knobs[4].delta_dp==-10);
         auto bad=raw;bad.back()=0x7f;c(!parse_config(bad,restored));
     }
