@@ -23,7 +23,6 @@ import com.sevtinge.hyperceiler.common.log.XposedLog;
 import com.sevtinge.hyperceiler.common.utils.PrefsBridge;
 import com.sevtinge.hyperceiler.libhook.base.BaseHook;
 import io.github.lingqiqi5211.ezhooktool.xposed.java.IMethodHook;
-import com.sevtinge.hyperceiler.libhook.rules.various.clipboard.ClearClipboard;
 import com.sevtinge.hyperceiler.libhook.rules.various.clipboard.ClipboardUnlock;
 import com.sevtinge.hyperceiler.libhook.rules.various.clipboard.UnlockIme;
 import com.sevtinge.hyperceiler.libhook.rules.various.input.MiAospIme;
@@ -81,13 +80,6 @@ public class InputMethodClassLoaderDispatcher extends BaseHook {
             enabledLoaders.add(InputMethodDexHelper.loader(
                 "ClipboardUnlock",
                 classLoader -> new ClipboardUnlock().initLoader(classLoader)
-            ));
-        }
-
-        if (PrefsBridge.getBoolean("add_clipboard_clear")) {
-            enabledLoaders.add(InputMethodDexHelper.loader(
-                "ClearClipboard",
-                classLoader -> new ClearClipboard().initLoader(classLoader)
             ));
         }
 

@@ -1,6 +1,7 @@
 import com.sevtinge.hyperceiler.common.log.ModuleLog;
 import com.sevtinge.hyperceiler.common.utils.PrefsBridge;
 import com.sevtinge.hyperceiler.libhook.app.Others.VariousThirdApps;
+import com.sevtinge.hyperceiler.libhook.appbase.input.InputMethodClassLoaderDispatcher;
 import com.sevtinge.hyperceiler.libhook.appbase.input.MiuiImeSupport;
 import com.sevtinge.hyperceiler.libhook.base.BaseHook;
 import com.sevtinge.hyperceiler.libhook.base.BaseLoad;
@@ -66,6 +67,30 @@ public class RecreationTest {
         PrefsBridge.values.put("various_unlock_ime",true);
         new VariousThirdApps().onPackageLoaded();
         check(BaseLoad.loaded.contains("UnlockIme"));
-        System.out.println("IME recreation: " + checks + " checks passed (100 service resets, inlined cache path, old predicate/field variants, cleanup, selected cold-start routing, disabled/unselected/legacy)");
+        BaseHook.hooks.clear();
+        PrefsBridge.values.clear();
+        PrefsBridge.values.put("add_clipboard_clear", true);
+        new InputMethodClassLoaderDispatcher().init();
+        check(!BaseHook.hooks.containsKey("loadDex"));
+
+        BaseLoad.pkg = "com.baidu.input_mi";
+        PrefsBridge.values.put("various_unlock_ime_style", "1");
+        PrefsBridge.values.put("various_unlock_ime_apps", Set.of(BaseLoad.pkg));
+        var dispatcher = new InputMethodClassLoaderDispatcher();
+        dispatcher.init();
+        check(BaseHook.hooks.containsKey("loadDex"));
+        var load = new HookParam();
+        load.args = new Object[]{RecreationTest.class.getClassLoader(), "fixture"};
+        BaseHook.hooks.get("loadDex").after(load);
+        check(!BaseHook.hooks.containsKey("getSupportIme"));
+
+        PrefsBridge.values.put("various_unlock_ime_show_all", true);
+        new InputMethodClassLoaderDispatcher().init();
+        BaseHook.hooks.get("loadDex").after(load);
+        check(BaseHook.hooks.keySet().equals(Set.of("loadDex", "getSupportIme")));
+        var result = new HookParam();
+        BaseHook.hooks.get("getSupportIme").before(result);
+        check(result.result.equals(java.util.List.of("fixture.ime")));
+        System.out.println("IME recreation: " + checks + " checks passed (service recovery, routing, retired clipboard preference, SDK 37 IME list)");
     }
 }

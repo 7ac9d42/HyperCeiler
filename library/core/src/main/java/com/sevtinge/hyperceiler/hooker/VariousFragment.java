@@ -18,7 +18,6 @@
  */
 package com.sevtinge.hyperceiler.hooker;
 
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreSmallVersion;
 import static com.sevtinge.hyperceiler.sub.SubPickerActivity.IME_MODE;
 
 import android.content.Intent;
@@ -56,7 +55,6 @@ public class VariousFragment extends DashboardFragment {
     private static final int IME_STYLE_AOSP = 2;
 
     SwitchPreference mClipboard;
-    SwitchPreference mClipboardClear;
     SwitchPreference mShowAllImeList;
     SwitchPreference mImeListUiCount;
     DropDownPreference mImeStyle;
@@ -72,17 +70,12 @@ public class VariousFragment extends DashboardFragment {
     @Override
     public void initPrefs() {
         mClipboard = findPreference("prefs_key_sogou_xiaomi_clipboard");
-        mClipboardClear = findPreference("prefs_key_add_clipboard_clear");
         mImeStyle = findPreference(PREF_IME_STYLE);
         mImeTargetApps = findPreference(PREF_IME_TARGET_APPS);
         mShowAllImeList = findPreference(PREF_IME_SHOW_ALL);
         mImeListUiCount = findPreference(PREF_IME_UI_COUNT);
         mAospImeNavBarLayoutStart = findPreference(PREF_AOSP_IME_NAV_BAR_LAYOUT_START);
         mAospImeNavBarLayoutEnd = findPreference(PREF_AOSP_IME_NAV_BAR_LAYOUT_END);
-
-        if (isMoreSmallVersion(200, 2f)) {
-            setFuncHint(mClipboardClear, 2);
-        }
 
         if (mClipboard != null) {
             mClipboard.setOnPreferenceChangeListener((preference, o) -> {

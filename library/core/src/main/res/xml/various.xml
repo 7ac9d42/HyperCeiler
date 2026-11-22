@@ -41,12 +41,6 @@
             android:summary="@string/sogou_xiaomi_clipboard_desc"
             android:title="@string/sogou_xiaomi_clipboard" />
 
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_add_clipboard_clear"
-            android:summary="@string/various_phrase_clipboardlist_more"
-            android:title="@string/add_clipboard_clear" />
-
         <fan.preference.DropDownPreference
             android:key="prefs_key_various_unlock_ime_style"
             android:summary="@string/various_unlock_ime_desc"

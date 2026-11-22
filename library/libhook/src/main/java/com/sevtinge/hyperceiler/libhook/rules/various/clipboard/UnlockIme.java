@@ -18,7 +18,6 @@
 */
 package com.sevtinge.hyperceiler.libhook.rules.various.clipboard;
 
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreAndroidVersion;
 import static com.sevtinge.hyperceiler.libhook.utils.api.PropUtils.getProp;
 
 import android.os.Build;
@@ -66,8 +65,6 @@ public class UnlockIme extends BaseHook {
     }
 
     private void startHook(PackageTarget param) {
-        boolean showAllImeList = InputMethodConfig.shouldShowAllImeList();
-
         // 检查是否为小米定制输入法
         boolean isNonCustomize = isNonCustomizeIme(param.getPackageName());
         if (isNonCustomize) {
@@ -82,11 +79,6 @@ public class UnlockIme extends BaseHook {
                 XposedLog.e(TAG, "Class not found: InputMethodServiceInjector");
             }
         }
-
-        if (showAllImeList) {
-            hookDeleteNotSupportIme("android.inputmethodservice.InputMethodServiceInjector$MiuiSwitchInputMethodListener",
-                param.getClassLoader());
-        }
     }
 
     public void initLoader(ClassLoader classLoader) {
@@ -94,14 +86,9 @@ public class UnlockIme extends BaseHook {
             return;
         }
 
-        boolean showAllImeList = InputMethodConfig.shouldShowAllImeList();
-        if (showAllImeList) {
-
+        if (InputMethodConfig.shouldShowAllImeList()) {
             // 阻止获取输入法列表时进行过滤。同时也 hook 了系统框架，否则 getEnabledInputMethodList() 获取到的输入法可能仍然不全
             hookGetSupportIme(classLoader);
-
-            // 针对 A11 的修复切换输入法列表
-            hookDeleteNotSupportIme("com.miui.inputmethod.InputMethodBottomManager$MiuiSwitchInputMethodListener", classLoader);
         }
 
         boolean unlockImeListUiCount = InputMethodConfig.shouldUnlockImeListUiCount();
@@ -230,26 +217,6 @@ public class UnlockIme extends BaseHook {
             }
         } catch (Throwable e) {
             XposedLog.w(TAG, "call customizeBottomViewColor: " + e);
-        }
-    }
-
-    /**
-     * 针对 A10 的修复切换输入法列表
-     * Android 16 已无此方法
-     *
-     * @param className 声明或继承方法的类的名称
-     */
-    private void hookDeleteNotSupportIme(String className, ClassLoader classLoader) {
-        if (isMoreAndroidVersion(36)) return;
-        try {
-            Class<?> clazz = findClassIfExists(className, classLoader);
-            if (clazz == null) {
-                XposedLog.w(TAG, "Class not found: " + className);
-                return;
-            }
-            hookAllMethods(clazz, "deleteNotSupportIme", returnConstant(null));
-        } catch (Throwable throwable) {
-            XposedLog.e(TAG, "Hook method deleteNotSupportIme: " + throwable);
         }
     }
 
