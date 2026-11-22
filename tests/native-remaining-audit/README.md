@@ -5,6 +5,9 @@ Gallery/Weather entry hooks against the supplied OS4 ROM. It produces evidence
 and unresolved gaps, not a runtime compatibility score. It does not modify any
 APK, native image, production hook or preference protocol.
 
+The OS3 phone-launcher comparison is read from the pinned Git revision in
+`audit.py`; the local checkout must contain that revision.
+
 ```sh
 python3 tests/native-remaining-audit/audit.py \
   --project "$HYPERCEILER_TEST_DATA" \

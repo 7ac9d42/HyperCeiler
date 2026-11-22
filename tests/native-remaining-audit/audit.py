@@ -29,15 +29,25 @@ ELF = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(ELF)
 JAVA = ROOT / "library/libhook/src/main/java"
 APP = JAVA / "com/sevtinge/hyperceiler/libhook/app"
+LEGACY_SOURCE_REVISION = "497476f0dcd6f784afd3c1acf380a1c285d588dc"
 
 
 def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def source(path):
-    data = path.read_bytes()
-    return {"path": str(test_paths.report_path(path, ROOT)), "sha256": sha(data)}
+def read_source(path, revision=None):
+    if revision is None:
+        return path.read_bytes()
+    relative = path.relative_to(ROOT).as_posix()
+    return subprocess.check_output(["git", "-C", str(ROOT), "show", f"{revision}:{relative}"], timeout=10)
+
+
+def source(path, revision=None):
+    result = {"path": str(test_paths.report_path(path, ROOT)), "sha256": sha(read_source(path, revision))}
+    if revision is not None:
+        result["revision"] = revision
+    return result
 
 
 def uncomment(text):
@@ -76,8 +86,16 @@ def pref_keys(text):
     return sorted(set(re.findall(r'PrefsBridge\.\w+\(\s*"([^"]+)"', uncomment(text))))
 
 
-def hooks(path):
-    raw = path.read_text()
+def hooks(path, revision=None):
+    available = None
+    if revision is not None:
+        listing = subprocess.check_output([
+            "git", "-C", str(ROOT), "ls-tree", "-rz", "--name-only", revision,
+            "--", JAVA.relative_to(ROOT).as_posix(),
+        ], timeout=10)
+        available = set(listing.decode("utf-8").split("\0"))
+    raw = read_source(path, revision).decode("utf-8")
+    entry_source = source(path, revision)
     clean = uncomment(raw)
     imports = {x.rsplit(".", 1)[-1]: x for x in
                re.findall(r"import\s+([\w.]+);", clean)}
@@ -90,7 +108,8 @@ def hooks(path):
             raise ValueError(f"Unresolved hook import: {call}")
         name = name_match[1]
         base = JAVA / imports[name].replace(".", "/")
-        paths = [p for suffix in (".java", ".kt") if (p := base.with_suffix(suffix)).exists()]
+        paths = [p for p in (base.with_suffix(".java"), base.with_suffix(".kt"))
+                 if (p.exists() if available is None else p.relative_to(ROOT).as_posix() in available)]
         if len(paths) != 1:
             raise ValueError(f"Expected one source for {name}, found {paths}")
         impl = paths[0]
@@ -103,7 +122,7 @@ def hooks(path):
                     resolved_variables[variable] = " ".join(value.split())
                     gate_keys.update(pref_keys(value))
                     pending.append(value)
-        impl_raw = impl.read_text()
+        impl_raw = read_source(impl, revision).decode("utf-8")
         lookups = []
         for lookup in ("findAndHookMethod", "findAndChainMethod", "findAndHookConstructor", "findClass",
                        "findClassIfExists", "hookAllConstructors"):
@@ -113,10 +132,10 @@ def hooks(path):
                 prefix = arguments.split("new IMethodHook", 1)[0]
                 lookups.append({"api": lookup, "line": lookup_line,
                                 "argument_prefix": " ".join(prefix.split())[:300]})
-        result.append({"hook": name, "entry_source": source(path), "entry_line": line,
+        result.append({"hook": name, "entry_source": entry_source, "entry_line": line,
                        "gate": " ".join(call.split()), "gate_preference_keys": sorted(gate_keys),
                        "gate_resolved_variables": resolved_variables,
-                       "implementation": source(impl),
+                       "implementation": source(impl, revision),
                        "implementation_preference_keys": pref_keys(impl_raw),
                        "legacy_lookup_evidence": sorted(lookups, key=lambda x: x["line"]),
                        "device_verified": False})
@@ -266,7 +285,7 @@ def audit(project, objdump):
                     f'{x["va"]:x} {x["size"]:x} {"DEF" if x["defined"] else "UND"} {x["name"]}\n'
                     for x in entries))
 
-    home = hooks(APP / "Home/os3/HomePhone.java")
+    home = hooks(APP / "Home/os3/HomePhone.java", LEGACY_SOURCE_REVISION)
     os4 = hooks(APP / "Home/os4/HomePhone.java")
     for row in home:
         status, note = HOME_REPLACEMENTS.get(row["hook"], (
