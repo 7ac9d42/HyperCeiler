@@ -6,7 +6,11 @@ import java.util.Map;
 import com.sevtinge.hyperceiler.libhook.provider.HomeLayoutPrefsSnapshot;
 public final class FolderAutoCloseEndpointTest {
  static int checks;static void check(boolean b){checks++;if(!b)throw new AssertionError("check "+checks);}
- public static void main(String[]args){
+ public static void main(String[]args) throws ReflectiveOperationException {
+  // Keep the background worker from racing the fixture's explicit provider refreshes.
+  var refresher=HomeLayoutNativeEndpointOS4.class.getDeclaredField("refresher");
+  refresher.setAccessible(true);
+  refresher.set(null,new Thread());
   ContentResolver.setSpecs(HomeLayoutPrefsSnapshot.specs());
   for(int value:new int[]{0,1,0,1}){
    ContentResolver.setRows(Map.of("prefs_key_home_folder_auto_close",value));

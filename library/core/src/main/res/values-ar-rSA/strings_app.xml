@@ -952,7 +952,6 @@
     <string name="home_navigation_assist_left_slide_desc">مرر للأعلى من الزاوية اليسرى السفلية للشاشة</string>
     <string name="home_navigation_assist_right_slide_desc">مرر للأعلى من الزاوية اليمنى السفلية للشاشة</string>
     <string name="home_navigation_quick_back_more">مرر عبر الشاشة بدءًا من الحافة للرجوع إلى التطبيق السابق</string>
-    <string name="home_navigation_disable_full_screen_back_gesture">تعطيل الإيماءات الخلفية للشاشة الكاملة</string>
     <string name="home_navigation_back_area_height">ارتفاع منطقة الإيماءة للرجوع</string>
     <string name="home_navigation_back_area_width">عرض منطقة الإيماءة للرجوع</string>
     <string name="home_gesture_title2">الإيماءات</string>
@@ -1028,11 +1027,6 @@
     <string name="home_wallpaper_blur">ضبابية الخلفية</string>
     <string name="home_enable_blur">بدء الضبابية</string>
     <string name="home_blur_radius_title">نطاق الضبابية</string>
-    <string name="home_folder_shade_title">لون التغطية</string>
-    <string name="home_folder_shade_summary">تعزيز أو إضعاف لون الخلفية</string>
-    <string name="home_folder_shade_solid">الخلفية بالكامل</string>
-    <string name="home_folder_shade_gradient">المنتصف فقط</string>
-    <string name="home_folder_shade_level_title">شدة اللون</string>
     <string name="home_folder_cols_title">عدد الأعمدة في المجلدات</string>
     <string name="home_folder_cols_format">%s عمود</string>
     <string name="home_folder_rows_format">صف %s</string>
@@ -1135,8 +1129,6 @@
     <string name="home_widget_widget_blur_opt">تحسين ضبابية الأداة</string>
     <string name="home_dock">الرصيف</string>
     <string name="home_dock_bg_enable">إضافة تأثير ضبابي إلى الخلفية في الرصيف</string>
-    <string name="home_dock_bg_all_app">متوافق مع وضع الدرج</string>
-    <string name="home_dock_bg_all_app_more">تشغيل هذه الميزة يمنع تقليص الرصيف، لكن ارتفاع الرصيف يكون محدودًا.</string>
     <string name="home_dock_bg_height">الارتفاع</string>
     <string name="home_dock_bg_height_desc">ارتفاع الرصيف</string>
     <string name="home_dock_bg_margin_horizontal">الهامش الرأسي</string>
@@ -1145,7 +1137,6 @@
     <string name="home_dock_bg_margin_bottom_desc">المسافة بين الرصيف وأسفل الشاشة</string>
     <string name="home_dock_icon_margin_bottom">هامش أسفل الأيقونة</string>
     <string name="home_dock_icon_margin_bottom_desc">المسافة بين أيقونة الرصيف وهامش أسفل الشاشة</string>
-    <string name="home_dock_bg_custom">عرض الخلفية الضبابية</string>
     <string name="home_dock_icon_bottom_margin">المسافة بين الأيقونة والهامش السفلي</string>
     <string name="home_dock_margin_bottom">المسافة بين مؤشر الصفحة وأسفل الشاشة</string>
     <string name="home_dock_unlock_style">حركة دخول الرصيف عند فتح القفل</string>
@@ -1156,12 +1147,7 @@
     <string name="home_dock_unlock_style_ripple">انكماش وتهدئة</string>
     <string name="home_dock_unlock_hotseat">إزالة قيود عدد الأيقونات في الرصيف</string>
     <string name="home_dock_icon_title">عرض اسم التطبيق في الرصيف</string>
-    <string name="home_dock_disable_recents_icon">إخفاء أيقونات التطبيقات الأخيرة من الرصيف</string>
     <string name="home_dock_add_blur">عرض خلفية مخصصة</string>
-    <string name="home_dock_slide_up_only_show_dock">اسحب للأعلى لعرض الرصيف فقط</string>
-    <string name="home_dock_slide_up_only_show_dock_desc">اسحب للأعلى مرة أخرى للانتقال إلى المهام الأخيرة</string>
-    <string name="home_dock_hide_dock">إخفاء الرصيف</string>
-    <string name="home_dock_hide_dock_desc">بعد تفعيل هذا الخيار، سيصبح خيار \"اسحب للأعلى لعرض الرصيف فقط\" غير فعال.</string>
     <string name="home_dock_bg_color">لون الخلفية</string>
     <string name="home_other">أخرى</string>
     <string name="home_other_shortcut_title">اختصار</string>

@@ -834,11 +834,6 @@
     <string name="home_wallpaper_blur">Desenfoque del fondo</string>
     <string name="home_enable_blur">Desactivar desenfoque</string>
     <string name="home_blur_radius_title">Radio de desenfoque</string>
-    <string name="home_folder_shade_title">Cobertura de color</string>
-    <string name="home_folder_shade_summary">Reforzar o debilitar el color de fondo</string>
-    <string name="home_folder_shade_solid">Todo el fondo</string>
-    <string name="home_folder_shade_gradient">Solo el centro</string>
-    <string name="home_folder_shade_level_title">Insensidad de color</string>
     <string name="home_folder_cols_title">Cantidad de aplicaciones en una columna de carpeta</string>
     <string name="home_folder_cols_format">%s Columnas</string>
     <string name="home_folder_horizontal_padding_desc">Distancia de carpeta desde el margen lateral de la pantalla</string>
@@ -932,7 +927,6 @@
     <string name="home_dock_bg_margin_bottom_desc">Margen de la base desde el fondo de la pantalla</string>
     <string name="home_dock_icon_margin_bottom">Margen del fondo de iconos</string>
     <string name="home_dock_icon_margin_bottom_desc">Distancia desde el fondo de iconos en la base hasta el de la pantalla</string>
-    <string name="home_dock_bg_custom">Desenfoque del fondo</string>
     <string name="home_dock_icon_bottom_margin">Distancia desde el fondo de iconos en la base hasta el de la pantalla</string>
     <string name="home_dock_margin_bottom">Margen del indicador de página desde el fondo de la pantalla</string>
     <string name="home_dock_unlock_style">Animación de entrada al desbloquear</string>
@@ -943,7 +937,6 @@
     <string name="home_dock_unlock_style_ripple">Contraer y calmar</string>
     <string name="home_dock_unlock_hotseat">Permitir que en la base se ponen iconos cuántos quiera</string>
     <string name="home_dock_icon_title">Mostrar títulos de iconos en la base</string>
-    <string name="home_dock_disable_recents_icon">Ocultar iconos de aplicaciones recientes en la base</string>
     <string name="home_dock_add_blur">Personalizar el desenfoque del fondo</string>
     <string name="home_dock_bg_color">Color de fondo</string>
     <string name="home_other">Otros</string>

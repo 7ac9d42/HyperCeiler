@@ -18,29 +18,15 @@
 */
 package com.sevtinge.hyperceiler.hooker.home;
 
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.Miui.isPad;
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isHyperOSVersion;
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreHyperOSVersion;
-
 import androidx.preference.PreferenceCategory;
 import androidx.preference.SwitchPreference;
 
 import com.sevtinge.hyperceiler.core.R;
 import com.sevtinge.hyperceiler.dashboard.DashboardFragment;
 
-import java.util.Objects;
-
-import fan.preference.DropDownPreference;
-import fan.preference.SeekBarPreferenceCompat;
-
 public class HomeGestureSettings extends DashboardFragment {
 
-    SwitchPreference mQuickBack;
     SwitchPreference mGestureEnable;
-    SwitchPreference mDisableAllGesture;
-    DropDownPreference mBackGestureHaptic;
-    SeekBarPreferenceCompat mHighBackArea;
-    SeekBarPreferenceCompat mWideBackArea;
     PreferenceCategory mGestureActions;
 
     @Override
@@ -51,40 +37,13 @@ public class HomeGestureSettings extends DashboardFragment {
     @Override
     public void initPrefs() {
         mGestureEnable = findPreference("prefs_key_home_gesture_enable");
-        mQuickBack = findPreference("prefs_key_home_navigation_quick_back");
-        mDisableAllGesture = findPreference("prefs_key_home_navigation_disable_full_screen_back_gesture");
-        mBackGestureHaptic = findPreference("prefs_key_home_gesture_back_haptic");
-        mHighBackArea = findPreference("prefs_key_home_navigation_back_area_height");
-        mWideBackArea = findPreference("prefs_key_home_navigation_back_area_width");
         mGestureActions = findPreference("prefs_key_home_gesture_actions");
 
-        boolean mSwitch = getSharedPreferences().getBoolean(mDisableAllGesture.getKey(), false);
         boolean gesturesEnabled = getSharedPreferences().getBoolean(mGestureEnable.getKey(), false);
 
         if (mGestureActions != null) {
             mGestureActions.setVisible(gesturesEnabled);
         }
-
-        if (isPad()) {
-            if (!isHyperOSVersion(4f)) {
-                setFuncHint(mBackGestureHaptic, 1);
-                setFuncHint(mDisableAllGesture, 1);
-            }
-        } else if (isMoreHyperOSVersion(3f) && !isHyperOSVersion(4f)) {
-            mQuickBack.setVisible(false);
-            mHighBackArea.setEnabled(mSwitch);
-            mWideBackArea.setEnabled(mSwitch);
-            updateBackGestureHapticSummary(getSharedPreferences().getString("prefs_key_home_gesture_back_haptic", "0"));
-        }
-
-        mDisableAllGesture.setOnPreferenceChangeListener(
-            (v, newValue) -> {
-                boolean enabled = (Boolean) newValue;
-                mHighBackArea.setEnabled(isHyperOSVersion(4f) || enabled);
-                mWideBackArea.setEnabled(isHyperOSVersion(4f) || enabled);
-                return true;
-            }
-        );
 
         mGestureEnable.setOnPreferenceChangeListener(
             (v, newValue) -> {
@@ -95,25 +54,6 @@ public class HomeGestureSettings extends DashboardFragment {
             }
         );
 
-        if (mBackGestureHaptic != null && !isPad()) {
-            mBackGestureHaptic.setOnPreferenceChangeListener((preference, newValue) -> {
-                updateBackGestureHapticSummary((String) newValue);
-                return true;
-            });
-        }
         HomeOS4AdaptationGate.apply(getPreferenceScreen(), getPreferenceScreenResId());
-    }
-
-    private void updateBackGestureHapticSummary(String value) {
-        if (mBackGestureHaptic == null) {
-            return;
-        }
-        if (Objects.equals(value, "1")) {
-            mBackGestureHaptic.setSummary(R.string.home_gesture_back_haptic_enhanced_tips);
-        } else if (Objects.equals(value, "2")) {
-            mBackGestureHaptic.setSummary("");
-        } else {
-            mBackGestureHaptic.setSummary(R.string.home_gesture_back_haptic_default_tips);
-        }
     }
 }

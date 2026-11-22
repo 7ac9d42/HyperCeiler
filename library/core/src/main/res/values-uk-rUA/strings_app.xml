@@ -992,11 +992,6 @@
     <string name="home_wallpaper_blur">Розмиття фону</string>
     <string name="home_enable_blur">Увімкнути розмиття</string>
     <string name="home_blur_radius_title">Радіус розмиття</string>
-    <string name="home_folder_shade_title">Колір накладання</string>
-    <string name="home_folder_shade_summary">Посилити або послабити колір фону</string>
-    <string name="home_folder_shade_solid">Весь фон</string>
-    <string name="home_folder_shade_gradient">Тільки середина</string>
-    <string name="home_folder_shade_level_title">Інтенсивність кольору</string>
     <string name="home_folder_cols_title">Кількість стовпців у папках</string>
     <string name="home_folder_horizontal_padding_desc">Відстань папки від бічного краю екрана</string>
     <string name="home_folder_vertical_spacing_desc">Відстань між рядками папки</string>
@@ -1095,8 +1090,6 @@
     <string name="home_widget_widget_blur_opt">Оптимізувати розмиття віджетів</string>
     <string name="home_dock">Док-панель</string>
     <string name="home_dock_bg_enable">Додати розмиття фону до док-панелі</string>
-    <string name="home_dock_bg_all_app">Сумісність з режимом меню додатків</string>
-    <string name="home_dock_bg_all_app_more">Увімкнення запобігає обрізанню док-панелі, але обмежує її висоту.</string>
     <string name="home_dock_bg_height">Висота</string>
     <string name="home_dock_bg_height_desc">Висота док-панелі</string>
     <string name="home_dock_bg_margin_horizontal">Вертикальний відступ</string>
@@ -1105,7 +1098,6 @@
     <string name="home_dock_bg_margin_bottom_desc">Відступ док-панелі від нижнього краю екрана</string>
     <string name="home_dock_icon_margin_bottom">Нижній відступ іконки</string>
     <string name="home_dock_icon_margin_bottom_desc">Відстань іконки док-панелі від нижнього краю екрана</string>
-    <string name="home_dock_bg_custom">Розмиття фону</string>
     <string name="home_dock_icon_bottom_margin">Відстань іконки від нижнього краю</string>
     <string name="home_dock_margin_bottom">Відступ індикатора сторінки від нижнього краю екрана</string>
     <string name="home_dock_unlock_style">Анімація появи доку при розблокуванні</string>
@@ -1116,12 +1108,7 @@
     <string name="home_dock_unlock_style_ripple">Стискання й заспокоєння</string>
     <string name="home_dock_unlock_hotseat">Зняти обмеження на кількість іконок у док-панелі</string>
     <string name="home_dock_icon_title">Показувати назву додатка в док-панелі</string>
-    <string name="home_dock_disable_recents_icon">Приховати іконки нещодавніх додатків з док-панелі</string>
     <string name="home_dock_add_blur">Користувацьке відображення фону</string>
-    <string name="home_dock_slide_up_only_show_dock">Проведіть вгору, щоб показати лише док-панель</string>
-    <string name="home_dock_slide_up_only_show_dock_desc">Проведіть вгору вдруге, щоб перейти до недавнього завдання</string>
-    <string name="home_dock_hide_dock">Приховати док-панель</string>
-    <string name="home_dock_hide_dock_desc">Після ввімкнення опція \"Проведіть вгору, щоб показати лише док-панель\" буде недійсною.</string>
     <string name="home_dock_bg_color">Колір фону</string>
     <string name="home_other">Інше</string>
     <string name="home_other_shortcut_title">Ярлик</string>

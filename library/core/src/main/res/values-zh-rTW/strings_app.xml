@@ -1011,7 +1011,6 @@
     <string name="home_navigation_assist_left_slide_desc">從螢幕左下角向內滑動</string>
     <string name="home_navigation_assist_right_slide_desc">從螢幕右下角向內滑動</string>
     <string name="home_navigation_quick_back_more">從螢幕兩側向螢幕內滑動以退回至上一個應用程式</string>
-    <string name="home_navigation_disable_full_screen_back_gesture">關閉全屏後退手勢</string>
     <string name="home_navigation_back_area_height">返回手勢區域高度</string>
     <string name="home_navigation_back_area_width">返回手勢區域寬度</string>
     <string name="home_gesture_title2">手勢</string>
@@ -1091,11 +1090,6 @@
     <string name="home_wallpaper_blur">背景模糊</string>
     <string name="home_enable_blur">啟用模糊</string>
     <string name="home_blur_radius_title">模糊半徑</string>
-    <string name="home_folder_shade_title">顏色覆蓋</string>
-    <string name="home_folder_shade_summary">增強或減弱背景顏色</string>
-    <string name="home_folder_shade_solid">整個背景</string>
-    <string name="home_folder_shade_gradient">僅中間</string>
-    <string name="home_folder_shade_level_title">色彩強度</string>
     <string name="home_folder_cols_title">資料夾欄位數量</string>
     <string name="home_folder_cols_format">%s 列</string>
     <string name="home_folder_rows_format">%s 行</string>
@@ -1197,8 +1191,6 @@
     <string name="home_widget_widget_blur_opt">優化小工具模糊</string>
     <string name="home_dock">Dock</string>
     <string name="home_dock_bg_enable">添加底欄背景</string>
-    <string name="home_dock_bg_all_app">相容抽屜模式</string>
-    <string name="home_dock_bg_all_app_more">開啟可防止 Dock 欄被截斷，但 Dock 欄高度有限</string>
     <string name="home_dock_bg_height">高度</string>
     <string name="home_dock_bg_height_desc">Dock 欄高度</string>
     <string name="home_dock_bg_margin_horizontal">垂直邊距</string>
@@ -1207,7 +1199,6 @@
     <string name="home_dock_bg_margin_bottom_desc">Dock 欄距螢幕底部邊距</string>
     <string name="home_dock_icon_margin_bottom">圖示底部邊距</string>
     <string name="home_dock_icon_margin_bottom_desc">Dock 欄圖示距螢幕底部邊距</string>
-    <string name="home_dock_bg_custom">背景模糊</string>
     <string name="home_dock_icon_bottom_margin">圖示距離底部邊距</string>
     <string name="home_dock_margin_bottom">頁面指示器距螢幕底部邊距</string>
     <string name="home_dock_unlock_style">Dock 欄解鎖入場動畫</string>
@@ -1221,12 +1212,7 @@
     <string name="home_dock_unlock_style_auto_aim">重力位能</string>
     <string name="home_dock_unlock_hotseat">解鎖底欄圖示數量限制</string>
     <string name="home_dock_icon_title">顯示應用程式標題</string>
-    <string name="home_dock_disable_recents_icon">在 Dock 欄中隱藏最近應用圖示</string>
     <string name="home_dock_add_blur">背景模糊自訂</string>
-    <string name="home_dock_slide_up_only_show_dock">向上滑動以僅顯示 Dock</string>
-    <string name="home_dock_slide_up_only_show_dock_desc">第二次向上滑動，跳到最近的任務</string>
-    <string name="home_dock_hide_dock">隱藏 Dock</string>
-    <string name="home_dock_hide_dock_desc">開啟後「向上滑動僅顯示 Dock」將失效。</string>
     <string name="home_dock_bg_color">背景顏色</string>
     <string name="home_other">其他</string>
     <string name="home_other_shortcut_title">快捷選單</string>

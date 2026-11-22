@@ -267,18 +267,6 @@
         <item>3</item>
     </string-array>
 
-    <string-array name="folder_shade">
-        <item>@string/array_default</item>
-        <item>@string/home_folder_shade_solid</item>
-        <item>@string/home_folder_shade_gradient</item>
-    </string-array>
-
-    <string-array name="folder_shade_value">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
-
     <string-array name="home_mode">
         <item>@string/array_default</item>
         <item>@string/home_mode_day</item>
@@ -286,18 +274,6 @@
     </string-array>
 
     <string-array name="home_mode_value">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
-
-    <string-array name="home_gesture_back_haptic">
-        <item>@string/array_default</item>
-        <item>@string/home_gesture_back_haptic_enhanced</item>
-        <item>@string/home_gesture_back_haptic_disabled</item>
-    </string-array>
-
-    <string-array name="home_gesture_back_haptic_value">
         <item>0</item>
         <item>1</item>
         <item>2</item>
@@ -712,27 +688,10 @@
         <item>4</item>
     </string-array>
 
-    <string-array name="blur_switch">
-        <item>@string/no_blur</item>
-        <item>@string/miui_blur</item>
-        <item>@string/android_blur</item>
-    </string-array>
-
-    <string-array name="blur_switch_new">
-        <item>@string/no_blur</item>
-        <item>@string/miui_blur</item>
-    </string-array>
-
     <string-array name="blur_switch_per">
         <item>@string/no_blur</item>
         <item>@string/miui_android_blur</item>
         <item>@string/android_blur</item>
-    </string-array>
-
-    <string-array name="blur_switch_value">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
     </string-array>
 
     <string-array name="home_dock_unlock_style">
@@ -755,11 +714,6 @@
         <item>perspective_fold</item>
         <item>capsule_fission</item>
         <item>auto_aim</item>
-    </string-array>
-
-    <string-array name="blur_switch_value_new">
-        <item>0</item>
-        <item>1</item>
     </string-array>
 
 

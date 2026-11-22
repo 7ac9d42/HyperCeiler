@@ -745,11 +745,6 @@
     <string name="home_wallpaper_blur">Sfocatura dello sfondo</string>
     <string name="home_enable_blur">Avvia sfocatura</string>
     <string name="home_blur_radius_title">Raggio di sfocatura</string>
-    <string name="home_folder_shade_title">Colore sovrapposto</string>
-    <string name="home_folder_shade_summary">Aumenta o indebolisce il colore dello sfondo</string>
-    <string name="home_folder_shade_solid">Intero sfondo</string>
-    <string name="home_folder_shade_gradient">Solo metà</string>
-    <string name="home_folder_shade_level_title">Intensità colore</string>
     <string name="home_folder_cols_title">Numero di disposizioni delle cartelle</string>
     <string name="home_folder_cols_format">%s Elenco</string>
     <string name="home_folder_vertical_spacing_desc">Spaziatura orizzontale cartella</string>
@@ -833,7 +828,6 @@
     <string name="home_dock_bg_margin_bottom_desc">Margine del Dock dalla parte inferiore dello schermo</string>
     <string name="home_dock_icon_margin_bottom">Margine inferiore dell\'icona</string>
     <string name="home_dock_icon_margin_bottom_desc">Distanza dell\'icona del Dock dal margine inferiore dello schermo</string>
-    <string name="home_dock_bg_custom">Sfocatura dello sfondo</string>
     <string name="home_dock_icon_bottom_margin">Distanza dell\'icona dal margine inferiore</string>
     <string name="home_dock_margin_bottom">Indicatore del margine della pagina dalla parte inferiore dello schermo</string>
     <string name="home_dock_unlock_style">Animazione di ingresso allo sblocco</string>
@@ -844,12 +838,7 @@
     <string name="home_dock_unlock_style_ripple">Contrarsi e calmarsi</string>
     <string name="home_dock_unlock_hotseat">Rimuovi limitazione del numero di icone dal dock</string>
     <string name="home_dock_icon_title">Mostra il titolo dell\'icona nel dock</string>
-    <string name="home_dock_disable_recents_icon">Nascondi le icone delle app recenti dal Dock</string>
     <string name="home_dock_add_blur">Sfocatura dello sfondo personalizzata</string>
-    <string name="home_dock_slide_up_only_show_dock">Scorri verso l\'alto per mostrare solo il Dock</string>
-    <string name="home_dock_slide_up_only_show_dock_desc">Scorri verso l\'alto una seconda volta e passa al attività recente</string>
-    <string name="home_dock_hide_dock">Nascondi il Dock</string>
-    <string name="home_dock_hide_dock_desc">Dopo averlo attivato, \"Scorri verso l\'alto per mostrare solo il Dock\" non sarà valido.</string>
     <string name="home_other">Altro</string>
     <string name="home_other_shortcut_title">Scorciatoia</string>
     <string name="home_other_home_mode">Modalità desktop</string>

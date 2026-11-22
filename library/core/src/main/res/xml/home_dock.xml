@@ -28,29 +28,8 @@
 
         <SwitchPreference
             android:defaultValue="false"
-            android:key="prefs_key_home_dock_disable_recents_icon"
-            android:title="@string/home_dock_disable_recents_icon" />
-
-        <SwitchPreference
-            android:defaultValue="false"
             android:key="prefs_key_home_dock_icon_title"
             android:title="@string/home_dock_icon_title" />
-
-        <SwitchPreference
-            android:defaultValue="false"
-            android:disableDependentsState="true"
-            android:key="prefs_key_home_dock_hide_dock"
-            android:summary="@string/home_dock_hide_dock_desc"
-            android:title="@string/home_dock_hide_dock"
-            app:isPreferenceVisible="false" />
-
-        <SwitchPreference
-            android:defaultValue="false"
-            android:dependency="prefs_key_home_dock_hide_dock"
-            android:key="prefs_key_home_dock_slide_up_only_show_dock"
-            android:summary="@string/home_dock_slide_up_only_show_dock_desc"
-            android:title="@string/home_dock_slide_up_only_show_dock"
-            app:isPreferenceVisible="false" />
 
     </PreferenceCategory>
 
@@ -58,6 +37,7 @@
         <SwitchPreference
             android:defaultValue="false"
             android:key="prefs_key_home_dock_bg_custom_enable"
+            android:summary="@string/home_dock_os4_window_hint"
             android:title="@string/home_dock_bg_enable" />
 
         <fan.preference.DropDownPreference
@@ -68,25 +48,13 @@
             app:entries="@array/home_dock_unlock_style"
             app:entryValues="@array/home_dock_unlock_style_value" />
 
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_home_dock_bg_all_app"
-            android:summary="@string/home_dock_bg_all_app_more"
-            android:title="@string/home_dock_bg_all_app" />
-
         <fan.preference.DropDownPreference
             android:defaultValue="0"
             android:dependency="prefs_key_home_dock_bg_custom_enable"
             android:key="prefs_key_home_dock_add_blur"
             android:title="@string/home_dock_add_blur"
-            app:entries="@array/blur_switch"
-            app:entryValues="@array/blur_switch_value" />
-
-        <Preference
-            android:dependency="prefs_key_home_dock_bg_custom_enable"
-            android:fragment="com.sevtinge.hyperceiler.sub.CustomBackgroundSettings"
-            android:key="prefs_key_home_dock_bg_custom"
-            android:title="@string/home_dock_bg_custom" />
+            app:entries="@array/home_dock_os4_styles"
+            app:entryValues="@array/home_dock_os4_style_values" />
 
         <SeekBarPreferenceCompat
             android:dependency="prefs_key_home_dock_bg_custom_enable"
@@ -162,7 +130,8 @@
             android:defaultValue="0"
             android:dependency="prefs_key_home_dock_bg_custom_enable"
             android:key="prefs_key_home_dock_bg_color"
-            android:title="@string/home_dock_bg_color" />
+            android:title="@string/home_dock_bg_color"
+            app:isPreferenceVisible="false" />
 
         <!--<SeekBarPreferenceCompat
             android:key="prefs_key_home_dock_icon_margin_bottom"

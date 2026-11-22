@@ -963,7 +963,6 @@
     <string name="home_navigation_assist_left_slide_desc">Сдвинуть внутрь из левого нижнего угла экрана</string>
     <string name="home_navigation_assist_right_slide_desc">Сдвинуть внутрь из правого нижнего угла экрана</string>
     <string name="home_navigation_quick_back_more">Проведите влево или вправо от края экрана для возврата к предыдущему приложению</string>
-    <string name="home_navigation_disable_full_screen_back_gesture">Отключить полноэкранный жест назад</string>
     <string name="home_navigation_back_area_height">Высота области обратного жеста</string>
     <string name="home_navigation_back_area_width">Ширина области обратного жеста</string>
     <string name="home_gesture_title2">Жесты</string>
@@ -1039,11 +1038,6 @@
     <string name="home_wallpaper_blur">Размытие фона</string>
     <string name="home_enable_blur">Включить размытие</string>
     <string name="home_blur_radius_title">Степень размытия</string>
-    <string name="home_folder_shade_title">Цвет наложения</string>
-    <string name="home_folder_shade_summary">Усилить или ослабить цвет фона</string>
-    <string name="home_folder_shade_solid">Заполнить фон</string>
-    <string name="home_folder_shade_gradient">Градиент</string>
-    <string name="home_folder_shade_level_title">Интенсивность цвета</string>
     <string name="home_folder_cols_title">Количество упорядоченных папок</string>
     <string name="home_folder_cols_format">Ряд: %s</string>
     <string name="home_folder_rows_format">%s ряды</string>
@@ -1146,8 +1140,6 @@
     <string name="home_widget_widget_blur_opt">Оптимизировать размытие виджета</string>
     <string name="home_dock">Док-бар</string>
     <string name="home_dock_bg_enable">Размытие док-бара</string>
-    <string name="home_dock_bg_all_app">Совместимость с режимом док-бара</string>
-    <string name="home_dock_bg_all_app_more">Включение предотвращает обрезку док-бара, но высота док-бара ограничена.</string>
     <string name="home_dock_bg_height">Высота</string>
     <string name="home_dock_bg_height_desc">Высота док-бара</string>
     <string name="home_dock_bg_margin_horizontal">Горизонтальный отступ</string>
@@ -1156,7 +1148,6 @@
     <string name="home_dock_bg_margin_bottom_desc">Отступ док-бара в нижней части экрана</string>
     <string name="home_dock_icon_margin_bottom">Нижний край значка</string>
     <string name="home_dock_icon_margin_bottom_desc">Расстояние значка дока от нижней границы экрана</string>
-    <string name="home_dock_bg_custom">Размытие фона</string>
     <string name="home_dock_icon_bottom_margin">Расстояние значка от нижней границы</string>
     <string name="home_dock_margin_bottom">Индикатор страниц в нижней части экрана</string>
     <string name="home_dock_unlock_style">Анимация появления дока при разблокировке</string>
@@ -1167,12 +1158,7 @@
     <string name="home_dock_unlock_style_ripple">Сжатие и успокоение</string>
     <string name="home_dock_unlock_hotseat">Убрать ограничение по количеству значков в доке</string>
     <string name="home_dock_icon_title">Показать название иконки в док-баре</string>
-    <string name="home_dock_disable_recents_icon">Скрыть иконки последних приложений из док-бара</string>
     <string name="home_dock_add_blur">Пользовательское размытие фона</string>
-    <string name="home_dock_slide_up_only_show_dock">Проведите пальцем вверх, чтобы отобразить только док-бар</string>
-    <string name="home_dock_slide_up_only_show_dock_desc">Проведите пальцем вверх второй раз и перейдите к последней задаче</string>
-    <string name="home_dock_hide_dock">Скрыть док</string>
-    <string name="home_dock_hide_dock_desc">После включения функция \"Проведите пальцем вверх, чтобы отобразить только док-бар\" станет недействительной.</string>
     <string name="home_dock_bg_color">Цвет фона</string>
     <string name="home_other">Прочее</string>
     <string name="home_other_shortcut_title">Ярлык</string>

@@ -25,13 +25,7 @@ import androidx.preference.SwitchPreference;
 import com.sevtinge.hyperceiler.core.R;
 import com.sevtinge.hyperceiler.dashboard.DashboardFragment;
 
-import fan.preference.DropDownPreference;
-import fan.preference.SeekBarPreferenceCompat;
-
 public class HomeFolderSettings extends DashboardFragment {
-
-    DropDownPreference mFolderShade;
-    SeekBarPreferenceCompat mFolderShadeLevel;
 
     SwitchPreference mUnlockFolderBlurSupport;
     SwitchPreference mSmallFolderIconBackgroundCustom1;
@@ -45,8 +39,6 @@ public class HomeFolderSettings extends DashboardFragment {
 
     @Override
     public void initPrefs() {
-        mFolderShade = findPreference("prefs_key_home_folder_shade");
-        mFolderShadeLevel = findPreference("prefs_key_home_folder_shade_level");
         mUnlockFolderBlurSupport = findPreference("prefs_key_home_folder_unlock_blur_supported");
 
         if (isPad()) {
@@ -58,17 +50,5 @@ public class HomeFolderSettings extends DashboardFragment {
             mSmallFolderIconBackgroundCustom2.setTitle(R.string.home_big_folder_icon_bg_1x2_n);
             mSmallFolderIconBackgroundCustom3.setTitle(R.string.home_big_folder_icon_bg_n);
         }
-        setFolderShadeLevelEnable(Integer.parseInt(getSharedPreferences().getString("prefs_key_home_folder_shade", "0")));
-
-        mFolderShade.setOnPreferenceChangeListener((preference, o) -> {
-            setFolderShadeLevelEnable(Integer.parseInt((String) o));
-            return true;
-        });
-    }
-
-    private void setFolderShadeLevelEnable(int i) {
-        boolean isEnable = i != 0;
-        mFolderShadeLevel.setVisible(isEnable);
-        mFolderShadeLevel.setEnabled(isEnable);
     }
 }

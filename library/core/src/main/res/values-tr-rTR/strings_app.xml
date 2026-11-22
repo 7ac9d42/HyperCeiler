@@ -902,11 +902,6 @@
     <string name="home_wallpaper_blur">Arkaplan bulanıklığı</string>
     <string name="home_enable_blur">Bulanıklaştırmaya başla</string>
     <string name="home_blur_radius_title">Bulanıklık yarıçapı</string>
-    <string name="home_folder_shade_title">Kaplama rengi</string>
-    <string name="home_folder_shade_summary">Arka plan rengini geliştirin veya zayıflatın</string>
-    <string name="home_folder_shade_solid">Tüm arka plan</string>
-    <string name="home_folder_shade_gradient">Sadece Orta</string>
-    <string name="home_folder_shade_level_title">Renk Yoğunluğu</string>
     <string name="home_folder_cols_title">Klasör Düzenlemelerinin Sayısı</string>
     <string name="home_folder_cols_format">%s Liste</string>
     <string name="home_folder_vertical_spacing_desc">Klasör yatay aralığı</string>
@@ -983,7 +978,6 @@
     <string name="home_widget_allow_moved_to_minus_one_screen">Klasik widget\'ın Eksi Bir ekrana taşınmasına izin ver</string>
     <string name="home_widget_resizable">Widget boyut sınırlamalarını kaldırın</string>
     <string name="home_dock">Yuva</string>
-    <string name="home_dock_bg_all_app">Çekmece modu uyumlu</string>
     <string name="home_dock_bg_height">Yükseklik</string>
     <string name="home_dock_bg_height_desc">Yuva yüksekliği</string>
     <string name="home_dock_bg_margin_horizontal">Dikey kenar boşluğu</string>
@@ -992,7 +986,6 @@
     <string name="home_dock_bg_margin_bottom_desc">Ekranın altından Dock\'un kenar boşluğu</string>
     <string name="home_dock_icon_margin_bottom">Simge alt kenar boşluğu</string>
     <string name="home_dock_icon_margin_bottom_desc">Dock simgesinin ekranın alt kenar boşluğundan uzaklığı</string>
-    <string name="home_dock_bg_custom">Arkaplan bulanıklığı</string>
     <string name="home_dock_icon_bottom_margin">Alt kenar boşluğundan simge mesafesi</string>
     <string name="home_dock_margin_bottom">Ekranın altından sayfa kenar boşluğu göstergesi</string>
     <string name="home_dock_unlock_style">Kilit açılırken giriş animasyonu</string>
@@ -1004,8 +997,6 @@
     <string name="home_dock_unlock_hotseat">Simge numarası kısıtlamasını dock\'tan kaldırın</string>
     <string name="home_dock_icon_title">Dock\'ta simge başlığını göster</string>
     <string name="home_dock_add_blur">Özel arka plan ekranı</string>
-    <string name="home_dock_slide_up_only_show_dock_desc">İkinci kez yukarı kaydırın ve son göreve atlayın</string>
-    <string name="home_dock_hide_dock">Dock\'u Gizle</string>
     <string name="home_dock_bg_color">Arka plan rengi</string>
     <string name="home_other">Diğer</string>
     <string name="home_other_shortcut_title">Kısayol</string>

@@ -774,11 +774,6 @@
     <string name="home_wallpaper_blur">Latar belakang kabur</string>
     <string name="home_enable_blur">Mulai kabur</string>
     <string name="home_blur_radius_title">Radius kabur</string>
-    <string name="home_folder_shade_title">Warna hamparan</string>
-    <string name="home_folder_shade_summary">Menambah atau melemahkan warna latar belakang</string>
-    <string name="home_folder_shade_solid">Seluruh latar belakang</string>
-    <string name="home_folder_shade_gradient">Hanya Tengah</string>
-    <string name="home_folder_shade_level_title">Intensitas Warna</string>
     <string name="home_folder_cols_title">Jumlah Susunan Folder</string>
     <string name="home_folder_cols_format">%s Daftar</string>
     <string name="home_folder_vertical_spacing_desc">Jarak horizontal folder</string>
@@ -871,7 +866,6 @@
     <string name="home_dock_bg_margin_bottom_desc">Margin Dock dari bagian bawah layar</string>
     <string name="home_dock_icon_margin_bottom">Margin bawah ikon</string>
     <string name="home_dock_icon_margin_bottom_desc">Jarak ikon dok dari margin bawah layar</string>
-    <string name="home_dock_bg_custom">Latar belakang kabur</string>
     <string name="home_dock_icon_bottom_margin">Jarak ikon dari margin bawah</string>
     <string name="home_dock_margin_bottom">Indikator margin halaman dari bawah layar</string>
     <string name="home_dock_unlock_style">Animasi masuk saat membuka kunci</string>
@@ -882,7 +876,6 @@
     <string name="home_dock_unlock_style_ripple">Menguncup dan tenang</string>
     <string name="home_dock_unlock_hotseat">Hapus batasan nomor ikon dari dok</string>
     <string name="home_dock_icon_title">Tampilkan judul ikon di dok</string>
-    <string name="home_dock_disable_recents_icon">Sembunyikan ikon aplikasi terkini dari Dock</string>
     <string name="home_dock_add_blur">Latar belakang khusus buram</string>
     <string name="home_other">Lainnya</string>
     <string name="home_other_shortcut_title">Jalan pintas</string>

@@ -556,27 +556,6 @@
     },
     {
       "page": "home_gesture",
-      "key": "prefs_key_home_navigation_predictive_progress",
-      "title": "修复预测性返回进度",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_gesture",
-      "key": "prefs_key_home_gesture_back_haptic",
-      "title": "返回手势触觉反馈",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_gesture",
-      "key": "prefs_key_home_navigation_disable_full_screen_back_gesture",
-      "title": "禁用全屏返回手势",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_gesture",
       "key": "prefs_key_home_navigation_back_area_height",
       "title": "返回手势区域高度",
       "status": "declared_adapted_requires_evidence",
