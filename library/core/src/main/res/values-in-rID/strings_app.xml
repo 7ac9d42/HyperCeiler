@@ -906,7 +906,6 @@
     <string name="miwallpaper_unlock_super_wallpaper">Buka kunci wallpaper Super</string>
     <!--Package installer-->
     <string name="package_installer">Pemasang paket</string>
-    <string name="miui_package_installer_modify">Bersihkan halaman</string>
     <string name="miui_package_installer_disable_ad">Nonaktifkan promosi</string>
     <string name="miui_package_installer_install_risk">Nonaktifkan deteksi risiko</string>
     <string name="miui_package_installer_safe_model_tip">Nonaktifkan perintah penjaga keamanan</string>

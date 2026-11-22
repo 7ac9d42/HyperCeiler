@@ -1185,7 +1185,6 @@
     <string name="miwallpaper_unlock_super_wallpaper">فتح خلفية الشاشة الفائقة</string>
     <!--Package installer-->
     <string name="package_installer">مثبّت الحزم</string>
-    <string name="miui_package_installer_modify">تنظيف الصفحة</string>
     <string name="miui_package_installer_disable_ad">إيقاف الإعلانات</string>
     <string name="miui_package_installer_install_risk">إيقاف اكتشاف المخاطر</string>
     <string name="miui_package_installer_safe_model_tip">إيقاف إشعار الحماية الأمنية</string>

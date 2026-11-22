@@ -869,7 +869,6 @@
     <string name="miwallpaper_unlock_super_wallpaper">Sblocca Super sfondo</string>
     <!--Package installer-->
     <string name="package_installer">Installazione pacchetto</string>
-    <string name="miui_package_installer_modify">Purifica la pagina</string>
     <string name="miui_package_installer_disable_ad">Disabilita promozione</string>
     <string name="miui_package_installer_install_risk">Disabilita rilevamento rischi</string>
     <string name="miui_package_installer_safe_model_tip">Disabilita il prompt della guardia di sicurezza</string>

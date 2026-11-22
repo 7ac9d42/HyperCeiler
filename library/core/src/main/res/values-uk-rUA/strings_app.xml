@@ -1146,7 +1146,6 @@
     <string name="miwallpaper_unlock_super_wallpaper">Розблокувати супершпалери</string>
     <!--Package installer-->
     <string name="package_installer">Установник пакетів</string>
-    <string name="miui_package_installer_modify">Чиста сторінка</string>
     <string name="miui_package_installer_disable_ad">Вимкнути рекламу</string>
     <string name="miui_package_installer_install_risk">Вимкнути виявлення ризиків</string>
     <string name="miui_package_installer_safe_model_tip">Вимкнути підказку служби безпеки</string>

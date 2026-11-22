@@ -1250,7 +1250,6 @@
     <string name="miwallpaper_unlock_super_wallpaper">解鎖超級桌布</string>
     <!--Package installer-->
     <string name="package_installer">應用程式檔案管理元件</string>
-    <string name="miui_package_installer_modify">淨化頁面</string>
     <string name="miui_package_installer_disable_ad">停用推廣</string>
     <string name="miui_package_installer_install_risk">停用風險檢測</string>
     <string name="miui_package_installer_disable_cloud_check">阻斷雲端設定下發</string>

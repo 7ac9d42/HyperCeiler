@@ -40,9 +40,6 @@ public class PackageInstaller extends BaseLoad {
 
     public void onPackageLoaded() {
 
-        //
-        /*initHook(new MiuiPackageInstallModify(), PrefsBridge.getBoolean("miui_package_installer_modify"));*/
-
         // 禁用广告
         initHook(new DisableAd(), PrefsBridge.getBoolean("miui_package_installer_disable_ad"));
 

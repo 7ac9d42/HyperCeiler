@@ -1031,7 +1031,6 @@
     <string name="miwallpaper_unlock_super_wallpaper">Süper duvar kağıdının kilidini aç</string>
     <!--Package installer-->
     <string name="package_installer">Paket Yükleyicisi</string>
-    <string name="miui_package_installer_modify">Sayfayı temizle</string>
     <string name="miui_package_installer_disable_ad">Promosyonu devre dışı bırak</string>
     <string name="miui_package_installer_install_risk">Risk algılamayı devre dışı bırak</string>
     <string name="miui_package_installer_safe_model_tip">Güvenlik görevlisi istemini devre dışı bırak</string>

@@ -1104,7 +1104,6 @@
     <string name="miwallpaper_unlock_super_wallpaper">Odblokuj Supertapety</string>
     <!--Package installer-->
     <string name="package_installer">Instalator pakietów</string>
-    <string name="miui_package_installer_modify">Wyczyść stronę</string>
     <string name="miui_package_installer_disable_ad">Wyłącz reklamy</string>
     <string name="miui_package_installer_install_risk">Wyłącz wykrywanie ryzyka</string>
     <string name="miui_package_installer_safe_model_tip">Wyłącz komunikat ostrzegawczy zabezpieczeń</string>

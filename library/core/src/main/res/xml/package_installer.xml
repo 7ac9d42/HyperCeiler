@@ -22,12 +22,6 @@
     app:quick_restart="com.miui.packageinstaller">
     <PreferenceCategory>
         <SwitchPreference
-            android:key="prefs_key_miui_package_installer_modify"
-            android:title="@string/miui_package_installer_modify"
-            android:defaultValue="false"
-            app:isPreferenceVisible="false" />
-
-        <SwitchPreference
             android:key="prefs_key_miui_package_installer_disable_ad"
             android:title="@string/miui_package_installer_disable_ad"
             android:defaultValue="false" />

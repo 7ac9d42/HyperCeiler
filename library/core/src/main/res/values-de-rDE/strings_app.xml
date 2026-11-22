@@ -1151,7 +1151,6 @@
     <string name="miwallpaper_unlock_super_wallpaper">Super-Hintergrund freischalten</string>
     <!--Package installer-->
     <string name="package_installer">Paket-Installer</string>
-    <string name="miui_package_installer_modify">Seite bereinigen</string>
     <string name="miui_package_installer_disable_ad">Werbung deaktivieren</string>
     <string name="miui_package_installer_install_risk">Risikoerkennung deaktivieren</string>
     <string name="miui_package_installer_safe_model_tip">Sicherheitswarnung deaktivieren</string>

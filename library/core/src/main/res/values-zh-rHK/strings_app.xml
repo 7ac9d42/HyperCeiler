@@ -1223,7 +1223,6 @@
     <string name="miwallpaper_unlock_super_wallpaper">解鎖超級桌布</string>
     <!--Package installer-->
     <string name="package_installer">應用包管理組件</string>
-    <string name="miui_package_installer_modify">净化頁面</string>
     <string name="miui_package_installer_disable_ad">禁用推廣</string>
     <string name="miui_package_installer_install_risk">禁用風險檢測</string>
     <string name="miui_package_installer_safe_model_tip">禁用安全守護提示</string>

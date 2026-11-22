@@ -1197,7 +1197,6 @@
     <string name="miwallpaper_unlock_super_wallpaper">Mở khoá Siêu hình nền</string>
     <!--Package installer-->
     <string name="package_installer">Trình cài đặt gói</string>
-    <string name="miui_package_installer_modify">Lọc trang</string>
     <string name="miui_package_installer_disable_ad">Tắt đề xuất</string>
     <string name="miui_package_installer_install_risk">Tắt phát hiện rủi ro</string>
     <string name="miui_package_installer_safe_model_tip">Tắt lời nhắc bảo vệ an ninh</string>
