@@ -1,12 +1,14 @@
 # Actual-ROM migration audit
 
-This is a read-only audit of initialized OS3 phone-launcher hook families and all
-Gallery/Weather entry hooks against the supplied OS4 ROM. It produces evidence
-and unresolved gaps, not a runtime compatibility score. It does not modify any
-APK, native image, production hook or preference protocol.
-
-The OS3 phone-launcher comparison is read from the pinned Git revision in
-`audit.py`; the local checkout must contain that revision.
+This is a read-only audit of the Home, Gallery and Weather hooks against the
+supplied OS4 ROM. Only the historical OS3 phone-launcher comparison uses the
+pinned Git revision in `audit.py`; the local checkout must contain that revision.
+The OS4 Home, Gallery and Weather entries are read from the current tree, with
+Weather rules enumerated from the current `Weather.java`. The separate
+Weather-only companion is wired in source for its supported ROM, but the export
+audit does not verify its image guards, injection or behavior on a device. The
+audit does not modify any APK, native image, production hook or preference
+protocol.
 
 ```sh
 python3 tests/native-remaining-audit/audit.py \

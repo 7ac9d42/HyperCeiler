@@ -177,9 +177,9 @@ def function_body(path, address, size):
 
 
 HOME_REPLACEMENTS = {
-    "DoubleTap": ("os4_java_path_present", "HomeGestureOS4 replaces touch handling; no device input test yet."),
-    "ScreenSwipe": ("os4_java_path_present", "HomeGestureOS4 replaces touch handling; no device input test yet."),
-    "ShakeDevice": ("os4_java_path_present", "OS4 entry explicitly initializes the shared shake hook."),
+    "DoubleTap": ("os4_java_path_present", "HomeGestureOS4 bootstraps touch handling in the default APK Native Home path; device input is not verified here."),
+    "ScreenSwipe": ("os4_java_path_present", "HomeGestureOS4 bootstraps touch handling in the default APK Native Home path; device input is not verified here."),
+    "ShakeDevice": ("os4_java_path_present", "SystemUI's HomeExtraGesturesOS4 reads the OS4 gesture configuration and handles shake; it does not load the legacy rule."),
     "SeekPoints": ("native_path_present", "Indicator policy uses home_other_seek_points in the authenticated endpoint."),
     "LayoutRules": ("native_path_present", "Native phone-grid/geometry guards pass the 7719 fixture; visual effects unverified."),
     "WorkspacePadding": ("native_path_present", "Workspace geometry target guards pass the 7719 fixture."),
@@ -216,7 +216,7 @@ def render(report):
     lines = ["OS4 原生剩余适配审计（静态证据，不能作为实机验收）", "",
              "目标：小米 17 Pro Max / popsicle / OS4.0.0.44.XPBCNXM / Android 17 API 37。",
              "本轮没有新增生产 hook，也没有修改认证或版本拒绝策略。",
-             "手机尚未连接：以下路径存在、符号命中、守卫通过均不表示 LSPosed 实际注入或长期稳定。", ""]
+             "本审计不运行于设备：源码接线、符号命中和历史守卫结果均不表示 LSPosed 实际注入或长期稳定。", ""]
     for app in report["applications"]:
         lines += [f'{app["package"]}: {app["versionName"]} ({app["versionCode"]})',
                   f'  APK SHA256 {app["sha256"]}', f'  DEX 条目 {len(app["dex_files"])}；ARM64 原生库 {len(app["native_entries"])}']
@@ -234,7 +234,7 @@ def render(report):
                       "  " + row["assessment"], "  源码: " + row["implementation"]["path"]]
             for target in row["native_candidates"]:
                 lines += [f'  候选: {target["name"]} @ 0x{target["va"]:x} size=0x{target["size"]:x}']
-    lines += ["", "原生 ABI 证据与本轮不实施原因："]
+    lines += ["", "历史 ROM 的原生 ABI 证据与当时的暂缓原因："]
     for candidate in report["home_candidates"]:
         lines += [f'- {candidate["symbol"]}: ' + candidate["decision_reason"]]
         for body in candidate["bodies"]:
@@ -297,14 +297,14 @@ def audit(project, objdump):
     for row in gallery:
         fragments = GALLERY_CANDIDATES.get(row["hook"], [])
         matches = [x for x in gal_exports if any(part in x["name"] for part in fragments)]
-        row.update(status="legacy_java_without_native_port", native_candidates=matches,
-                   assessment="The supplied Gallery APK has no DEX, while this hook requires Java classes/methods. Current native injection is Home-only. Named FRB exports are investigation candidates, not proven equivalent hook points; bridge result layout and lifecycle must be decoded." if matches else
-                   "The supplied Gallery APK has no DEX, while this hook requires Java classes/methods. No matching feature export was established in this audit; current native injection is Home-only.")
+        row.update(status="native_equivalence_not_established", native_candidates=matches,
+                   assessment="The supplied Gallery APK has no DEX, while this hook requires Java classes/methods. No equivalent native hook was established; named FRB exports are investigation candidates, not verified bindings." if matches else
+                   "The supplied Gallery APK has no DEX, while this hook requires Java classes/methods. No matching feature export or equivalent native hook was established in this audit.")
     weather = hooks(APP / "Weather.java")
     weather_exports = [x for x in exports["weather:libweather_app.so"] if x["defined"]]
     for row in weather:
-        row.update(status="legacy_java_without_native_port", native_candidates=[],
-                   assessment="The supplied Weather APK has no DEX. The legacy hook uses Java/DexKit targets, and current native injection is Home-only. Exported renderer APIs do not establish a corresponding preference/feature hook.")
+        row.update(status="weather_only_source_wired", native_candidates=[],
+                   assessment="This row inventories a Java rule from the current Weather entry; the supplied Weather APK has no DEX. Current source wires a separate Weather-only companion to the Weather preferences through the Provider and system bridge. The export inventory does not validate that wiring, the image guards, or device effects.")
 
     home_image = rom_root / 'launcher-native/lib/arm64-v8a/libapp.so'
     symbols = ELF.symbols(home_image)
@@ -333,7 +333,7 @@ def audit(project, objdump):
                            stdout=disasm_path.open("w"))
             bodies.append({"va": address, "size": size, "sha256": sha(body),
                            "words": str(body_path), "disassembly": str(disasm_path)})
-        candidates.append({"symbol": name, "decision": "defer_until_semantic_and_abi_evidence",
+        candidates.append({"symbol": name, "decision": "historical_defer_until_semantic_and_abi_evidence",
                            "decision_reason": reason, "bodies": bodies})
 
     # The non-leaf FRB bridge is deliberately disassembled, never replaced with
@@ -368,11 +368,11 @@ def audit(project, objdump):
         "gallery_hdr_abi": {**hdr, "body_sha256": sha(hdr_body), "disassembly": str(hdr_asm),
                             "finding": "0x38c-byte FRB wire wrapper with stack allocation, state checks and bridge machinery; not a native leaf bool getter. Do not return x0=1 or reuse Dart x22 bool ABI."},
         "protocol_boundary": {"snapshot": source(snapshot), "endpoint": source(endpoint),
-                              "native_entry": source(entry), "snapshot_schema": 1,
+                              "native_entry": source(entry), "snapshot_schema": 4,
                               "snapshot_keys": [{"type": k, "key": v} for k, v in protocol_keys],
                               "authentication": "Endpoint requires application UID, positive PID, verified com.miui.home process and Binder interface token; retain all checks for future additions.",
                               "migration_rule": "Any new preference needs explicit snapshot/endpoint/native wire/cache handling, old-schema compatibility or rejection, missing-key safe default, bounds validation and unauthorized/partial/corrupt-packet rejection tests.",
-                              "process_scope": "Current hyperceiler_home.cpp native specialization checks com.miui.home; no Gallery/Weather native initializer is established."},
+                              "process_scope": "This entry is the default APK Native specialization for com.miui.home. HCL4 serves that layout path; the APK still serves HCY1/HCS1 compatibility replies after retirement of the standalone Home companion."},
         "os4_mapping_sources": [source(ROOT / path) for path in [
             "library/libhook/src/main/java/com/sevtinge/hyperceiler/libhook/rules/home/gesture/HomeGestureOS4.kt",
             "library/libhook/src/main/java/com/sevtinge/hyperceiler/libhook/rules/home/other/NativeHomeHooksOS4.kt",
@@ -386,13 +386,15 @@ def audit(project, objdump):
         "limitations": [
             "Zero classes*.dex entries establish that Java implementations are not inside these APKs; they do not prove that no external runtime class can ever be loaded. A matching external class and correct runtime ClassLoader would require separate evidence.",
             "71 Home rows are initialized OS3 phone hook families, not a count of all UI preferences. OS4-only hooks, shared framework hooks, disabled source comments and preference sub-options need separate accounting.",
-            "A native path present means code is wired and some target binding was statically checked. It does not mean a preference takes effect, survives restart, or is stable under LSPosed.",
+            "The standalone Home companion is retired. Default APK Native Home and the APK's HCY1/HCS1 compatibility replies remain; the Weather-only companion is a separate build path.",
+            "Current source wiring, ROM APK/ELF inventory and historical target-guard results are separate evidence. None establishes that a current build injects, takes effect or remains stable under LSPosed.",
             "Gallery/Weather lack .symtab and .gnu_debugdata in the four reviewed libraries. Gallery .gnu_debuglink names companion DWARF files, which were not provided here. Dynamic export names alone do not establish FRB input/output ABI.",
             "Searchbar preferences remain in the snapshot for compatibility but are deliberately ignored by the OS4 endpoint; whitelist membership is not support evidence.",
         ],
         "next_requirements": [
             "Before another native feature patch: prove precise receiver layout, calling convention, return encoding/ownership, callers/inlined alternatives and the setting's intended scope; require exact known-image instruction guards.",
-            "Gallery/Weather ports additionally require process initialization and authenticated preference transport; FRB dispatch/result structures must be decoded before changing any result.",
+            "For a new Gallery port, establish process initialization and authenticated preference transport, and decode FRB dispatch/result structures before changing any result.",
+            "For the existing Weather-only source path, verify the built companion, image and startup guards, and authenticated Provider/system-bridge transport separately before claiming device effects.",
             "On the real phone: verify LSPosed scope and injected process, test each setting at default/changed/reset values, restart app/reboot, capture hook success/rejection/crash logs and repeat interaction/stability cases.",
         ],
     }
