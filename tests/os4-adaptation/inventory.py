@@ -22,7 +22,7 @@ for page,group in pages.items():
   status='declared_adapted_requires_evidence' if key in allowed else 'ui_gate_unadapted'
   rows.append({'page':page,'key':key,'title':title,'status':status,'dependency':node.get(android+'dependency')})
 report={'scope':'Explicit OS4 home adaptation gates; other module/version branches require a separate audit. No UI gate is proof of runtime behavior.','entries':rows}
-Path(__file__).with_name('inventory.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+Path(__file__).with_name('inventory.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
 counts={status:sum(r['status']==status for r in rows)for status in sorted({r['status'] for r in rows})}
 print(json.dumps(counts))
 for r in rows:
