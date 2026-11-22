@@ -517,7 +517,6 @@
     <string name="system_framework_disable_verify_can_ve_disabled">Disable to verify can be disabled</string>
     <string name="system_framework_allow_all_dark_mode">Allow all apps to use Dark mode</string>
     <string name="system_framework_background_blur_supported">Force enable Advanced textures</string>
-    <string name="system_framework_background_blur_toast">Advanced textures toast</string>
     <string name="system_framework_background_blur_supported_more">When this feature is enabled, enable Advanced textures in the Settings. The device may need to be rebooted twice.</string>
     <string name="system_framework_disablt_miuilite_check">Disable MIUI Lite Check</string>
     <string name="system_framework_posted_clipboard">Disable clipboard paste toast</string>
@@ -646,12 +645,7 @@
     <string name="system_ui_lock_screen_scramble_pin">Random PIN</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">Randomize PIN keypad order</string>
     <string name="system_ui_lock_screen_default_theme">Support default theme only</string>
-    <string name="system_ui_lock_screen_show_charging_cv">Show charging information at the bottom</string>
-    <string name="system_ui_lock_screen_show_charging_c_more">Show detailed current</string>
-    <string name="system_ui_lock_screen_show_battery_temperature">Show battery temperature</string>
-    <string name="system_ui_lock_screen_show_spacing">Display refresh interval</string>
     <string name="system_ui_lock_screen_hide_camera">Hide camera</string>
-    <string name="system_ui_lock_screen_bottom_left_button">Left button at the bottom</string>
     <string name="system_ui_lock_screen_current">Current</string>
     <string name="system_ui_lock_screen_blur_button">Blur Lock screen buttons</string>
     <string name="system_ui_lock_screen_blur_button_desc">After enabling, the background of the camera and shortcut button is blurred, which may cause high power consumption.\nSupport default theme only.</string>
@@ -669,9 +663,6 @@
     <string name="system_ui_lock_screen_allow_third_face">Allow third-party Lock screen to wake up system verify recognition</string>
     <string name="system_ui_lock_screen_allow_third_face_desc">Allow face unlock and fingerprint to be used normally on the Lock screen displayed by third-party apps</string>
     <string name="system_ui_lock_screen_disable_unlock_by_ble_toast">Hide unlocked by Bluetooth devices toast</string>
-    <string name="system_ui_lock_screen_linkage_anim">Replace Lock screen transition</string>
-    <string name="system_ui_lock_screen_linkage_anim_on">Screen on animation rate</string>
-    <string name="system_ui_lock_screen_linkage_anim_off">Screen off animation rate</string>
     <string name="system_ui_navigation_title">Navigation</string>
     <string name="system_ui_navigation_handle_title">Gesture line</string>
     <string name="system_ui_statusbar_title">Status bar</string>
@@ -862,12 +853,6 @@
     <string name="system_ui_control_center_qs_open_color">Enable customization of the small tile</string>
     <string name="system_ui_control_center_qs_big_open_color">Enable customization of the large tile</string>
     <string name="system_ui_control_auto_close_more">By tapping the status bar block, the status bar will automatically retract.</string>
-    <string name="system_control_center_qs_rows">Rows</string>
-    <string name="system_control_center_qs_rows_format">%d lines</string>
-    <string name="system_control_center_qs_rows_horizontal">Rows (Horizontal)</string>
-    <string name="system_control_center_qs_columns">Columns</string>
-    <string name="system_control_center_qs_columns_format">%d cols</string>
-    <string name="system_control_center_qs_columns_horizontal">Columns (Horizontal)</string>
     <string name="system_ui_control_center_notification_disable_transparent">Disable transparent mode</string>
     <string name="system_ui_control_center_notification_disable_transparent_desc">Disable set notification background to transparent</string>
     <string name="system_ui_control_center_media_control_progress">Progress bar</string>
@@ -922,7 +907,6 @@
     <string name="system_ui_control_center_expand_notification_show_time">Display duration</string>
     <string name="system_ui_control_center_mute_visible_notice_desc">When the screen is on, the pop-up notification won\'t play the alert sound.</string>
     <string name="system_ui_control_center_rounded_rect">Rounded rectangle tile</string>
-    <string name="system_ui_control_center_statusbar_blur">Force background blur</string>
     <string name="system_ui_control_center_rounded_rect_radius">Rounded radius</string>
     <string name="system_ui_control_center_fix_tiles_list">Unlock hidden control center tiles</string>
     <string name="system_ui_shade_header_gradient_blur">Blur the top of control center and Notification shade</string>
@@ -931,11 +915,7 @@
     <string name="system_ui_control_center_hide_display_device_name">Display device name</string>
     <string name="system_ui_control_center_hide_name">Hide all names</string>
     <string name="system_ui_controlcenter_new_title">New control center</string>
-    <string name="system_ui_controlcenter_old_title">Legacy control center</string>
     <string name="system_ui_controlcenter_unlock_old_title">Unlock control center styles</string>
-    <string name="system_ui_controlcenter_enable_title">Customize the number of rows and columns</string>
-    <string name="system_control_center_old_qs_grid_columns">Number of columns in collapsed panel</string>
-    <string name="system_control_center_old_qs_grid_columns_horizontal">Number of columns in collapsed panel (Horizontal)</string>
     <string name="system_ui_control_center_card_tiles_customization">Customize card tiles</string>
     <string name="system_ui_control_center_card_tiles_customization_desc">Long press and drag the cards you\'ve added to adjust the order</string>
     <string name="system_ui_control_center_card_tiles_customization_add">Added</string>
@@ -990,7 +970,6 @@
     <string name="system_ui_volume_collpased_column_press_desc">The expand button will turn off when this feature are enabled.</string>
     <string name="system_ui_volume_hide_foot_button">Hide Silent mode and DND button</string>
     <string name="system_ui_plugin_enable_volume_blur">Enable volume bar blur</string>
-    <string name="system_ui_move_log_to_miui">Move statusbar_gestures.dat to MIUI directory</string>
     <string name="system_ui_plugin_enable_volume_blur_desc">May lead to high GPU load</string>
     <!--Telecom-->
     <string name="telecom">Manage calls</string>

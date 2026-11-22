@@ -411,7 +411,6 @@
     <string name="system_framework_disable_verify_can_ve_disabled">Функция \"Отключить для проверки\" может быть отключена</string>
     <string name="system_framework_allow_all_dark_mode">Разрешить всем приложениям использовать темный режим</string>
     <string name="system_framework_background_blur_supported">Принудительное включение Расширенных текстур</string>
-    <string name="system_framework_background_blur_toast">Размытие всплывающих окон</string>
     <string name="system_framework_background_blur_supported_more">Когда эта функция включена, используйте переключатель \"Расширенные текстуры\" в настройках системы. Возможно, потребуется дважды перезагрузить устройство.</string>
     <string name="system_framework_disablt_miuilite_check">Отключить проверку MIUI Lite</string>
     <string name="system_framework_posted_clipboard">Отключить всплывающее окно уведомления о доступе приложения к буферу обмена</string>
@@ -535,12 +534,7 @@
     <string name="system_ui_lock_screen_scramble_pin">Случайный PIN</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">Случайный порядок клавиатуры PIN-кода</string>
     <string name="system_ui_lock_screen_default_theme">Поддерживает только тему по умолчанию</string>
-    <string name="system_ui_lock_screen_show_charging_cv">Отображение информации о заряде в нижней части экрана блокировки</string>
-    <string name="system_ui_lock_screen_show_charging_c_more">Показывать подробную информацию о токах</string>
-    <string name="system_ui_lock_screen_show_battery_temperature">Показывать температуру батареи</string>
-    <string name="system_ui_lock_screen_show_spacing">Показывать интервал обновления</string>
     <string name="system_ui_lock_screen_hide_camera">Скрыть камеру</string>
-    <string name="system_ui_lock_screen_bottom_left_button">Левая кнопка внизу</string>
     <string name="system_ui_lock_screen_current">Текущий</string>
     <string name="system_ui_lock_screen_blur_button">Размытие кнопок экрана блокировки</string>
     <string name="system_ui_lock_screen_blur_button_desc">После включения фон камеры и кнопки отрицательного экрана на экране блокировки размыты, что может привести к высокому энергопотреблению. Поддерживается только тема по умолчанию.</string>
@@ -556,9 +550,6 @@
     <string name="system_ui_lock_screen_allow_third_face">Позволяет системе пробуждаться для проверки распознавания на стороннем экране блокировки</string>
     <string name="system_ui_lock_screen_allow_third_face_desc">Позволяет нормально использовать распознавание лиц и отпечатков пальцев на экране блокировки, отображаемом сторонними приложениями</string>
     <string name="system_ui_lock_screen_disable_unlock_by_ble_toast">Отключить показ разблокировки по Bluetooth-уведомлению</string>
-    <string name="system_ui_lock_screen_linkage_anim">Замена перехода экрана блокировки</string>
-    <string name="system_ui_lock_screen_linkage_anim_on">Скорость анимации включения экрана</string>
-    <string name="system_ui_lock_screen_linkage_anim_off">Скорость анимации выключения экрана</string>
     <string name="system_ui_navigation_title">Навигация</string>
     <string name="system_ui_navigation_handle_title">Полоса жестов</string>
     <string name="system_ui_statusbar_title">Строка состояния</string>
@@ -709,12 +700,6 @@
     <string name="system_ui_control_center_qs_open_color">Настройка цвета маленькой плитки</string>
     <string name="system_ui_control_center_qs_big_open_color">Настройка цвета большой плитки</string>
     <string name="system_ui_control_auto_close_more">При нажатии на строку состояния она автоматически убирается.</string>
-    <string name="system_control_center_qs_rows">Строки</string>
-    <string name="system_control_center_qs_rows_format">Линий: %d</string>
-    <string name="system_control_center_qs_rows_horizontal">Кол-во строк (ландшафт)</string>
-    <string name="system_control_center_qs_columns">Столбцы</string>
-    <string name="system_control_center_qs_columns_format">Ряд: %d</string>
-    <string name="system_control_center_qs_columns_horizontal">Кол-во столбцов (ландшафт)</string>
     <string name="system_ui_control_center_notification_disable_transparent">Отключить прозрачный режим</string>
     <string name="system_ui_control_center_notification_disable_transparent_desc">Отключить настройку прозрачности фона уведомлений</string>
     <string name="system_ui_control_center_media_control_progress">Индикатор выполнения</string>
@@ -758,7 +743,6 @@
     <string name="system_ui_control_center_expand_notification_show_time">Время отображения</string>
     <string name="system_ui_control_center_mute_visible_notice_desc">Когда экран включен, всплывающее уведомление отображается без звукового сопровождения.</string>
     <string name="system_ui_control_center_rounded_rect">Плитка с закругленными углами</string>
-    <string name="system_ui_control_center_statusbar_blur">Принудительное размытие фона</string>
     <string name="system_ui_control_center_rounded_rect_radius">Округленный радиус</string>
     <string name="system_ui_control_center_fix_tiles_list">Отключить скрытие очень темных плиток</string>
     <string name="system_ui_shade_header_gradient_blur">Теневое размытие в заголовке</string>
@@ -767,11 +751,7 @@
     <string name="system_ui_control_center_hide_display_device_name">Отображение имени устройства</string>
     <string name="system_ui_control_center_hide_name">Скрыть все имена</string>
     <string name="system_ui_controlcenter_new_title">Новый центр управления</string>
-    <string name="system_ui_controlcenter_old_title">Старый центр управления</string>
     <string name="system_ui_controlcenter_unlock_old_title">Разблокировать стиль центра управления</string>
-    <string name="system_ui_controlcenter_enable_title">Настроить количество строк и столбцов</string>
-    <string name="system_control_center_old_qs_grid_columns">Количество столбцов в свернутой панели</string>
-    <string name="system_control_center_old_qs_grid_columns_horizontal">Количество столбцов в свернутой панели (Альбомная ориентация)</string>
     <string name="system_ui_control_center_card_tiles_customization">Настраиваемые большие плитки</string>
     <string name="system_ui_control_center_card_tiles_customization_desc">Нажмите, удерживайте и перетащите добавленные вами карточки, чтобы изменить порядок</string>
     <string name="system_ui_control_center_card_tiles_customization_add">Добавлено</string>
@@ -823,7 +803,6 @@
     <string name="system_ui_volume_collpased_column_press_desc">Когда эта функция включена, кнопка \"Развернуть\" отключается.</string>
     <string name="system_ui_volume_hide_foot_button">Скрыть кнопки отключения звука и \"Не беспокоить\"</string>
     <string name="system_ui_plugin_enable_volume_blur">Включить размытие полосы громкости</string>
-    <string name="system_ui_move_log_to_miui">Переместить statusbar_gestures.dat в каталог MIUI</string>
     <string name="system_ui_plugin_enable_volume_blur_desc">Только для моделей MTK с Android 12+, возможна высокая нагрузка ГПУ</string>
     <!--Telecom-->
     <string name="telecom">Телефонные звонки</string>

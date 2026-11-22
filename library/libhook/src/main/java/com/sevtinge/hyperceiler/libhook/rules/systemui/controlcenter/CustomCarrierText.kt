@@ -19,8 +19,6 @@
 package com.sevtinge.hyperceiler.libhook.rules.systemui.controlcenter
 
 import android.view.View
-import android.view.ViewGroup
-import androidx.core.view.isVisible
 import com.sevtinge.hyperceiler.common.utils.PrefsBridge
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
 import com.sevtinge.hyperceiler.libhook.utils.api.PropUtils
@@ -31,14 +29,6 @@ import io.github.lingqiqi5211.ezhooktool.xposed.java.IMethodHook
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.util.concurrent.atomic.AtomicBoolean
-import io.github.lingqiqi5211.ezhooktool.core.callMethod
-import io.github.lingqiqi5211.ezhooktool.core.callMethodAs
-import io.github.lingqiqi5211.ezhooktool.core.findMethod
-import io.github.lingqiqi5211.ezhooktool.core.loadClass
-import io.github.lingqiqi5211.ezhooktool.xposed.dsl.createAfterHook
-import io.github.lingqiqi5211.ezhooktool.xposed.dsl.createBeforeHook
-import io.github.lingqiqi5211.ezhooktool.xposed.dsl.getObjectFieldAs
-import io.github.lingqiqi5211.ezhooktool.xposed.dsl.setIntField
 
 /**
  * 控制中心运营商名称自定义；设置变更后重启系统界面。
@@ -51,26 +41,8 @@ object CustomCarrierText : BaseHook() {
     private const val HEADER_CONTROLLER = "com.android.systemui.controlcenter.shade.ControlCenterHeaderController"
 
 
-    val getOperator by lazy {
-        PrefsBridge.getStringAsInt("system_ui_control_center_hide_operator", 0)
-    }
-
     override fun init() {
-        if (isMoreHyperOSVersion(4f)) {
-            hookOS4()
-            return
-        }
-        loadClass("com.android.systemui.statusbar.policy.HDController").findMethod { name("isVisible") }.createBeforeHook { param ->
-                param.result = false
-            }
-
-        hookLegacyCarrierText()
-        hookModernCarrierText()
-
-        when (getOperator) {
-            1 -> hideCarrierSeparator()
-            2 -> hideCarrierText()
-        }
+        if (isMoreHyperOSVersion(4f)) hookOS4()
     }
 
     // ROM calls and rollback can throw arbitrary runtime failures; preserve the host and cleanup boundary.
@@ -172,100 +144,4 @@ object CustomCarrierText : BaseHook() {
             check(View::class.java.isAssignableFrom(it.type) && !Modifier.isStatic(it.modifiers))
             it.isAccessible = true
         }
-
-    private fun hookLegacyCarrierText() {
-        runCatching {
-            loadClass("com.android.systemui.statusbar.phone.MiuiKeyguardStatusBarView").findMethod { name(CARRIER_TEXT_CHANGED) }.createBeforeHook { param ->
-                    param.args[2] = transformCarrierText(
-                        slotId = param.args[1] as Int,
-                        carrierText = param.args[2] as? String
-                    )
-                }
-        }
-    }
-
-    // 显示设备名称
-    private fun hookModernCarrierText() {
-        runCatching {
-            loadClass(CARRIER_CALLBACK).findMethod { name(CARRIER_TEXT_CHANGED) }.createBeforeHook { param ->
-                    param.args[2] = transformCarrierText(
-                        slotId = param.args[1] as Int,
-                        carrierText = param.args[2] as? String
-                    )
-                }
-        }
-    }
-
-    private fun transformCarrierText(slotId: Int, carrierText: String?): String? {
-        return when (getOperator) {
-            1 -> carrierText
-                ?.replace("  |  ", "")
-                ?.replace(" | ", "")
-
-            2 -> ""
-            3 -> if (slotId == 0) {
-                PropUtils.getProp("persist.private.device_name")
-            } else {
-                null
-            }
-
-            else -> carrierText
-        }
-    }
-
-    // 隐藏分割线
-    private fun hideCarrierSeparator() {
-        loadClass(CARRIER_LAYOUT).findMethod { name(ON_MEASURE); parameterTypes(Int::class.java, Int::class.java) }.createBeforeHook { param ->
-                val viewGroup = param.thisObject as ViewGroup
-                val widthMeasureSpec = param.args[0] as Int
-                val heightMeasureSpec = param.args[1] as Int
-
-                if (!viewGroup.isVisible) {
-                    // super.onMeasure
-                    com.sevtinge.hyperceiler.libhook.base.BaseHook.invokeSuperMethod(
-                        ON_MEASURE, viewGroup,
-                        widthMeasureSpec,
-                        heightMeasureSpec
-                    )
-                    param.result = null
-                    return@createBeforeHook
-                }
-
-                var availableWidth = View.MeasureSpec.getSize(widthMeasureSpec)
-                if (viewGroup.callMethodAs("getQsHeaderLayout")) {
-                    availableWidth /= 2
-                }
-                viewGroup.setIntField("availableWidth", availableWidth)
-
-                viewGroup.getObjectFieldAs<View>("carrierSeparatorView").isVisible = false
-                val leftCarrierTextView = viewGroup.getObjectFieldAs<View>("leftCarrierTextView")
-                val rightCarrierTextView = viewGroup.getObjectFieldAs<View>("rightCarrierTextView")
-                if (leftCarrierTextView.callMethodAs("shouldShow")) {
-                    viewGroup.callMethod("setCarrierMaxWidth", leftCarrierTextView, availableWidth)
-                } else {
-                    viewGroup.callMethod("setCarrierMaxWidth", rightCarrierTextView, availableWidth)
-                }
-
-                // super.onMeasure
-                com.sevtinge.hyperceiler.libhook.base.BaseHook.invokeSuperMethod(
-                    ON_MEASURE, viewGroup,
-                    View.MeasureSpec.makeMeasureSpec(availableWidth, View.MeasureSpec.EXACTLY),
-                    heightMeasureSpec
-                )
-                viewGroup.callMethod(
-                    "setMeasuredDimension",
-                    availableWidth,
-                    viewGroup.measuredHeight
-                )
-
-                param.result = null
-            }
-    }
-
-    // 隐藏全部名称
-    private fun hideCarrierText() {
-        loadClass(HEADER_CONTROLLER).findMethod { name("updateCarrierAndPrivacyVisible") }.createAfterHook { param ->
-                param.thisObject.getObjectFieldAs<View>("carrierLayout").visibility = View.INVISIBLE
-            }
-    }
 }

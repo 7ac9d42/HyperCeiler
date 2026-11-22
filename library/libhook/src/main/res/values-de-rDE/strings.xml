@@ -24,7 +24,6 @@
     <!--Multi-list Array-->
     <string name="tiles_gms">Google Play-Dienste</string>
     <string name="tiles_snow_leopard_mode">S-Leo-Modus</string>
-    <string name="tiles_taplus">Taplus</string>
     <string name="tiles_5g">5G-Netzwerk</string>
     <string name="system_ui_statusbar_music_notification">Fokus-Benachrichtigungs-Liedtexte</string>
     <string name="open_by_default">Standardmäßig öffnen</string>

@@ -399,7 +399,6 @@
     <string name="system_framework_disable_verify_can_ve_disabled">Verifikation kann deaktiviert werden deaktivieren</string>
     <string name="system_framework_allow_all_dark_mode">Allen Apps erlauben, den dunklen Modus zu verwenden</string>
     <string name="system_framework_background_blur_supported">Erweiterte Texturen erzwingen</string>
-    <string name="system_framework_background_blur_toast">Erweiterte Texturen Toast</string>
     <string name="system_framework_background_blur_supported_more">Wenn diese Funktion aktiviert ist, aktiviere erweiterte Texturen in den Einstellungen. Das Gerät muss möglicherweise zweimal neu gestartet werden.</string>
     <string name="system_framework_disablt_miuilite_check">MIUI Lite Check deaktivieren</string>
     <string name="system_framework_posted_clipboard">Zwischenablage-Einfügen-Toast deaktivieren</string>
@@ -515,12 +514,7 @@
     <string name="system_ui_lock_screen_scramble_pin">Zufällige PIN</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">PIN-Tastatur-Reihenfolge randomisieren</string>
     <string name="system_ui_lock_screen_default_theme">Nur Standard-Theme unterstützen</string>
-    <string name="system_ui_lock_screen_show_charging_cv">Ladeinformationen unten anzeigen</string>
-    <string name="system_ui_lock_screen_show_charging_c_more">Detaillierten Strom anzeigen</string>
-    <string name="system_ui_lock_screen_show_battery_temperature">Akku-Temperatur anzeigen</string>
-    <string name="system_ui_lock_screen_show_spacing">Anzeige-Aktualisierungsintervall</string>
     <string name="system_ui_lock_screen_hide_camera">Kamera ausblenden</string>
-    <string name="system_ui_lock_screen_bottom_left_button">Linke Taste unten</string>
     <string name="system_ui_lock_screen_current">Strom</string>
     <string name="system_ui_lock_screen_blur_button">Sperrbildschirm-Buttons unscharf machen</string>
     <string name="system_ui_lock_screen_blur_button_desc">Nach der Aktivierung wird der Hintergrund der Kamera- und Verknüpfungstasten unscharf, was hohen Stromverbrauch verursachen kann.\nUnterstützt nur Standard-Theme.</string>
@@ -536,9 +530,6 @@
     <string name="system_ui_lock_screen_allow_third_face">Drittanbieter-Sperrbildschirm erlauben, Systemverifikationserkennung zu aktivieren</string>
     <string name="system_ui_lock_screen_allow_third_face_desc">Gesichtsentsprrung und Fingerabdruck normal auf dem von Drittanbieter-Apps angezeigten Sperrbildschirm verwenden</string>
     <string name="system_ui_lock_screen_disable_unlock_by_ble_toast">Durch Bluetooth-Geräte entsperrt Toast ausblenden</string>
-    <string name="system_ui_lock_screen_linkage_anim">Sperrbildschirm-Übergang ersetzen</string>
-    <string name="system_ui_lock_screen_linkage_anim_on">Bildschirm-an-Animationsrate</string>
-    <string name="system_ui_lock_screen_linkage_anim_off">Bildschirm-aus-Animationsrate</string>
     <string name="system_ui_navigation_title">Navigation</string>
     <string name="system_ui_navigation_handle_title">Gestenlinie</string>
     <string name="system_ui_statusbar_title">Statusleiste</string>
@@ -687,12 +678,6 @@
     <string name="system_ui_control_center_qs_open_color">Anpassung der kleinen Kachel aktivieren</string>
     <string name="system_ui_control_center_qs_big_open_color">Anpassung der großen Kachel aktivieren</string>
     <string name="system_ui_control_auto_close_more">Durch Antippen des Statusleisten-Blocks wird sich die Statusleiste automatisch zurückziehen.</string>
-    <string name="system_control_center_qs_rows">Reihen</string>
-    <string name="system_control_center_qs_rows_format">%d Zeilen</string>
-    <string name="system_control_center_qs_rows_horizontal">Reihen (Horizontal)</string>
-    <string name="system_control_center_qs_columns">Spalten</string>
-    <string name="system_control_center_qs_columns_format">%d Spalten</string>
-    <string name="system_control_center_qs_columns_horizontal">Spalten (Horizontal)</string>
     <string name="system_ui_control_center_notification_disable_transparent">Transparenten Modus deaktivieren</string>
     <string name="system_ui_control_center_notification_disable_transparent_desc">Benachrichtigungshintergrund auf transparent setzen deaktivieren</string>
     <string name="system_ui_control_center_media_control_progress">Fortschrittsbalken</string>
@@ -720,7 +705,6 @@
     <string name="system_ui_control_center_expand_notification_show_time">Anzeigedauer</string>
     <string name="system_ui_control_center_mute_visible_notice_desc">Wenn der Bildschirm an ist, wird die Pop-up-Benachrichtigung keinen Alarmton abspielen.</string>
     <string name="system_ui_control_center_rounded_rect">Abgerundete Rechteck-Kachel</string>
-    <string name="system_ui_control_center_statusbar_blur">Hintergrund-Unschärfe erzwingen</string>
     <string name="system_ui_control_center_rounded_rect_radius">Abgerundeter Radius</string>
     <string name="system_ui_control_center_fix_tiles_list">Versteckte Kontrollzentrum-Kacheln freischalten</string>
     <string name="system_ui_shade_header_gradient_blur">Oberteil von Kontrollzentrum und Benachrichtigungsleiste unscharf machen</string>
@@ -729,11 +713,7 @@
     <string name="system_ui_control_center_hide_display_device_name">Gerätename anzeigen</string>
     <string name="system_ui_control_center_hide_name">Alle Namen ausblenden</string>
     <string name="system_ui_controlcenter_new_title">Neues Kontrollzentrum</string>
-    <string name="system_ui_controlcenter_old_title">Legacy Kontrollzentrum</string>
     <string name="system_ui_controlcenter_unlock_old_title">Kontrollzentrum-Stile freischalten</string>
-    <string name="system_ui_controlcenter_enable_title">Anzahl der Reihen und Spalten anpassen</string>
-    <string name="system_control_center_old_qs_grid_columns">Anzahl der Spalten im eingeklappten Panel</string>
-    <string name="system_control_center_old_qs_grid_columns_horizontal">Anzahl der Spalten im eingeklappten Panel (Horizontal)</string>
     <string name="system_ui_control_center_card_tiles_customization">Karten-Kacheln anpassen</string>
     <string name="system_ui_control_center_card_tiles_customization_desc">Halte die hinzugefügten Karten gedrückt und ziehe sie, um die Reihenfolge anzupassen</string>
     <string name="system_ui_control_center_card_tiles_customization_add">Hinzugefügt</string>
@@ -783,7 +763,6 @@
     <string name="system_ui_volume_collpased_column_press_desc">Der Erweitern-Button wird ausgeschaltet wenn diese Funktion aktiviert ist.</string>
     <string name="system_ui_volume_hide_foot_button">Stumm-Modus und Nicht-Stören-Button ausblenden</string>
     <string name="system_ui_plugin_enable_volume_blur">Lautstärkeleiste-Unschärfe aktivieren</string>
-    <string name="system_ui_move_log_to_miui">statusbar_gestures.dat in MIUI-Verzeichnis verschieben</string>
     <string name="system_ui_plugin_enable_volume_blur_desc">Kann zu hoher GPU-Last führen</string>
     <!--Telecom-->
     <string name="telecom">Anrufe verwalten</string>

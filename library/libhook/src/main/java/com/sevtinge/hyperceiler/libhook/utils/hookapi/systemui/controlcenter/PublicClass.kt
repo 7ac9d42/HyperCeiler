@@ -68,10 +68,6 @@ object PublicClass {
         loadClassOrNull("com.android.systemui.statusbar.notification.mediacontrol.MiuiMediaControlPanel")
     }
 
-    val seekBarObserver by lazy {
-        loadClassOrNull("com.android.systemui.media.controls.ui.binder.SeekBarObserver")
-    }
-
     val playerTwoCircleView by lazy {
         loadClassOrNull("com.miui.systemui.notification.media.PlayerTwoCircleView")
     }

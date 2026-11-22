@@ -1,7 +1,7 @@
 Test14 CustomBackground OS4 lifecycle and shader-tint regression
 
 Production under test:
-- CustomBackground.kt: OS4 early routing; remainder identical to frozen test13.
+- CustomBackground.kt: OS4-only routing with the shared progress-bar key and island check.
 - CustomBackgroundOS4.kt: four selected styles, NC/DI owner generations, views,
   foreground journal, exact late layout writer, receiver and worker lifecycle.
 - MediaSeekBarColorOS4.kt: exact current-owned high/middle draw scope only.
@@ -15,11 +15,12 @@ Output directories must not already exist; reports bind inputs before/after.
 The host suite compiles complete production Kotlin against Android37 first and
 runs the real EzHook1.3.0/API102 before/after chain. Android views/Looper,
 controller method bodies, renderer/drawer and asynchronous scheduling are
-explicit stand-ins. It does not run Xiaomi SystemUI or LSPosed. A separately
-compiled complete old/new route tests OS4 no-legacy lookup and OS3 legacy entry;
-verify_rom additionally compares the full non-OS4 source with frozen test13.
+explicit stand-ins. It does not run Xiaomi SystemUI or LSPosed. The separately
+compiled production route tests OS4 dispatch and verifies that OS3 installs no
+hooks even with both background modes enabled. verify_rom checks the OS4 vendor
+inputs and settings; it no longer requires the retired OS3 source snapshot.
 
-The authoritative positive host-v11 suite has 132 cases. The 13 negative controls
+The current host suite has 132 cases. The 13 negative controls
 compile modified copies, never production, and require a named behavioural
 witness to fail. Final negative-parallel-v1 explicitly combines completed
 host-v11 controls with remaining sibling runs of the same frozen runner; the
@@ -78,4 +79,5 @@ Historical diagnostics remain present. host-v10 executed130/130 but correctly
 failed its accidentally declared132 total; host-v11 adds prior-skip and busy
 scope cases to reach132. rom-v1 stopped on the checker's singular pref_key typo;
 rom-v2 verifies the actual prefs_key XML names. Other early directories retain
-fixture/setup failures and are not final approval evidence.
+fixture/setup failures and are not final approval evidence. finalize.py checks
+those frozen reports against their original inputs, not this OS4-only route.

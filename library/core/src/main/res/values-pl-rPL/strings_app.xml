@@ -392,7 +392,6 @@
     <string name="system_framework_disable_verify_can_ve_disabled">Wyłączanie weryfikacji może być wyłączone</string>
     <string name="system_framework_allow_all_dark_mode">Zezwól wszystkim aplikacjom na korzystanie z ciemnego motywu</string>
     <string name="system_framework_background_blur_supported">Wymuś włączenie zaawansowanych tekstur</string>
-    <string name="system_framework_background_blur_toast">Zaawansowane tekstury komunikatów</string>
     <string name="system_framework_background_blur_supported_more">Gdy ta funkcja jest włączona, proszę kontrolować opcję zaawansowanych tekstur w ustawieniach systemowych, ponieważ system może wymagać dwukrotnego ponownego uruchomienia.</string>
     <string name="system_framework_disablt_miuilite_check">Wyłącz sprawdzanie MIUI Lite</string>
     <string name="system_framework_posted_clipboard">Usuń folder ze schowka</string>
@@ -500,10 +499,6 @@
     <string name="system_ui_lock_screen_scramble_pin">Losowy PIN</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">Zmienia losowo układ przyciskowy PIN</string>
     <string name="system_ui_lock_screen_default_theme">Obsługuje tylko domyślny motyw</string>
-    <string name="system_ui_lock_screen_show_charging_cv">Pokaż informacje o ładowaniu na dole</string>
-    <string name="system_ui_lock_screen_show_charging_c_more">Pokaż szczegółowy przepływ</string>
-    <string name="system_ui_lock_screen_show_battery_temperature">Pokaż temperaturę baterii</string>
-    <string name="system_ui_lock_screen_show_spacing">Częstotliwość odświeżania</string>
     <string name="system_ui_lock_screen_hide_camera">Ukryj aparat</string>
     <string name="system_ui_lock_screen_current">Przepływ</string>
     <string name="system_ui_lock_screen_blur_button">Rozmycie przycisków ekranu blokady</string>
@@ -520,9 +515,6 @@
     <string name="system_ui_lock_screen_allow_third_face">Zezwól systemowi na weryfikację rozpoznawania przez strony trzecie</string>
     <string name="system_ui_lock_screen_allow_third_face_desc">Umożliwia normalne używanie funkcji rozpoznawania twarzy i odcisków palców na ekranie blokady wyświetlanym przez aplikacje firm trzecich</string>
     <string name="system_ui_lock_screen_disable_unlock_by_ble_toast">Wyłącz wyświetlanie powiadomienia o odblokowaniu przez Bluetooth</string>
-    <string name="system_ui_lock_screen_linkage_anim">Zastąp przejście ekranu blokady</string>
-    <string name="system_ui_lock_screen_linkage_anim_on">Szybkość animacji włączania ekranu</string>
-    <string name="system_ui_lock_screen_linkage_anim_off">Szybkość animacji wyłączania ekranu</string>
     <string name="system_ui_navigation_title">Nawigacja</string>
     <string name="system_ui_navigation_handle_title">Linia uchwytu</string>
     <string name="system_ui_statusbar_title">Pasek stanu</string>
@@ -656,12 +648,6 @@
     <string name="system_ui_control_center_qs_open_color">Włącz dostosowywanie małych kafelków</string>
     <string name="system_ui_control_center_qs_big_open_color">Włącz dostosowywanie dużych kafelków</string>
     <string name="system_ui_control_auto_close_more">Dotknięcie bloku na pasku stanu spowoduje automatyczne jego zwinięcie.</string>
-    <string name="system_control_center_qs_rows">Wiersze</string>
-    <string name="system_control_center_qs_rows_format">%d linii</string>
-    <string name="system_control_center_qs_rows_horizontal">Wiersze (poziomo)</string>
-    <string name="system_control_center_qs_columns">Kolumny</string>
-    <string name="system_control_center_qs_columns_format">%d kolumn</string>
-    <string name="system_control_center_qs_columns_horizontal">Kolumny (poziomo)</string>
     <string name="system_ui_control_center_notification_disable_transparent">Wyłącz tryb przezroczysty</string>
     <string name="system_ui_control_center_notification_disable_transparent_desc">Wyłącza ustawienie tła powiadomienia na przezroczyste</string>
     <string name="system_ui_control_center_media_control_progress">Pasek postępu</string>
@@ -687,7 +673,6 @@
     <string name="system_ui_control_center_expand_notification">Rozwiń powiadomienia</string>
     <string name="system_ui_control_center_mute_visible_notice_desc">Gdy ekran jest włączony, wyskakujące powiadomienie nie odtwarza dźwięku alertu.</string>
     <string name="system_ui_control_center_rounded_rect">Zaokrąglony prostokątny kafelek</string>
-    <string name="system_ui_control_center_statusbar_blur">Niestandardowe rozmycie tła</string>
     <string name="system_ui_control_center_rounded_rect_radius">Zaokrąglony promień</string>
     <string name="system_ui_control_center_fix_tiles_list">Wyłącz ukrycie niezwykle ciemnych kafelków</string>
     <string name="system_ui_shade_header_gradient_blur">Rozmycie gradientu nagłówka</string>
@@ -696,11 +681,7 @@
     <string name="system_ui_control_center_hide_display_device_name">Wyświetl nazwę urządzenia</string>
     <string name="system_ui_control_center_hide_name">Ukryj wszystkie nazwy</string>
     <string name="system_ui_controlcenter_new_title">Nowe centrum kontroli</string>
-    <string name="system_ui_controlcenter_old_title">Starsze centrum kontroli</string>
     <string name="system_ui_controlcenter_unlock_old_title">Odblokuj style centrum kontroli</string>
-    <string name="system_ui_controlcenter_enable_title">Dostosuj liczbę wierszy i kolumn</string>
-    <string name="system_control_center_old_qs_grid_columns">Liczba kolumn w zwiniętym panelu</string>
-    <string name="system_control_center_old_qs_grid_columns_horizontal">Liczba kolumn w zwiniętym panelu (w trybie poziomym)</string>
     <string name="system_ui_control_center_card_tiles_customization">Dostosuj kafelki karty</string>
     <string name="system_ui_control_center_card_tiles_customization_desc">Naciśnij i przytrzymaj, a następnie przeciągnij karty, które dodałeś(aś), aby dostosować kolejność</string>
     <string name="system_ui_control_center_card_tiles_customization_add">Dodano</string>
@@ -745,7 +726,6 @@
     <string name="system_ui_volume_collpased_column_press_desc">Gdy ta funkcja jest włączona, przycisk rozwijania jest wyłączony</string>
     <string name="system_ui_volume_hide_foot_button">Ukryj przyciski wyciszenia i trybu Nie Przeszkadzać</string>
     <string name="system_ui_plugin_enable_volume_blur">Włącz rozmycie paska głośności</string>
-    <string name="system_ui_move_log_to_miui">Przenieś statusbar_gestures.dat do rejestru MIUI</string>
     <string name="system_ui_plugin_enable_volume_blur_desc">Tylko dla modeli Android 12+ z procesorem MTK. Może wystąpić wysokie obciążenie GPU.</string>
     <!--Telecom-->
     <string name="telecom">Zarządzaj połączeniami</string>

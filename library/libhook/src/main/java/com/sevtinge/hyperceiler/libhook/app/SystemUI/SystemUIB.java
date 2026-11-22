@@ -108,7 +108,6 @@ import com.sevtinge.hyperceiler.libhook.rules.systemui.statusbar.network.Network
 import com.sevtinge.hyperceiler.libhook.rules.systemui.statusbar.network.NewNetworkSpeed;
 import com.sevtinge.hyperceiler.libhook.rules.systemui.statusbar.network.NewNetworkSpeedStyle;
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.MiuiStub;
-import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.controlcenter.MediaControlBgFactory;
 
 import java.util.Objects;
 
@@ -234,10 +233,6 @@ public class SystemUIB extends BaseLoad {
         int ncBgMode = PrefsBridge.getStringAsInt("system_ui_control_center_media_control_background_mode", 0);
         int diBgMode = PrefsBridge.getStringAsInt("system_ui_island_media_control_background_mode", 0);
         initHook(NewUnlockCustomActions.INSTANCE, PrefsBridge.getBoolean("system_ui_control_center_media_control_unlock_custom_actions"));
-        // OS4 resolves its typed Monet palettes in CustomBackgroundOS4; the
-        // legacy factory expects the removed Style enum and OS3 controllers.
-        initHook(MediaControlBgFactory.INSTANCE, (ncBgMode != 0 || diBgMode != 0)
-            && !com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreHyperOSVersion(4f));
         initHook(CustomBackground.INSTANCE, ncBgMode != 0 || diBgMode != 0);
         initHook(MediaViewLayout.INSTANCE, PrefsBridge.getBoolean("system_ui_control_center_media_control_media_button_layout_switch"));
         initHook(MediaViewSize.INSTANCE, PrefsBridge.getBoolean("system_ui_control_center_media_control_media_button_size_switch") || PrefsBridge.getBoolean("system_ui_island_media_control_media_button_size_switch"));

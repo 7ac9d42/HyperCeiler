@@ -24,7 +24,6 @@
     <!--Multi-list Array-->
     <string name="tiles_gms">Google Play hizmetleri</string>
     <string name="tiles_snow_leopard_mode">S-Leo modu</string>
-    <string name="tiles_taplus">Taplus</string>
     <string name="tiles_5g">5G ağı</string>
     <string name="system_ui_statusbar_music_notification">Bildirim sözlerine odaklan</string>
     <string name="open_by_default">Varsayılan olarak açık</string>

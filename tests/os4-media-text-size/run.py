@@ -13,10 +13,12 @@ ROUTE=SOURCE/'library/libhook/src/main/java/com/sevtinge/hyperceiler/libhook/app
 XML=[SOURCE/'library/core/src/main/res/xml'/n for n in ['system_ui_control_center_media_cards.xml','system_ui_status_bar_island_media_card.xml']]
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 def inputs():return {str(test_paths.report_path(p, ROOT)):sha(p) for p in [RULE,ROUTE,*XML,Path(__file__),*sorted((BASE/'fixtures').rglob('*'))]if p.is_file()}
+ROUTE_MUTATION='drop_route_OS4_gate'
+ROUTE_WITNESS='OS3_enabled_does_not_read_preferences_or_register'
 def run(out,mutation=None):
  out.mkdir(parents=True,exist_ok=False);before=inputs();body=RULE.read_text()
  if mutation == 'ignore_exact_receiver':
-  for old in [' || param.thisObject?.javaClass != owner','if (receiver?.javaClass != owner) return']:
+  for old in ['if (param.thisObject?.javaClass != owner) return','if (receiver?.javaClass != owner) return']:
    assert body.count(old)==1,(mutation,old);body=body.replace(old,'')
  elif mutation and mutation!='outer_gate_NC_only':
   old,new=MUTANTS[mutation];assert body.count(old)==1,(mutation,body.count(old));body=body.replace(old,new)
@@ -31,15 +33,15 @@ def run(out,mutation=None):
   prod=w/RULE.name;prod.write_text(body);cmd=[str(JAVA/'java'),'-cp',str(KH/'lib/kotlin-compiler.jar'),'org.jetbrains.kotlin.cli.jvm.K2JVMCompiler','-kotlin-home',str(KH),'-jvm-target','21','-classpath',allcp,'-d',str(classes),str(prod),*map(str,(BASE/'fixtures').rglob('*.kt'))];commands.append(cmd);r=subprocess.run(cmd,capture_output=True,text=True);logs+=r.stdout+r.stderr;(out/'build.txt').write_text(logs);assert r.returncode==0,logs
   cmd=[str(JAVA/'javac'),'--release','21','-proc:none','-cp',allcp,'-d',str(classes),str(BASE/'fixtures/TestMain.java'),str(BASE/'fixtures/Targets.java'),str(routejava)];commands.append(cmd);r=subprocess.run(cmd,capture_output=True,text=True);logs+=r.stdout+r.stderr;(out/'build.txt').write_text(logs);assert r.returncode==0,logs
   r=subprocess.run([str(JAVA/'java'),'-ea','-cp',allcp,'TestMain'],capture_output=True,text=True,timeout=60);(out/'tests.txt').write_text(r.stdout+r.stderr);print(r.stdout[-500:]);m=re.search(r'RESULT passes=(\d+) failures=(\d+)',r.stdout);assert m,r.stdout+r.stderr
-  after=inputs();report={'passed':r.returncode==0 and int(m[2])==0 and before==after,'tests':{'passed':int(m[1]),'failed':int(m[2])},'exit_code':r.returncode,'inputs_before':before,'inputs_after':after,'inputs_unchanged':before==after,'dependencies':{str(p):sha(p)for p in DEPS},'commands':commands,'mutation':mutation,'device_status':'NOT_TESTED','scope':'Complete production Kotlin object; real EzHook1.3.0/API102 callback chain. Android TextViews/SP conversion, preferences/version, ROM-mapped controller bodies and hook installation backend are host fixtures; the OS3 helpers are compile-only fixtures; no ROM DEX/ART/LSPosed/device execution.'};(out/'report.json').write_text(json.dumps(report,indent=2)+'\n');return report
+  after=inputs();report={'passed':r.returncode==0 and int(m[2])==0 and before==after,'tests':{'passed':int(m[1]),'failed':int(m[2])},'exit_code':r.returncode,'inputs_before':before,'inputs_after':after,'inputs_unchanged':before==after,'dependencies':{str(p):sha(p)for p in DEPS},'commands':commands,'mutation':mutation,'device_status':'NOT_TESTED','scope':'Complete production Kotlin object; real EzHook1.3.0/API102 callback chain. Android TextViews/SP conversion, preferences/version, ROM-mapped controller bodies and hook installation backend are host fixtures; no ROM DEX/ART/LSPosed/device execution.'};(out/'report.json').write_text(json.dumps(report,indent=2)+'\n');return report
 MUTANTS={
  'outer_gate_NC_only':None,
  'obsolete_inner_switch':('prefix + "_media_button_size_switch"','prefix + "_text_size"'),
  'NC_controls_both_domains':('if (!PrefsBridge.getBoolean(prefix + "_media_button_size_switch")) continue','if (!PrefsBridge.getBoolean("system_ui_control_center_media_control_media_button_size_switch")) continue'),
  'island_reads_NC_sizes':('if (island) "system_ui_island_media_control" else "system_ui_control_center_media_control"','if (island) "system_ui_control_center_media_control" else "system_ui_control_center_media_control"'),
  'omit_island_dummy':('listOf("miuiPlayerHolder", "miuiDummyPlayerHolder")','listOf("miuiPlayerHolder")'),
- 'omit_elapsed':('"artistText", "elapsedTimeView", "totalTimeView"','"artistText", "totalTimeView"'),
- 'omit_total':('"artistText", "elapsedTimeView", "totalTimeView"','"artistText", "elapsedTimeView"'),
+ 'omit_elapsed':('listOf(TITLE_TEXT, ARTIST_TEXT, ELAPSED_TIME_VIEW, TOTAL_TIME_VIEW)','listOf(TITLE_TEXT, ARTIST_TEXT, TOTAL_TIME_VIEW)'),
+ 'omit_total':('listOf(TITLE_TEXT, ARTIST_TEXT, ELAPSED_TIME_VIEW, TOTAL_TIME_VIEW)','listOf(TITLE_TEXT, ARTIST_TEXT, ELAPSED_TIME_VIEW)'),
  'time_uses_artist':('val time = readSize(prefix + "_time_view_text_size", 130, 50..200)','val time = readSize(prefix + "_artist_size", 120, 80..240)'),
  'wrong_unit_DP':('views[index].setTextSize(TypedValue.COMPLEX_UNIT_SP, sizes[index])','views[index].setTextSize(TypedValue.COMPLEX_UNIT_DIP, sizes[index])'),
  'integer_truncation':('return value / 10f','return (value / 10).toFloat()'),
@@ -47,16 +49,20 @@ MUTANTS={
  'before_instead_of_after':('override fun after(param: HookParam)','override fun before(param: HookParam)'),
  'ignore_original_exception':(' || param.hasThrowable',''),
  'ignore_prior_skip':(' || param.isSkipped',''),
- 'ignore_exact_receiver':(' || param.thisObject?.javaClass != owner',''),
+ 'ignore_exact_receiver':None,
  'activate_partial':('val active = AtomicBoolean(false)','val active = AtomicBoolean(true)'),
  'omit_rollback':('try { handle.unhook() } catch (rollback: RuntimeException) { error.addSuppressed(rollback) }','try { /* retain registration */ } catch (rollback: RuntimeException) { error.addSuppressed(rollback) }'),
  'accept_invalid_range':('check(value in range) { "Invalid media text size: $key" }','/* no range check */'),
- 'route_OS4_to_legacy':('if (isMoreHyperOSVersion(4f)) {','if (false) {'),
+ ROUTE_MUTATION:('if (isMoreHyperOSVersion(4f)) initOS4()','initOS4()'),
 }
 if __name__=='__main__':
  p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--negative-controls',action='store_true');a=p.parse_args();r=run(a.output);assert r['passed']
  if a.negative_controls:
   rows=[]
   for m in MUTANTS:
-   q=run(a.output/m,m);rows.append({'mutation':m,'rejected':not q['passed'] and q['tests']['failed']>0 and q['inputs_unchanged'],'failed_tests':q['tests']['failed']})
+   q=run(a.output/m,m);row={'mutation':m,'rejected':not q['passed'] and q['tests']['failed']>0 and q['inputs_unchanged'],'failed_tests':q['tests']['failed']}
+   if m==ROUTE_MUTATION:
+    observed=any(line.startswith('FAIL '+ROUTE_WITNESS+':')for line in (a.output/m/'tests.txt').read_text().splitlines())
+    row.update(expected_witness=ROUTE_WITNESS,witness_observed=observed,rejected=row['rejected'] and observed)
+   rows.append(row)
   v={'passed':all(x['rejected']for x in rows),'checks':rows,'scope':'In-memory source-copy regressions. Production file unchanged.'};(a.output/'negative-controls.json').write_text(json.dumps(v,indent=2)+'\n');assert v['passed']

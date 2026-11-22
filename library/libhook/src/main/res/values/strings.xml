@@ -28,7 +28,6 @@
     <!--Multi-list Array-->
     <string name="tiles_gms">Google Play service</string>
     <string name="tiles_snow_leopard_mode">S-Leo mode</string>
-    <string name="tiles_taplus">Taplus</string>
     <string name="tiles_5g">5G network</string>
     <string name="system_ui_statusbar_music_share">Share lyrics</string>
     <string name="system_ui_statusbar_music_send">Release to send</string>

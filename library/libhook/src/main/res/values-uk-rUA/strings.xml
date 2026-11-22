@@ -24,7 +24,6 @@
     <!--Multi-list Array-->
     <string name="tiles_gms">Служба Google Play</string>
     <string name="tiles_snow_leopard_mode">Режим S-Leo</string>
-    <string name="tiles_taplus">Taplus</string>
     <string name="tiles_5g">Мережа 5G</string>
     <string name="system_ui_statusbar_music_share">Поділитись текстом пісні</string>
     <string name="system_ui_statusbar_music_send">Відпустіть, щоб надіслати</string>

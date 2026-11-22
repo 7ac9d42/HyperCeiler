@@ -374,7 +374,6 @@
     <string name="system_framework_disable_verify_can_ve_disabled">\"Desactivar para verificar\" puede desactivarse</string>
     <string name="system_framework_allow_all_dark_mode">Permitir que todas las aplicaciones usen el modo oscuro</string>
     <string name="system_framework_background_blur_supported">Forzar la activación de texturas avanzadas</string>
-    <string name="system_framework_background_blur_toast">Toast de texturas avanzadas</string>
     <string name="system_framework_disablt_miuilite_check">Deshabilitar verificación de MIUI lite</string>
     <string name="system_framework_allow_manage_all_notifications">Se permite administrar todas las notificaciones</string>
     <string name="system_framework_quick_screenshot">Captura de pantalla rápida</string>
@@ -454,10 +453,6 @@
     <string name="system_ui_lock_screen_scramble_pin">PIN aleatorio</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">Orden aleatorio del teclado PIN</string>
     <string name="system_ui_lock_screen_default_theme">Soporte solo tema predeterminado</string>
-    <string name="system_ui_lock_screen_show_charging_cv">Mostrar información de carga en el fondo de la pantalla de bloqueo</string>
-    <string name="system_ui_lock_screen_show_charging_c_more">Mostrar corriente precisa</string>
-    <string name="system_ui_lock_screen_show_battery_temperature">Mostrar temperatura de batería</string>
-    <string name="system_ui_lock_screen_show_spacing">Intervalo de actualización de la muestra</string>
     <string name="system_ui_lock_screen_hide_camera">Ocultar la cámara</string>
     <string name="system_ui_lock_screen_current">Corriente</string>
     <string name="system_ui_lock_screen_blur_button">Desenfocar los botones de cámara y pantalla inteligente</string>
@@ -583,12 +578,6 @@
     <string name="system_ui_control_center_qs_open_color">Habilitar la personalización del mosaico pequeño</string>
     <string name="system_ui_control_center_qs_big_open_color">Habilitar la personalización del mosaico grande</string>
     <string name="system_ui_control_auto_close_more">Después de abrir, hacer clic en pegatinas y automáticamente se vuelve la barra de estado</string>
-    <string name="system_control_center_qs_rows">Filas</string>
-    <string name="system_control_center_qs_rows_format">%d Filas</string>
-    <string name="system_control_center_qs_rows_horizontal">Filas (Horizontal)</string>
-    <string name="system_control_center_qs_columns">Columnas</string>
-    <string name="system_control_center_qs_columns_format">%d Columnas</string>
-    <string name="system_control_center_qs_columns_horizontal">Columnas (Horizontal)</string>
     <string name="system_ui_control_center_media_control_progress">Barra de progreso</string>
     <string name="system_ui_control_center_media_control_progress_wavy">Ondeado</string>
     <string name="system_ui_control_center_media_control_progress_sleek">Elegante</string>
@@ -606,7 +595,6 @@
     <string name="system_ui_control_center_expand_notification">Expandir notificaciones</string>
     <string name="system_ui_control_center_mute_visible_notice_desc">Cuando la pantalla está encendida, la notificación emergente no reproduce el sonido de indicador</string>
     <string name="system_ui_control_center_rounded_rect">Pegatinas rectángulos redondeados</string>
-    <string name="system_ui_control_center_statusbar_blur">Forzar desenfoque de fondo</string>
     <string name="system_ui_control_center_rounded_rect_radius">Radio de redondeo</string>
     <string name="system_ui_control_center_fix_tiles_list">Desactivar ocultar pegatina del modo extremadamente oscuro</string>
     <string name="system_ui_control_center_hide_operator">Personalización de nombre(s) de operador(es)</string>
@@ -614,11 +602,7 @@
     <string name="system_ui_control_center_hide_display_device_name">Mostrar el nombre del dispositivo</string>
     <string name="system_ui_control_center_hide_name">Se ocultan todos</string>
     <string name="system_ui_controlcenter_new_title">Centro de control nuevo</string>
-    <string name="system_ui_controlcenter_old_title">Centro de control clásico</string>
     <string name="system_ui_controlcenter_unlock_old_title">Desbloquear estilos del centro de control</string>
-    <string name="system_ui_controlcenter_enable_title">Personalizar el número de filas y columnas</string>
-    <string name="system_control_center_old_qs_grid_columns">Cantidad de columnas en el panel contraído</string>
-    <string name="system_control_center_old_qs_grid_columns_horizontal">Cantidad de columnas en el panel contraído (horizontal)</string>
     <string name="system_ui_control_center_card_tiles_customization_add">Añadido</string>
     <string name="system_ui_control_center_card_tiles_customization_not_add">No añadido</string>
     <string name="system_ui_other_title">Otros</string>

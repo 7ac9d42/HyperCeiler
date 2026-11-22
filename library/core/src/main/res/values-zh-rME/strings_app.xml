@@ -365,7 +365,6 @@
     <string name="system_framework_disable_verify_can_ve_disabled">禁用验证禁用可以禁用验证吗？</string>
     <string name="system_framework_allow_all_dark_mode">允许所有阿泼泼们使用暗黑⚨模式</string>
     <string name="system_framework_background_blur_supported">强制启动睾♂鸡材质</string>
-    <string name="system_framework_background_blur_toast">牛逼材质</string>
     <string name="system_framework_background_blur_supported_more">你可能需要重启两次才能启用牛逼材质</string>
     <string name="system_framework_disablt_miuilite_check">保过 MIUI Lite 检查</string>
     <string name="system_framework_posted_clipboard">烦内，不要弹剪贴板读取提示好不好</string>
@@ -475,10 +474,6 @@
     <string name="system_ui_lock_screen_scramble_pin">不随机PIN</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">随机更改 PIN 键盘顺序</string>
     <string name="system_ui_lock_screen_default_theme">还是默认主题</string>
-    <string name="system_ui_lock_screen_show_charging_cv">在底部显示爆炸充能百分比信息</string>
-    <string name="system_ui_lock_screen_show_charging_c_more">想要详细电流？唉，不给</string>
-    <string name="system_ui_lock_screen_show_battery_temperature">Oppo A5的电池快热炸了</string>
-    <string name="system_ui_lock_screen_show_spacing">没有时间间隔</string>
     <string name="system_ui_lock_screen_hide_camera">防止版本T0污蔑</string>
     <string name="system_ui_lock_screen_current">当前电流</string>
     <string name="system_ui_lock_screen_blur_button">糊上锁屏按钮</string>
@@ -487,8 +482,6 @@
     <string name="system_ui_lock_screen_double_lock">屏幕怎么亮了？双击试试</string>
     <string name="system_ui_lock_screen_double_lock_desc">霜鸡空白位置锁屏</string>
     <string name="system_ui_lock_screen_not_disturb_mode_title">别告诉我你开了免打扰😭</string>
-    <string name="system_ui_lock_screen_linkage_anim_on">动画可以吃吗</string>
-    <string name="system_ui_lock_screen_linkage_anim_off">我不让你关</string>
     <string name="system_ui_navigation_title">导航</string>
     <string name="system_ui_navigation_handle_title">底线</string>
     <string name="system_ui_statusbar_title">状态不实时显示的栏</string>
@@ -524,7 +517,6 @@
     <string name="system_ui_another_title">还想... 看更多吗❤️</string>
     <string name="system_ui_disable_infinitymode_gesture_sum">只能给泡面盖用</string>
     <string name="system_ui_plugin_enable_volume_blur">音量糊糊～</string>
-    <string name="system_ui_move_log_to_miui">垃圾就该待在垃圾桶里</string>
     <string name="system_ui_plugin_enable_volume_blur_desc">骁龙就别看了，给A12+联fuck用的</string>
     <!--Telecom-->
     <!--Settings-->

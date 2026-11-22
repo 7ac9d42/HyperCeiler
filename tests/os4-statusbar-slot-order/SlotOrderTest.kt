@@ -62,10 +62,10 @@ fun main() {
         val list = IconList(otaNames); apply(list); val once = list.mSlots.toList()
         apply(list); check(list.mSlots == once)
     }
-    test("OS3 retains constructor interception") {
+    test("OS3 skips registration") {
         Hooks.factory = null; DeviceHelper.System.version = 3f
         SwapWiFiAndMobileNetwork.init()
-        check(Hooks.legacy != null && Hooks.factory == null)
+        check(Hooks.legacy == null && Hooks.factory == null)
     }
     println("OS4 slot order: $count passed")
 }

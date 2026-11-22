@@ -24,7 +24,6 @@
     <!--Multi-list Array-->
     <string name="tiles_gms">Dịch vụ Google Play</string>
     <string name="tiles_snow_leopard_mode">Chế độ S-Leo</string>
-    <string name="tiles_taplus">Taplus</string>
     <string name="tiles_5g">Mạng 5G</string>
     <string name="system_ui_statusbar_music_share">Chia sẻ lời bài hát</string>
     <string name="system_ui_statusbar_music_send">Thả để gửi</string>

@@ -18,16 +18,9 @@
  */
 package com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui
 
-import com.sevtinge.hyperceiler.common.utils.PrefsBridge
 import io.github.lingqiqi5211.ezhooktool.core.loadClass
 
 object Keyguard {
-    // 锁屏底部左侧按钮
-    @JvmStatic
-    val leftButtonType by lazy {
-        PrefsBridge.getStringAsInt("system_ui_lock_screen_bottom_left_button", 0)
-    }
-
     val keyguardBottomAreaInjector by lazy {
         loadClass("com.android.keyguard.injector.KeyguardBottomAreaInjector")
     }

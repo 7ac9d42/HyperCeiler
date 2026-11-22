@@ -476,7 +476,6 @@
     <string name="system_framework_disable_verify_can_ve_disabled">禁用是否允许禁用 APP 校验</string>
     <string name="system_framework_allow_all_dark_mode">允许所有 APP 使用深色模式</string>
     <string name="system_framework_background_blur_supported">强制启用高级材质</string>
-    <string name="system_framework_background_blur_toast">Toast 高级材质</string>
     <string name="system_framework_background_blur_supported_more">开启此功能后请在系统设置中控制高级材质开关，可能需要重启两次系统</string>
     <string name="system_framework_disablt_miuilite_check">禁用精简版系统检查</string>
     <string name="system_framework_posted_clipboard">禁止显示剪贴板粘贴 Toast</string>
@@ -608,12 +607,7 @@
     <string name="system_ui_lock_screen_scramble_pin">乱序 PIN</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">随机更改 PIN 键盘顺序</string>
     <string name="system_ui_lock_screen_default_theme">仅支持默认主题</string>
-    <string name="system_ui_lock_screen_show_charging_cv">锁屏底部显示充电信息</string>
-    <string name="system_ui_lock_screen_show_charging_c_more">显示详细电流</string>
-    <string name="system_ui_lock_screen_show_battery_temperature">显示电池温度</string>
-    <string name="system_ui_lock_screen_show_spacing">显示刷新间隔</string>
     <string name="system_ui_lock_screen_hide_camera">隐藏相机</string>
-    <string name="system_ui_lock_screen_bottom_left_button">底部左侧按钮</string>
     <string name="system_ui_lock_screen_current">当前电流</string>
     <string name="system_ui_lock_screen_blur_button">锁屏按钮背景模糊</string>
     <string name="system_ui_lock_screen_blur_button_desc">启用后相机和负一屏按钮的背景带有模糊，可能存在功耗偏高的情况，仅支持默认主题</string>
@@ -631,9 +625,6 @@
     <string name="system_ui_lock_screen_allow_third_face">允许三方锁屏界面唤醒系统验证识别</string>
     <string name="system_ui_lock_screen_allow_third_face_desc">允许在第三方应用显示的锁屏界面时，正常使用人脸及指纹识别</string>
     <string name="system_ui_lock_screen_disable_unlock_by_ble_toast">禁止显示 \"已通过蓝牙设备解锁\" Toast</string>
-    <string name="system_ui_lock_screen_linkage_anim">覆盖联动息屏壁纸动画参数</string>
-    <string name="system_ui_lock_screen_linkage_anim_on">亮屏动画速率</string>
-    <string name="system_ui_lock_screen_linkage_anim_off">息屏动画速率</string>
     <string name="system_ui_navigation_title">导航栏</string>
     <string name="system_ui_navigation_handle_title">手势提示线</string>
     <string name="system_ui_statusbar_title">状态栏</string>
@@ -819,12 +810,6 @@
     <string name="system_ui_control_center_snow_leopard_mode_desc">禁止全部的音频输出。实验性功能，可能包含不稳定的内容</string>
     <string name="system_ui_control_auto_close">磁贴自动收起</string>
     <string name="system_ui_control_auto_close_more">开启后点击状态栏磁贴会自动收起状态栏</string>
-    <string name="system_control_center_qs_rows">行数</string>
-    <string name="system_control_center_qs_rows_format">%d 行</string>
-    <string name="system_control_center_qs_rows_horizontal">行数（横屏）</string>
-    <string name="system_control_center_qs_columns">列数</string>
-    <string name="system_control_center_qs_columns_format">%d 列</string>
-    <string name="system_control_center_qs_columns_horizontal">列数（横屏）</string>
     <string name="system_ui_control_center_notification_disable_transparent">禁用透明模式</string>
     <string name="system_ui_control_center_notification_disable_transparent_desc">禁止设置通知背景为非模糊或透明样式</string>
     <string name="system_ui_control_center_media_control_progress">媒体进度条样式</string>
@@ -883,7 +868,6 @@
     <string name="system_ui_control_center_expand_notification_show_time">显示时长</string>
     <string name="system_ui_control_center_mute_visible_notice_desc">亮屏时弹出通知不播放提示音</string>
     <string name="system_ui_control_center_rounded_rect">圆角矩形磁贴</string>
-    <string name="system_ui_control_center_statusbar_blur">强制背景模糊</string>
     <string name="system_ui_control_center_rounded_rect_radius">圆角大小</string>
     <string name="system_ui_control_center_fix_tiles_list">补全磁贴列表</string>
     <string name="system_ui_shade_header_gradient_blur">通知与控制中心头部渐变模糊</string>
@@ -904,11 +888,7 @@
     <string name="system_ui_control_center_zen_fix">勿扰模式修复</string>
     <string name="system_ui_control_center_zen_fix_desc">修复部分设备在勿扰模式依旧响铃</string>
     <string name="system_ui_controlcenter_new_title">新控制中心</string>
-    <string name="system_ui_controlcenter_old_title">经典控制中心</string>
     <string name="system_ui_controlcenter_unlock_old_title">解锁控制中心样式</string>
-    <string name="system_ui_controlcenter_enable_title">自定义行列数</string>
-    <string name="system_control_center_old_qs_grid_columns">折叠面板中的列数</string>
-    <string name="system_control_center_old_qs_grid_columns_horizontal">折叠面板中的列数（横屏）</string>
     <string name="system_ui_control_center_card_tiles_customization">卡片磁贴自定义</string>
     <string name="system_ui_control_center_card_tiles_customization_desc">长按并拖拽已添加的卡片可调整顺序</string>
     <string name="system_ui_control_center_card_tiles_customization_add">已添加</string>
@@ -952,7 +932,6 @@
     <string name="system_ui_volume_hide_foot_button">隐藏静音和勿扰按钮</string>
     <string name="system_ui_plugin_enable_volume_blur">音量条模糊</string>
     <string name="system_ui_plugin_enable_volume_blur_desc">可能存在 GPU 负载较高的情况</string>
-    <string name="system_ui_move_log_to_miui">将 statusbar_gestures.dat 移动到 MIUI 目录</string>
     <!--设置-->
     <string name="system_settings_international_build">国际版本设置页面</string>
     <string name="system_settings_novelty_haptic_title">解锁新版触感调节页面</string>

@@ -24,7 +24,6 @@
     <!--Multi-list Array-->
     <string name="tiles_gms">Google Play 服务</string>
     <string name="tiles_snow_leopard_mode">雪豹模式</string>
-    <string name="tiles_taplus">传送门</string>
     <string name="tiles_5g">5G 网络</string>
     <string name="system_ui_statusbar_music_share">分享歌词</string>
     <string name="system_ui_statusbar_music_send">松开即发送</string>

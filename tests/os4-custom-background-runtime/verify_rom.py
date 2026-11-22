@@ -58,14 +58,6 @@ with zipfile.ZipFile(apk)as z:
  for name in ['res/raw/music_player_tracker.frag','res/raw/music_player_tracker_middle.frag']:
   text=z.read(name).decode();check(name+'_geometry_alpha_no_palette_uniform','uniform shader uTex;'in text and 'uniform vec2 uTrackSize;'in text and 'uniform'not in '\n'.join(x for x in text.splitlines()if 'Color' in x))
 source=test_paths.SOURCE_ROOT / 'library/libhook/src/main/java/com/sevtinge/hyperceiler/libhook/rules/systemui/controlcenter/media3'
-route=source/'CustomBackground.kt';old=test_paths.SNAPSHOT_ROOT / 'source-os4-hyos-test13-20261009-r1/library/libhook/src/main/java/com/sevtinge/hyperceiler/libhook/rules/systemui/controlcenter/media3/CustomBackground.kt'
-body=route.read_text();delta='''        if (isMoreHyperOSVersion(4f)) {
-            CustomBackgroundOS4.init()
-            return
-        }
-'''
-check('OS3_route_exact_previous_body',body.replace('import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreHyperOSVersion\n','').replace(delta,'')==old.read_text())
-inputs[str(old)]=sha(old)
 for n in ['CustomBackground.kt','CustomBackgroundOS4.kt','MediaSeekBarColorOS4.kt']:inputs[str(source/n)]=sha(source/n)
 xml=test_paths.SOURCE_ROOT / 'library/core/src/main/res/xml'
 for name,prefix in [('system_ui_control_center_media_cards.xml','system_ui_control_center_media_control'),('system_ui_status_bar_island_media_card.xml','system_ui_island_media_control')]:

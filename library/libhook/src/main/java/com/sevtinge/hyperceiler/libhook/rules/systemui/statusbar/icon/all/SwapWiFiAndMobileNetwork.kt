@@ -19,23 +19,13 @@
 package com.sevtinge.hyperceiler.libhook.rules.systemui.statusbar.icon.all
 
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
-import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isHyperOSVersion
 import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreHyperOSVersion
 import io.github.lingqiqi5211.ezhooktool.core.findMethod
-import io.github.lingqiqi5211.ezhooktool.xposed.dsl.beforeHookConstructor
 import io.github.lingqiqi5211.ezhooktool.core.loadClass
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.createAfterHook
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.getObjectFieldOrNull
 
 object SwapWiFiAndMobileNetwork : BaseHook() {
-    val mSignalIcons by lazy {
-        if (isHyperOSVersion(3f)) {
-            arrayOf("wifi", "demo_wifi", "mobile", "demo_mobile", "no_sim")
-        } else {
-            arrayOf("hotspot", "slave_wifi", "wifi", "demo_wifi", "no_sim", "mobile", "demo_mobile", "airplane")
-        }
-    }
-
     override fun init() {
         if (isMoreHyperOSVersion(4f)) {
             // OS4 constructs the list inside this factory; the String[] constructor
@@ -45,32 +35,7 @@ object SwapWiFiAndMobileNetwork : BaseHook() {
                 .createAfterHook { param ->
                     reorderOS4Slots(param.result)
                 }
-            return
         }
-        val statusBarIconListClass =
-            loadClass("com.android.systemui.statusbar.phone.ui.StatusBarIconList")
-
-        statusBarIconListClass
-            .beforeHookConstructor(Array<String>::class.java) { param ->
-                val isRightController =
-                    "StatusBarIconList" == param.thisObject.javaClass.simpleName
-                val allStatusIcons: ArrayList<Any?> = ArrayList((param.args[0] as Array<*>).toList())
-                if (isRightController) {
-                    var startIndex = allStatusIcons.indexOf("mobile")
-                    val endIndex = allStatusIcons.indexOf("demo_wifi") + 1
-                    val removedIcons = allStatusIcons.subList(startIndex, endIndex)
-                    val mSignalRelatedIcons = ArrayList(listOf(*mSignalIcons))
-
-                    removedIcons.clear()
-                    startIndex = if (isHyperOSVersion(3f)) {
-                        maxOf(allStatusIcons.indexOf("network_speed"), allStatusIcons.indexOf("hd"))
-                    } else {
-                        allStatusIcons.indexOf("hd")
-                    }
-                    allStatusIcons.addAll(startIndex + 1, mSignalRelatedIcons)
-                    param.args[0] = allStatusIcons.map { it as String }.toTypedArray()
-                }
-            }
     }
 
     private fun reorderOS4Slots(result: Any?) {

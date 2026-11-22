@@ -10,9 +10,11 @@ This suite does not execute Xiaomi SystemUI, the GPU, or LSPosed on a phone.
 
 The route is compiled separately against the SDK37 and frozen test12 peer jars
 whose paths/hashes are recorded in the SDK report; the host runtime supplies
-minimal version/preference adapters. The OS3 test proves branch selection with
-all legacy options disabled and no OS4 classes. Byte identity of the retained
-legacy body is checked separately; this is not a full OS3 integration test.
+minimal version/preference adapters. The route tests verify that OS4 registers
+both the notification center and island hooks, and that OS3 neither reads
+preferences nor installs hooks even with both locations enabled, including the
+obsolete island key. The version-gate negative control removes the OS4 check
+and must fail the named OS3 route test.
 
 `compile_android.py --output <new-directory>` compiles the route, adapter, current
 resolver, native color wrapper and actual shared Drawable together against real SDK37/API102 and

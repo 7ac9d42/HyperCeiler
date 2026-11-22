@@ -24,7 +24,6 @@
     <!--Multi-list Array-->
     <string name="tiles_gms">Google Play 開発者サービス</string>
     <string name="tiles_snow_leopard_mode">S-Leo モード</string>
-    <string name="tiles_taplus">Taplus</string>
     <string name="tiles_5g">5G ネットワーク</string>
     <string name="system_ui_statusbar_music_share">歌詞を共有する</string>
     <string name="system_ui_statusbar_music_send">リリースして送信</string>

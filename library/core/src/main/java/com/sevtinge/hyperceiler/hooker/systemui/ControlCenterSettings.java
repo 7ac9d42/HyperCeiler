@@ -22,18 +22,13 @@ import static com.sevtinge.hyperceiler.sub.SubPickerActivity.ALL_APPS_MODE;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.widget.SeekBar;
 
 import androidx.preference.Preference;
 
-import com.sevtinge.hyperceiler.common.log.AndroidLog;
 import com.sevtinge.hyperceiler.core.R;
 import com.sevtinge.hyperceiler.dashboard.DashboardFragment;
 import com.sevtinge.hyperceiler.prefs.RecommendPreference;
 import com.sevtinge.hyperceiler.sub.SubPickerActivity;
-
-import fan.preference.SeekBarPreferenceCompat;
 
 public class ControlCenterSettings extends DashboardFragment {
 
@@ -71,27 +66,6 @@ public class ControlCenterSettings extends DashboardFragment {
                 return true;
             }
         );
-
-        ((SeekBarPreferenceCompat) findPreference("prefs_key_system_control_center_old_qs_grid_columns")).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (!fromUser) return;
-                if (progress < 3) progress = 5;
-                try {
-                    Settings.Secure.putInt(requireActivity().getContentResolver(), "sysui_qqs_count", progress);
-                } catch (Throwable t) {
-                    AndroidLog.w("SeekBarPreferenceCompat", "onProgressChanged -> system_control_center_old_qs_grid_columns", t);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
 
         Bundle args1 = new Bundle();
         mRecommend = new RecommendPreference(requireContext());

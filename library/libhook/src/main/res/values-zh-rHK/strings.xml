@@ -24,7 +24,6 @@
     <!--Multi-list Array-->
     <string name="tiles_gms">Google Play 服務</string>
     <string name="tiles_snow_leopard_mode">雪豹模式</string>
-    <string name="tiles_taplus">傳送門</string>
     <string name="tiles_5g">5G 網絡</string>
     <string name="system_ui_statusbar_music_notification">焦點通知歌詞</string>
     <string name="open_by_default">預設打開</string>

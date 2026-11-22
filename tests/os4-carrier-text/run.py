@@ -34,7 +34,7 @@ MUTANTS={
  'drop_rollback':('try { handle.unhook() } catch (rollback: RuntimeException) { error.addSuppressed(rollback) }','try { /* retain registration */ } catch (rollback: RuntimeException) { error.addSuppressed(rollback) }'),
  'count_dependent_display_slot':('else if (slot == 0) name else ""','else if (carrierCount == 1 || slot == 0) name else ""'),
  'empty_primary_slot_skipped':('if (mode != 3 && text.isNullOrEmpty()) return','if (text.isNullOrEmpty()) return'),
- 'drop_os4_gate':('if (isMoreHyperOSVersion(4f)) {','if (true) {'),
+ 'drop_os4_gate':('if (isMoreHyperOSVersion(4f)) hookOS4()','hookOS4()'),
 }
 if __name__=='__main__':
  p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--negative-controls',action='store_true');a=p.parse_args();r=run(a.output);assert r['passed']

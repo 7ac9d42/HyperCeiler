@@ -13,10 +13,13 @@ PEER=test_paths.SNAPSHOT_ROOT / 'source-os4-hyos-test12-20261009-r1/library/libh
 DEPS=[CACHE/'changed-hooks-compile'/x for x in ['hook-xposed-102-1.3.0.jar','core-1.3.0.jar','api-102.0.0.jar']]+[KH/'lib/kotlin-stdlib.jar',test_paths.ANDROID_HOME / 'platforms/android-37.0/android.jar']
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 def inputs():return {str(test_paths.report_path(p, ROOT)):sha(p)for p in [RULE,ROUTE,test_paths.TEST_DATA_ROOT / 'acceptance/java-test13/ambient-runtime-v1/sdk-first-v1/report.json',Path(__file__),*sorted((BASE/'fixtures').rglob('*'))]if p.is_file()}
+ROUTE_MUTATION='drop_route_OS4_gate'
+ROUTE_WITNESS='OS3 enabled route does not read preferences or install hooks'
 def run(out,mutation=None):
- out.mkdir(parents=True,exist_ok=False);before=inputs();body=RULE.read_text();commands=[];logs=''
- if mutation and mutation!='route_OS4_to_legacy':
-  old,new=MUTANTS[mutation];assert body.count(old)==1,(mutation,body.count(old));body=body.replace(old,new)
+ out.mkdir(parents=True,exist_ok=False);before=inputs();bodies={'adapter':RULE.read_text(),'route':ROUTE.read_text()};commands=[];logs=''
+ if mutation:
+  old,new=MUTANTS[mutation];target='route' if mutation==ROUTE_MUTATION else 'adapter';body=bodies[target]
+  assert body.count(old)==1,(mutation,body.count(old));bodies[target]=body.replace(old,new)
  with tempfile.TemporaryDirectory(prefix='hc-ambient-')as t:
   w=Path(t);classes=w/'classes';classes.mkdir();cp=os.pathsep.join(map(str,DEPS));allcp=str(classes)+os.pathsep+cp
   def cmd(c):
@@ -24,11 +27,11 @@ def run(out,mutation=None):
    commands.append(c);r=subprocess.run(c,capture_output=True,text=True);logs+=r.stdout+r.stderr;(out/'build.txt').write_text(logs);assert r.returncode==0,logs
   files=[p for p in (BASE/'fixtures').rglob('*.java')if p.name not in ['TestMain.java','Targets.java']]
   cmd([str(JAVA/'javac'),'--release','21','-proc:none','-cp',cp,'-d',str(classes),*map(str,files)])
-  prod=w/RULE.name;prod.write_text(body)
+  prod=w/RULE.name;prod.write_text(bodies['adapter'])
   cmd([str(JAVA/'java'),'-cp',str(KH/'lib/kotlin-compiler.jar'),'org.jetbrains.kotlin.cli.jvm.K2JVMCompiler','-kotlin-home',str(KH),'-jvm-target','21','-classpath',allcp,'-d',str(classes),str(prod),*map(str,(BASE/'fixtures').rglob('*.kt'))])
   sdk_deps=list(json.loads((test_paths.TEST_DATA_ROOT / 'acceptance/java-test13/ambient-runtime-v1/sdk-first-v1/report.json').read_text())['dependencies'])
   routeclasses=w/'routeclasses';routeclasses.mkdir()
-  routesrc=w/ROUTE.name;routesrc.write_text(ROUTE.read_text().replace('if (isMoreHyperOSVersion(4f)) {','if (false) {')if mutation=='route_OS4_to_legacy'else ROUTE.read_text())
+  routesrc=w/ROUTE.name;routesrc.write_text(bodies['route'])
   cmd([str(JAVA/'java'),'-cp',str(KH/'lib/kotlin-compiler.jar'),'org.jetbrains.kotlin.cli.jvm.K2JVMCompiler','-kotlin-home',str(KH),'-jvm-target','21','-classpath',os.pathsep.join([*sdk_deps,str(classes)]),'-d',str(routeclasses),str(routesrc)])
   allcp=os.pathsep.join([str(classes),str(routeclasses),cp,str(PEER)])
   if not (BASE/'fixtures/TestMain.java').exists(): return
@@ -45,12 +48,16 @@ MUTANTS={
  'clobber_foreign_color_on_cleanup':('if (read(it) == value) write(it, original)','write(it, original)'),
  'no_holder_generation_check':('plan.current(owner, kind) === holder && plan.colors[holder] === journal','true'),
  'discard_partial_effect_write':('if (!frame.eligible || param.isSkipped) return','if (!frame.eligible || param.isSkipped || param.hasThrowable) return'),
- 'route_OS4_to_legacy':None,
+ ROUTE_MUTATION:('if (isMoreHyperOSVersion(4f)) AlwaysDarkOS4.init()','AlwaysDarkOS4.init()'),
 }
 if __name__=='__main__':
  p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--negative-controls',action='store_true');a=p.parse_args();r=run(a.output);assert r['passed']
  if a.negative_controls:
   rows=[]
   for m in MUTANTS:
-   q=run(a.output/m,m);rows.append({'mutation':m,'rejected':q['exit_code']!=0 and q['tests']['failed']>0 and q['inputs_unchanged'],'failed_tests':q['tests']['failed']})
+   q=run(a.output/m,m);row={'mutation':m,'rejected':q['exit_code']!=0 and q['tests']['failed']>0 and q['inputs_unchanged'],'failed_tests':q['tests']['failed']}
+   if m==ROUTE_MUTATION:
+    observed=any(line.startswith('FAIL '+ROUTE_WITNESS+':')for line in (a.output/m/'tests.txt').read_text().splitlines())
+    row.update(expected_witness=ROUTE_WITNESS,witness_observed=observed,rejected=row['rejected'] and observed)
+   rows.append(row)
   report={'passed':all(x['rejected']for x in rows),'checks':rows,'device_status':'NOT_TESTED','scope':'Temporary production-source mutation compiled and executed through actual API102 callbacks; no source file overwritten.'};(a.output/'negative-controls.json').write_text(json.dumps(report,indent=2)+'\n');assert report['passed']

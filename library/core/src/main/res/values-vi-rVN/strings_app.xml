@@ -411,7 +411,6 @@
     <string name="system_framework_disable_verify_can_ve_disabled">Cho phép tắt xác minh ứng dụng</string>
     <string name="system_framework_allow_all_dark_mode">Cho phép tất cả ứng dụng sử dụng chế độ tối</string>
     <string name="system_framework_background_blur_supported">Mở họa tiết nâng cao</string>
-    <string name="system_framework_background_blur_toast">Thông báo họa tiết nâng cao</string>
     <string name="system_framework_background_blur_supported_more">Khi tính năng này được bật, vui lòng điều khiển công tắc vật liệu nâng cao trong cài đặt hệ thống vì hệ thống có thể cần phải khởi động lại hai lần</string>
     <string name="system_framework_disablt_miuilite_check">Tắt kiểm tra MIUI Lite</string>
     <string name="system_framework_posted_clipboard">Đã chặn thông báo bộ nhớ tạm khi dán</string>
@@ -535,12 +534,7 @@
     <string name="system_ui_lock_screen_scramble_pin">Mã PIN ngẫu nhiên</string>
     <string name="system_ui_lock_screen_scramble_pin_desc">Sắp xếp Mã PIN ngẫu nhiên</string>
     <string name="system_ui_lock_screen_default_theme">Chỉ hỗ trợ chủ đề mặc định</string>
-    <string name="system_ui_lock_screen_show_charging_cv">Hiển thị thông tin sạc ở dưới cùng màn hình khóa</string>
-    <string name="system_ui_lock_screen_show_charging_c_more">Hiển thị chi tiết mA</string>
-    <string name="system_ui_lock_screen_show_battery_temperature">Hiển thị nhiệt độ pin</string>
-    <string name="system_ui_lock_screen_show_spacing">Thời gian làm mới</string>
     <string name="system_ui_lock_screen_hide_camera">Ẩn Camera</string>
-    <string name="system_ui_lock_screen_bottom_left_button">Nút bên trái ở phía dưới</string>
     <string name="system_ui_lock_screen_current">Hiện tại</string>
     <string name="system_ui_lock_screen_blur_button">Làm mờ phím tắt và thông báo</string>
     <string name="system_ui_lock_screen_blur_button_desc">Sau khi bật, nền của camera và nút màn hình điều hướng trên Màn hình khóa sẽ bị mờ, có thể gây tốn điện năng.\nChỉ hỗ trợ chủ đề mặc định.</string>
@@ -556,9 +550,6 @@
     <string name="system_ui_lock_screen_allow_third_face">Cho phép đánh thức hệ thống để xác minh nhận dạng trên màn hình khóa của bên thứ ba</string>
     <string name="system_ui_lock_screen_allow_third_face_desc">Cho phép sử dụng bình thường tính năng nhận dạng khuôn mặt và vân tay hiển thị trên màn hình khóa do ứng dụng bên thứ ba</string>
     <string name="system_ui_lock_screen_disable_unlock_by_ble_toast">Tắt hiển thị thông báo mở khóa bằng Bluetooth</string>
-    <string name="system_ui_lock_screen_linkage_anim">Ghi đè liên kết hình nền động</string>
-    <string name="system_ui_lock_screen_linkage_anim_on">Màn hình trên tốc độ hoạt ảnh</string>
-    <string name="system_ui_lock_screen_linkage_anim_off">Tốc độ hoạt ảnh tắt màn hình</string>
     <string name="system_ui_navigation_title">Phím điều hướng</string>
     <string name="system_ui_navigation_handle_title">Thanh ngang</string>
     <string name="system_ui_statusbar_title">Thanh trạng thái</string>
@@ -710,12 +701,6 @@
     <string name="system_ui_control_center_qs_open_color">Đã bật tùy chỉnh màu ô</string>
     <string name="system_ui_control_center_qs_big_open_color">Đã bật tùy chỉnh màu ô lớn</string>
     <string name="system_ui_control_auto_close_more">Sau khi bật, bấm vào biểu tượng thanh trạng thái sẽ tự động thu gọn thanh trạng thái</string>
-    <string name="system_control_center_qs_rows">Hàng</string>
-    <string name="system_control_center_qs_rows_format">%d dòng</string>
-    <string name="system_control_center_qs_rows_horizontal">Hàng (màn hình ngang)</string>
-    <string name="system_control_center_qs_columns">Cột</string>
-    <string name="system_control_center_qs_columns_format">%d Danh sách</string>
-    <string name="system_control_center_qs_columns_horizontal">Cột (màn hình ngang)</string>
     <string name="system_ui_control_center_notification_disable_transparent">Tắt chế độ trong suốt</string>
     <string name="system_ui_control_center_notification_disable_transparent_desc">Tắt cài đặt nền thông báo trong suốt</string>
     <string name="system_ui_control_center_media_control_progress">Thanh tiến trình</string>
@@ -759,7 +744,6 @@
     <string name="system_ui_control_center_expand_notification_show_time">Hiện thời gian</string>
     <string name="system_ui_control_center_mute_visible_notice_desc">Khi màn hình đang bật, thông báo không phát âm thanh</string>
     <string name="system_ui_control_center_rounded_rect">Ô hình chữ nhật bo tròn</string>
-    <string name="system_ui_control_center_statusbar_blur">Buộc làm mờ nền</string>
     <string name="system_ui_control_center_rounded_rect_radius">Góc bo tròn</string>
     <string name="system_ui_control_center_fix_tiles_list">Tắt ẩn các ô cực tối</string>
     <string name="system_ui_shade_header_gradient_blur">Làm mờ tiêu đề bóng mờ</string>
@@ -768,11 +752,7 @@
     <string name="system_ui_control_center_hide_display_device_name">Hiện tên thiết bị</string>
     <string name="system_ui_control_center_hide_name">Ẩn tên tất cả</string>
     <string name="system_ui_controlcenter_new_title">Trung tâm điều khiển kiểu mới</string>
-    <string name="system_ui_controlcenter_old_title">Trung tâm điều khiển kiểu cũ</string>
     <string name="system_ui_controlcenter_unlock_old_title">Mở khóa các kiểu trung tâm điều khiển</string>
-    <string name="system_ui_controlcenter_enable_title">Tùy chỉnh số lượng hàng và cột</string>
-    <string name="system_control_center_old_qs_grid_columns">Hàng trong bảng thu gọn</string>
-    <string name="system_control_center_old_qs_grid_columns_horizontal">Số hàng trong bảng thu gọn (màn hình ngang)</string>
     <string name="system_ui_control_center_card_tiles_customization">Tùy chỉnh ô thẻ</string>
     <string name="system_ui_control_center_card_tiles_customization_desc">Nhấn và kéo các ô lớn mới được thêm vào để sắp xếp lại chúng</string>
     <string name="system_ui_control_center_card_tiles_customization_add">Đã thêm</string>
@@ -824,7 +804,6 @@
     <string name="system_ui_volume_collpased_column_press_desc">Khi tính năng này được bật, nút mở rộng sẽ bị tắt</string>
     <string name="system_ui_volume_hide_foot_button">Ẩn nút tắt tiếng và không làm phiền</string>
     <string name="system_ui_plugin_enable_volume_blur">Làm mờ thanh âm lượng</string>
-    <string name="system_ui_move_log_to_miui">Di chuyển statusbar_gestures.dat vào thư mục MIUI</string>
     <string name="system_ui_plugin_enable_volume_blur_desc">Chỉ dành cho các mẫu Android12+ MTK, có thể có tải GPU cao</string>
     <!--Telecom-->
     <string name="telecom">Quản lý cuộc gọi</string>

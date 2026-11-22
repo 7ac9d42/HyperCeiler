@@ -21,7 +21,6 @@ package com.sevtinge.hyperceiler.hooker.systemui;
 import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.Miui.isPad;
 import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isHyperOSVersion;
 import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreAndroidVersion;
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreSmallVersion;
 
 import android.content.ComponentName;
 import android.content.pm.PackageManager;
@@ -44,7 +43,6 @@ public class OtherSettings extends DashboardFragment
     SwitchPreference mDisableInfinitymodeGesture;
     SwitchPreference mVolume;
     SwitchPreference mPower;
-    SwitchPreference mFuckSG;
     SwitchPreference mCollpasedColumnPress;
     // 数据显示
     DropDownPreference mPctStyle;
@@ -67,7 +65,6 @@ public class OtherSettings extends DashboardFragment
         mDisableInfinitymodeGesture = findPreference("prefs_key_system_ui_disable_infinitymode_gesture");
         mVolume = findPreference("prefs_key_system_ui_disable_volume");
         mPower = findPreference("prefs_key_system_ui_disable_power");
-        mFuckSG = findPreference("prefs_key_system_ui_move_log_to_miui");
         mCollpasedColumnPress = findPreference("prefs_key_system_ui_volume_collpased_column_press");
 
         mPctStyle = findPreference("prefs_key_system_ui_others_pct_style");
@@ -80,9 +77,6 @@ public class OtherSettings extends DashboardFragment
 
         mDisableInfinitymodeGesture.setVisible(isPad());
 
-        if (isMoreSmallVersion(200, 2f)) {
-            setFuncHint(mFuckSG, 2);
-        }
         if (isHyperOSVersion(2f) && isMoreAndroidVersion(36)) {
             setFuncHint(mVolume, 1);
             setFuncHint(mPower, 1);

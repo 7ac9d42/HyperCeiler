@@ -15,11 +15,9 @@ DEPS=[CACHE/'changed-hooks-compile'/x for x in ['hook-xposed-102-1.3.0.jar','cor
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 def inputs():return {str(test_paths.report_path(p, ROOT)):sha(p)for p in [RULE,ROUTE,SHADER,test_paths.TEST_DATA_ROOT / 'acceptance/java-test13/ambient-runtime-v1/sdk-first-v1/report.json',Path(__file__),*sorted((BASE/'fixtures').rglob('*'))]if p.is_file()}
 def run(out,mutation=None):
- out.mkdir(parents=True,exist_ok=False);before=inputs();body=RULE.read_text();shaderbody=SHADER.read_text();commands=[];logs=''
- if mutation and mutation!='route_OS4_to_legacy':
-  target,old,new,witness=MUTANTS[mutation];value=shaderbody if target=='shader' else body;assert value.count(old)==1,(mutation,value.count(old));value=value.replace(old,new)
-  if target=='shader':shaderbody=value
-  else:body=value
+ out.mkdir(parents=True,exist_ok=False);before=inputs();bodies={'runtime':RULE.read_text(),'shader':SHADER.read_text(),'route':ROUTE.read_text()};commands=[];logs=''
+ if mutation:
+  target,old,new,witness=MUTANTS[mutation];value=bodies[target];assert value.count(old)==1,(mutation,value.count(old));bodies[target]=value.replace(old,new)
  with tempfile.TemporaryDirectory(prefix='hc-background-')as t:
   w=Path(t);classes=w/'classes';classes.mkdir();cp=os.pathsep.join(map(str,DEPS));allcp=str(classes)+os.pathsep+cp
   def cmd(c):
@@ -27,12 +25,12 @@ def run(out,mutation=None):
    commands.append(c);r=subprocess.run(c,capture_output=True,text=True);logs+=r.stdout+r.stderr;(out/'build.txt').write_text(logs);assert r.returncode==0,logs
   files=[p for p in (BASE/'fixtures').rglob('*.java')if p.name not in ['TestMain.java','Targets.java']]
   cmd([str(JAVA/'javac'),'--release','21','-proc:none','-cp',cp,'-d',str(classes),*map(str,files)])
-  prod=w/RULE.name;prod.write_text(body);shaderprod=w/SHADER.name;shaderprod.write_text(shaderbody)
+  prod=w/RULE.name;prod.write_text(bodies['runtime']);shaderprod=w/SHADER.name;shaderprod.write_text(bodies['shader'])
   cmd([str(JAVA/'java'),'-cp',str(KH/'lib/kotlin-compiler.jar'),'org.jetbrains.kotlin.cli.jvm.K2JVMCompiler','-kotlin-home',str(KH),'-jvm-target','21','-classpath',allcp,'-d',str(classes),*map(str,(BASE/'fixtures').rglob('*.kt'))])
   cmd([str(JAVA/'java'),'-cp',str(KH/'lib/kotlin-compiler.jar'),'org.jetbrains.kotlin.cli.jvm.K2JVMCompiler','-kotlin-home',str(KH),'-jvm-target','21','-classpath',cp+os.pathsep+str(classes),'-d',str(classes),str(prod),str(shaderprod)])
   sdk_deps=list(json.loads((test_paths.TEST_DATA_ROOT / 'acceptance/java-test13/ambient-runtime-v1/sdk-first-v1/report.json').read_text())['dependencies'])
   routeclasses=w/'routeclasses';routeclasses.mkdir()
-  routesrc=w/ROUTE.name;routesrc.write_text(ROUTE.read_text().replace('if (isMoreHyperOSVersion(4f)) {','if (false) {')if mutation=='route_OS4_to_legacy'else ROUTE.read_text())
+  routesrc=w/ROUTE.name;routesrc.write_text(bodies['route'])
   cmd([str(JAVA/'java'),'-cp',str(KH/'lib/kotlin-compiler.jar'),'org.jetbrains.kotlin.cli.jvm.K2JVMCompiler','-kotlin-home',str(KH),'-jvm-target','21','-classpath',os.pathsep.join([*sdk_deps,str(classes)]),'-d',str(routeclasses),str(routesrc)])
   allcp=os.pathsep.join([str(classes),str(routeclasses),cp,str(PEER)])
   if not (BASE/'fixtures/TestMain.java').exists(): return
@@ -52,7 +50,7 @@ MUTANTS={
  'shader_missing_restore':('shader','if (target != null && target.colorFilter === applied) target.colorFilter = previous','if (false) target!!.colorFilter = previous','shader_original_throw_still_restores_original_filter'),
  'shader_overwrites_foreign_filter':('shader','target != null && target.colorFilter === applied','target != null','shader_foreign_filter_write_not_overwritten'),
  'shader_excludes_middle':('shader','level.getInt(param.thisObject) !in 1..2','level.getInt(param.thisObject) != 2','DI_seekbar_real_level_path_1'),
- 'route_OS4_to_legacy':('route','','','actual_route_OS4_early_branch_never_evaluates_legacy_targets'),
+ 'drop_route_OS4_gate':('route','if (isMoreHyperOSVersion(4f)) CustomBackgroundOS4.init()','CustomBackgroundOS4.init()','actual_route_OS3_registers_nothing'),
 }
 if __name__=='__main__':
  p=argparse.ArgumentParser();p.add_argument('--output',type=Path,required=True);p.add_argument('--negative-controls',action='store_true');a=p.parse_args();r=run(a.output);assert r is None or r['passed']

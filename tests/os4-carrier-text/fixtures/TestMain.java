@@ -64,7 +64,7 @@ public class TestMain{
   for(Class<?>shape:new Class<?>[]{BadCallback.class,StaticCallback.class})test("bad_callback_"+shape,()->{BaseHook.classes.put(P+"ControlCenterCarrierText$mCarrierTextCallback$1",shape);try{start(3);throw new AssertionError();}catch(IllegalStateException expected){check(hooks.isEmpty());}});
   test("bad_separator_shape",()->{BaseHook.classes.put(P+"MiuiCarrierTextLayout",BadLayout.class);try{start(1);throw new AssertionError();}catch(IllegalStateException expected){check(hooks.isEmpty());}});
   for(int mode:new int[]{1,2,3})for(int fail=1;fail<=(mode==3?1:2);fail++){final int index=fail;for(boolean throwing:new boolean[]{false,true})test("registration_rollback_"+mode+"_"+fail+"_"+throwing,()->{BaseHook.failAt=index;BaseHook.throwInstall=throwing;try{start(mode);throw new AssertionError();}catch(IllegalStateException expected){check(hooks.isEmpty());}});}
-  test("os3_original_registration_path",()->{DeviceHelper.System.version=3;start(3);check(hooks.keySet().stream().anyMatch(m->m.getName().equals("isVisible")));check(hooks.keySet().stream().noneMatch(m->m.getName().equals("onMeasure")));});
+  test("os3_skips_registration",()->{DeviceHelper.System.version=3;start(3);check(hooks.isEmpty());});
   System.out.println("RESULT passes="+passes+" failures="+failures);if(failures>0)System.exit(1);
  }
 }

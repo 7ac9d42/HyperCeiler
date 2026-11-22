@@ -36,7 +36,6 @@ import com.sevtinge.hyperceiler.libhook.utils.hookapi.blur.MiBlurUtilsKt.setMiBa
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.blur.MiBlurUtilsKt.setMiViewBlurMode
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.blur.MiBlurUtilsKt.setPassWindowBlurEnabled
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.Keyguard.keyguardBottomAreaInjector
-import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.Keyguard.leftButtonType
 import io.github.lingqiqi5211.ezhooktool.core.findAllMethods
 import io.github.lingqiqi5211.ezhooktool.xposed.common.HookParam
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.createHooks
@@ -86,9 +85,7 @@ object BlurButton : BaseHook() {
             context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
 
         if (keyguardManager.isKeyguardLocked) {
-            mLeftAffordanceView.background = if (leftButtonType != 1) {
-                setNewBackgroundBlur(mLeftAffordanceView)
-            } else null
+            mLeftAffordanceView.background = setNewBackgroundBlur(mLeftAffordanceView)
             mRightAffordanceView.background = if (!removeRight) {
                 setNewBackgroundBlur(mRightAffordanceView)
             } else null
@@ -105,9 +102,7 @@ object BlurButton : BaseHook() {
         val mRightAffordanceView: ImageView =
             param.thisObject.getObjectFieldOrNullAs<ImageView>("mRightButton")!!
 
-        if (leftButtonType != 1) {
-            addHyBlur(mLeftAffordanceView)
-        }
+        addHyBlur(mLeftAffordanceView)
         if (!removeRight) {
             addHyBlur(mRightAffordanceView)
         }

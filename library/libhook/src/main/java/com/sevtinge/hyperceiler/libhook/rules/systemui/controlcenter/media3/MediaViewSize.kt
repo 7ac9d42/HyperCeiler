@@ -30,14 +30,6 @@ import java.lang.reflect.Modifier
 import java.util.concurrent.atomic.AtomicBoolean
 import com.sevtinge.hyperceiler.common.utils.PrefsBridge
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
-import com.sevtinge.hyperceiler.libhook.rules.systemui.controlcenter.media3.CustomBackground.isIsland
-import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.controlcenter.PublicClass.mediaViewHolderNew
-import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.controlcenter.PublicClass.miuiIslandMediaViewHolder
-import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.controlcenter.PublicClass.miuiMediaNotificationControllerImpl
-import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.controlcenter.media.getMediaViewHolderFieldAs
-import io.github.lingqiqi5211.ezhooktool.xposed.dsl.afterHookConstructor
-import io.github.lingqiqi5211.ezhooktool.xposed.dsl.afterHookMethod
-import io.github.lingqiqi5211.ezhooktool.xposed.dsl.getObjectFieldOrNull
 
 object MediaViewSize : BaseHook() {
     private const val TITLE_TEXT = "titleText"
@@ -46,47 +38,8 @@ object MediaViewSize : BaseHook() {
     private const val TOTAL_TIME_VIEW = "totalTimeView"
 
 
-    // ==================== 通知中心配置 ====================
-
-    private val ncModifyTextSize by lazy {
-        PrefsBridge.getBoolean("system_ui_control_center_media_control_media_button_size_switch")
-    }
-    private val ncTitleSize by lazy {
-        PrefsBridge.getInt("system_ui_control_center_media_control_title_size", 180).toFloat() / 10
-    }
-    private val ncArtistSize by lazy {
-        PrefsBridge.getInt("system_ui_control_center_media_control_artist_size", 120).toFloat() / 10
-    }
-    private val ncTimeSize by lazy {
-        PrefsBridge.getInt("system_ui_control_center_media_control_time_view_text_size", 130).toFloat() / 10
-    }
-
-    // ==================== 灵动岛配置 ====================
-
-    private val diModifyTextSize by lazy {
-        PrefsBridge.getBoolean("system_ui_island_media_control_media_button_size_switch")
-    }
-    private val diTitleSize by lazy {
-        PrefsBridge.getInt("system_ui_island_media_control_title_size", 180).toFloat() / 10
-    }
-    private val diArtistSize by lazy {
-        PrefsBridge.getInt("system_ui_island_media_control_artist_size", 120).toFloat() / 10
-    }
-    private val diTimeSize by lazy {
-        PrefsBridge.getInt("system_ui_island_media_control_time_view_text_size", 130).toFloat() / 10
-    }
-
     override fun init() {
-        if (isMoreHyperOSVersion(4f)) {
-            initOS4()
-            return
-        }
-        if (ncModifyTextSize) {
-            initNotificationCenter()
-        }
-        if (isIsland && diModifyTextSize) {
-            initDynamicIsland()
-        }
+        if (isMoreHyperOSVersion(4f)) initOS4()
     }
 
     // OS4 inlines holder constructors. The NC layout resets TextAppearance;
@@ -187,50 +140,5 @@ object MediaViewSize : BaseHook() {
         val value = PrefsBridge.getInt(key, default)
         check(value in range) { "Invalid media text size: $key" }
         return value / 10f
-    }
-
-    // ==================== 通知中心 ====================
-
-    private fun initNotificationCenter() {
-        miuiMediaNotificationControllerImpl?.let { clz ->
-            clz.declaredMethods.firstOrNull { it.name.startsWith("updateLayout") }?.let { method ->
-                clz.afterHookMethod(method.name) {
-                    val mediaViewHolder = it.thisObject.getObjectFieldOrNull("mediaViewHolder")
-                        ?: return@afterHookMethod
-                    val titleText = mediaViewHolder.getMediaViewHolderFieldAs<TextView>(TITLE_TEXT, false)
-                    val artistText = mediaViewHolder.getMediaViewHolderFieldAs<TextView>(ARTIST_TEXT, false)
-                    titleText?.setTextSize(TypedValue.COMPLEX_UNIT_SP, ncTitleSize)
-                    artistText?.setTextSize(TypedValue.COMPLEX_UNIT_SP, ncArtistSize)
-                }
-            }
-        }
-
-        mediaViewHolderNew?.afterHookConstructor { param ->
-            val holder = param.thisObject
-            val titleText = holder.getMediaViewHolderFieldAs<TextView>(TITLE_TEXT, false)
-            val artistText = holder.getMediaViewHolderFieldAs<TextView>(ARTIST_TEXT, false)
-            val elapsedTimeView = holder.getMediaViewHolderFieldAs<TextView>(ELAPSED_TIME_VIEW, false)
-            val totalTimeView = holder.getMediaViewHolderFieldAs<TextView>(TOTAL_TIME_VIEW, false)
-            titleText?.setTextSize(TypedValue.COMPLEX_UNIT_SP, ncTitleSize)
-            artistText?.setTextSize(TypedValue.COMPLEX_UNIT_SP, ncArtistSize)
-            elapsedTimeView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, ncTimeSize)
-            totalTimeView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, ncTimeSize)
-        }
-    }
-
-    // ==================== 灵动岛 ====================
-
-    private fun initDynamicIsland() {
-        miuiIslandMediaViewHolder?.afterHookConstructor { param ->
-            val holder = param.thisObject
-            val titleText = holder.getMediaViewHolderFieldAs<TextView>(TITLE_TEXT, true)
-            val artistText = holder.getMediaViewHolderFieldAs<TextView>(ARTIST_TEXT, true)
-            val elapsedTimeView = holder.getMediaViewHolderFieldAs<TextView>(ELAPSED_TIME_VIEW, true)
-            val totalTimeView = holder.getMediaViewHolderFieldAs<TextView>(TOTAL_TIME_VIEW, true)
-            titleText?.setTextSize(TypedValue.COMPLEX_UNIT_SP, diTitleSize)
-            artistText?.setTextSize(TypedValue.COMPLEX_UNIT_SP, diArtistSize)
-            elapsedTimeView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, diTimeSize)
-            totalTimeView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, diTimeSize)
-        }
     }
 }

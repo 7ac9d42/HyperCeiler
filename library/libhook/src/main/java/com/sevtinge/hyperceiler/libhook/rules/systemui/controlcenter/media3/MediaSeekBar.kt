@@ -32,7 +32,6 @@ import com.sevtinge.hyperceiler.common.utils.PrefsBridge
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
 import com.sevtinge.hyperceiler.libhook.rules.systemui.controlcenter.media3.CustomBackground.isIsland
 import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.Hardware.isDarkMode
-import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreAndroidVersion
 import com.sevtinge.hyperceiler.libhook.utils.api.DisplayUtils.dp2px
 import com.sevtinge.hyperceiler.libhook.utils.api.dp
 import com.sevtinge.hyperceiler.libhook.utils.api.dpFloat
@@ -41,7 +40,6 @@ import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.controlcenter.Pub
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.controlcenter.PublicClass.miuiIslandMediaViewBinderImpl
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.controlcenter.PublicClass.miuiIslandMediaViewHolder
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.controlcenter.PublicClass.miuiMediaViewControllerImpl
-import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.controlcenter.PublicClass.seekBarObserver
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.controlcenter.PublicClass.seekBarObserverNew
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.controlcenter.media.getMediaViewHolderFieldAs
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.controlcenter.progress.CometSeekBar
@@ -197,24 +195,14 @@ object MediaSeekBar : BaseHook() {
             getOrCreateRealSeekBar(it.thisObject, false)
         }
 
-        if (isMoreAndroidVersion(36)) {
-            seekBarObserverNew?.beforeHookMethod("onChanged") {
-                val controllerImpl =
-                    it.thisObject.getObjectFieldOrNull($$"this$0") ?: return@beforeHookMethod
-                val holder =
-                    controllerImpl.getObjectFieldOrNull("holder") ?: return@beforeHookMethod
-                val vmProgress = it.args[0] ?: return@beforeHookMethod
-                onProgressChanged(holder, vmProgress, false)
-                it.result = null
-            }
-        } else {
-            seekBarObserver?.beforeHookMethod("onChanged") {
-                val holder =
-                    it.thisObject.getObjectFieldOrNull("holder") ?: return@beforeHookMethod
-                val vmProgress = it.args[0] ?: return@beforeHookMethod
-                onProgressChanged(holder, vmProgress, false)
-                it.result = null
-            }
+        seekBarObserverNew?.beforeHookMethod("onChanged") {
+            val controllerImpl =
+                it.thisObject.getObjectFieldOrNull($$"this$0") ?: return@beforeHookMethod
+            val holder =
+                controllerImpl.getObjectFieldOrNull("holder") ?: return@beforeHookMethod
+            val vmProgress = it.args[0] ?: return@beforeHookMethod
+            onProgressChanged(holder, vmProgress, false)
+            it.result = null
         }
 
         val controllerClass = miuiMediaViewControllerImpl ?: return
