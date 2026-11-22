@@ -23,17 +23,6 @@
     <PreferenceCategory android:title="@string/home_widget">
         <SwitchPreference
             android:defaultValue="false"
-            android:key="prefs_key_home_widget_all_widget_animation"
-            android:title="@string/home_widget_all_widget_animation" />
-
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_home_widget_show_miui_widget"
-            android:summary="@string/home_widget_show_miui_widget_desc"
-            android:title="@string/home_widget_show_miui_widget" />
-
-        <SwitchPreference
-            android:defaultValue="false"
             android:key="prefs_key_home_widget_allow_moved_to_minus_one_screen"
             android:title="@string/home_widget_allow_moved_to_minus_one_screen" />
 
@@ -42,49 +31,13 @@
     <PreferenceCategory android:title="@string/home_folder">
         <SwitchPreference
             android:defaultValue="false"
-            android:key="prefs_key_home_big_folder_item_max_count"
-            android:title="@string/home_big_folder_item_max_count" />
-
-        <SwitchPreference
-            android:defaultValue="false"
             android:key="prefs_key_home_folder_auto_close"
             android:summary="@string/home_auto_close_folder_summary"
             android:title="@string/home_auto_close_folder_title" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/home_other_shortcut_title">
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_home_other_freeform_shortcut_menu"
-            android:summary="@string/home_other_freeform_shortcut_menu_desc"
-            android:title="@string/home_other_freeform_shortcut_menu" />
-
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_home_other_tasks_shortcut_menu"
-            android:summary="@string/home_other_tasks_shortcut_menu_desc"
-            android:title="@string/home_other_tasks_shortcut_menu" />
-
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_home_other_allow_share_apk"
-            android:title="@string/home_other_allow_share_apk" />
-
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_home_other_shortcut_remove_restrictions"
-            android:title="@string/home_other_shortcut_remove_restrictions" />
-
-    </PreferenceCategory>
-
     <PreferenceCategory android:title="@string/home_other">
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_home_other_mi_pad_enable_more_setting"
-            android:summary="@string/home_other_mi_pad_enable_more_setting_desc"
-            android:title="@string/home_other_mi_pad_enable_more_setting_title" />
-
         <SwitchPreference
             android:defaultValue="false"
             android:key="prefs_key_home_other_infinite_scroll"

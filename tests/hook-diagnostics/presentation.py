@@ -54,14 +54,13 @@ ns='{http://schemas.android.com/apk/res/android}'
 page=ET.parse(root/'app/src/main/res/xml/prefs_hook_diagnostics.xml').getroot()
 first=list(list(page)[0])[0]
 assert first.tag.endswith('DiagnosticsOverviewPreference') and first.get(ns+'key')=='diagnostics_summary'
-for file in ['home.xml','home_new.xml']:
- entry=[n for n in ET.parse(root/'library/core/src/main/res/xml'/file).iter()if n.get(ns+'key')=='prefs_key_home_diagnostics']
- assert len(entry)==1 and entry[0].get(ns+'persistent')=='false'
+entry=[n for n in ET.parse(root/'library/core/src/main/res/xml/home_new.xml').iter()if n.get(ns+'key')=='prefs_key_home_diagnostics']
+assert len(entry)==1 and entry[0].get(ns+'persistent')=='false'
 for directory in ['values','values-zh-rCN']:
  for n in ET.parse(root/'app/src/main/res'/directory/'diagnostics.xml').getroot():
   text=''.join(n.itertext())
   assert all(ch in ',，' or not unicodedata.category(ch).startswith(('P','S'))for ch in text),(n.get('name'),text)
-print('Diagnostics UI contract PASS: overview first, both launcher entries, comma-only resource copy')
+print('Diagnostics UI contract PASS: overview first, OS4 launcher entry, comma-only resource copy')
 
 fragment=(root/'app/src/main/java/com/sevtinge/hyperceiler/diagnostics/HookDiagnosticsFragment.java').read_text()
 assert 'assessment.counts()' in fragment and 'counts.success()' in fragment

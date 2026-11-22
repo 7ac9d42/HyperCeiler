@@ -18,37 +18,13 @@
 */
 package com.sevtinge.hyperceiler.hooker.home;
 
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.Miui.isPad;
-
-import androidx.preference.SwitchPreference;
-
 import com.sevtinge.hyperceiler.core.R;
 import com.sevtinge.hyperceiler.dashboard.DashboardFragment;
 
 public class HomeFolderSettings extends DashboardFragment {
 
-    SwitchPreference mUnlockFolderBlurSupport;
-    SwitchPreference mSmallFolderIconBackgroundCustom1;
-    SwitchPreference mSmallFolderIconBackgroundCustom2;
-    SwitchPreference mSmallFolderIconBackgroundCustom3;
-
     @Override
     public int getPreferenceScreenResId() {
         return R.xml.home_folder;
-    }
-
-    @Override
-    public void initPrefs() {
-        mUnlockFolderBlurSupport = findPreference("prefs_key_home_folder_unlock_blur_supported");
-
-        if (isPad()) {
-            mSmallFolderIconBackgroundCustom1 = findPreference("prefs_key_home_big_folder_icon_bg_2x1");
-            mSmallFolderIconBackgroundCustom2 = findPreference("prefs_key_home_big_folder_icon_bg_1x2");
-            mSmallFolderIconBackgroundCustom3 = findPreference("prefs_key_home_big_folder_icon_bg");
-
-            mSmallFolderIconBackgroundCustom1.setTitle(R.string.home_big_folder_icon_bg_2x1_n);
-            mSmallFolderIconBackgroundCustom2.setTitle(R.string.home_big_folder_icon_bg_1x2_n);
-            mSmallFolderIconBackgroundCustom3.setTitle(R.string.home_big_folder_icon_bg_n);
-        }
     }
 }

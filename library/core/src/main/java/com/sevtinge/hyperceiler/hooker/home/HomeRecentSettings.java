@@ -20,7 +20,6 @@ package com.sevtinge.hyperceiler.hooker.home;
 
 import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.Miui.isPad;
 import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isHyperOSVersion;
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreHyperOSVersion;
 import static com.sevtinge.hyperceiler.sub.SubPickerActivity.ALL_APPS_MODE;
 
 import android.content.Intent;
@@ -44,14 +43,7 @@ public class HomeRecentSettings extends DashboardFragment {
 
     Preference mHideRecentCard;
     SeekBarPreferenceCompat mTaskViewHeight;
-    SwitchPreference mShowLaunch;
-    SwitchPreference mHideWorldCirculate;
-    SwitchPreference mHideFreeform;
-    SwitchPreference mUnlockPin;
     SwitchPreference mShowMenInfo;
-    SwitchPreference mHideCleanIcon;
-    SwitchPreference mNotHideCleanIcon;
-    SwitchPreference mFixCardTitlePadding;
     private static final String HIDE_CLEAR = "prefs_key_home_layout_recents_hide_clear";
     private static final String DISABLE_CLEAR = "prefs_key_home_layout_recents_no_clear";
 
@@ -85,16 +77,9 @@ public class HomeRecentSettings extends DashboardFragment {
             boolean enabled = (Boolean) value || scrollHaptic.isChecked();
             hapticType.setEnabled(enabled);hapticStrength.setEnabled(enabled);return true;
         });
-        mShowLaunch = findPreference("prefs_key_home_recent_show_launch");
-        mHideWorldCirculate = findPreference("prefs_key_home_recent_hide_world_circulate");
-        mHideFreeform = findPreference("prefs_key_home_recent_hide_freeform");
-        mUnlockPin = findPreference("prefs_key_home_recent_unlock_pin");
         mHideRecentCard = findPreference("prefs_key_home_recent_hide_card");
         mTaskViewHeight = findPreference("prefs_key_home_recent_task_view_height");
         mShowMenInfo = findPreference("prefs_key_home_recent_show_memory_info");
-        mHideCleanIcon = findPreference("prefs_key_home_recent_hide_clean_up");
-        mNotHideCleanIcon = findPreference("prefs_key_always_show_clean_up");
-        mFixCardTitlePadding = findPreference("prefs_key_home_recent_fix_card_title_padding");
 
         // Both switches are read while the launcher builds a card header, so an already built
         // card keeps its old header until it is rebuilt. Re-entering the recents view rebuilds
@@ -103,19 +88,8 @@ public class HomeRecentSettings extends DashboardFragment {
         hideText.setVisible(isHyperOSVersion(4f));
         mTaskViewHeight.setVisible(isPad());
         mShowMenInfo.setVisible(isPad());
-        mFixCardTitlePadding.setVisible(!isPad());
 
-        if (isHyperOSVersion(4f)) {
-            mHideRecentCard.setSummary(R.string.home_recent_hide_card_os4_desc);
-            // setFuncHint/setPreVisible also erase stored keys and replace descriptions.
-            // OS4's temporary gate must be presentation-only.
-            mUnlockPin.setVisible(false);
-        } else if (isMoreHyperOSVersion(3f)) {
-            setFuncHint(mShowLaunch, 1);
-            setFuncHint(mHideWorldCirculate, isPad() ? 1 : 2);
-            setFuncHint(mHideFreeform, 1);
-            setPreVisible(mUnlockPin, false);
-        }
+        mHideRecentCard.setSummary(R.string.home_recent_hide_card_os4_desc);
 
         mHideRecentCard.setOnPreferenceClickListener(
                 preference -> {
@@ -127,25 +101,12 @@ public class HomeRecentSettings extends DashboardFragment {
                 }
         );
 
-        if (isHyperOSVersion(4f)) {
-            initClearActionForOS4();
-        } else {
-            // Preserve the original switch and dependency behavior on other OS versions.
-            mHideCleanIcon.setOnPreferenceChangeListener((preference, o) -> {
-                if (!(boolean) o) {
-                    mNotHideCleanIcon.setChecked(false);
-                }
-                return true;
-            });
-        }
+        initClearActionForOS4();
         HomeOS4AdaptationGate.apply(getPreferenceScreen(), getPreferenceScreenResId());
     }
 
     private void initClearActionForOS4() {
-        mHideCleanIcon.setVisible(false);
-        mNotHideCleanIcon.setVisible(false);
         DropDownPreference action = findPreference("prefs_key_home_recent_clear_action_os4");
-        action.setVisible(true);
 
         // Display the existing native flags; no third persisted mode or provider/ABI migration.
         // If an older installation has both flags on, native behavior already prioritizes disable.

@@ -51,61 +51,15 @@
     <PreferenceCategory>
         <SwitchPreference
             android:defaultValue="false"
-            android:key="prefs_key_home_recent_blur"
-            android:title="@string/home_recent_blur" />
-
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_home_recent_show_launch"
-            android:title="@string/home_recent_show_launch" />
-
-        <SeekBarPreferenceCompat
-            android:dependency="prefs_key_home_recent_show_launch"
-            android:key="prefs_key_home_recent_show_launch_size"
-            android:title="@string/home_recent_show_launch_size"
-            app:defaultValue="95"
-            app:defaultValueTitle="@string/array_default"
-            app:format="%.2f f"
-            app:maxValue="100"
-            app:minValue="20"
-            app:dividerValue="100"
-            app:showSeekBarValue="true"
-            app:stepValue="1" />
-
-        <SeekBarPreferenceCompat
-            android:dependency="prefs_key_home_recent_show_launch"
-            android:key="prefs_key_home_recent_show_launch_alpha"
-            android:title="@string/home_recent_show_launch_alpha"
-            app:defaultValue="100"
-            app:defaultValueTitle="@string/array_default"
-            app:format="%.2f f"
-            app:maxValue="100"
-            app:minValue="0"
-            app:dividerValue="100"
-            app:showSeekBarValue="true"
-            app:stepValue="1" />
-
-        <SwitchPreference
-            android:defaultValue="false"
             android:key="prefs_key_home_recent_show_memory_info"
             android:summary="@string/home_recent_show_memory_info_sum"
             android:title="@string/home_recent_show_memory_info" />
 
         <SwitchPreference
             android:defaultValue="false"
-            android:key="prefs_key_home_recent_show_real_memory"
-            android:title="@string/home_recent_show_real_memory" />
-
-        <SwitchPreference
-            android:defaultValue="false"
             android:key="prefs_key_home_recent_modify_animation"
             android:title="@string/home_recent_modify_animation"
             android:summary="@string/home_recent_modify_animation_summary" />
-
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_home_recent_fix_card_title_padding"
-            android:title="@string/home_recent_fix_card_title_padding" />
 
     </PreferenceCategory>
 
@@ -120,36 +74,13 @@
             android:key="prefs_key_home_recent_hide_status_bar_in_task_view"
             android:title="@string/home_recent_hide_status_bar_in_task_view" />
 
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_home_recent_hide_world_circulate"
-            android:title="@string/home_recent_hide_world_circulate" />
-
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_home_recent_hide_freeform"
-            android:title="@string/home_recent_hide_freeform" />
-
-        <SwitchPreference
-            android:defaultValue="false"
-            android:disableDependentsState="true"
-            android:key="prefs_key_home_recent_hide_clean_up"
-            android:title="@string/home_recent_hide_clean_up" />
-
-        <SwitchPreference
-            android:defaultValue="false"
-            android:dependency="prefs_key_home_recent_hide_clean_up"
-            android:key="prefs_key_always_show_clean_up"
-            android:title="@string/home_recent_always_show_clean_up" />
-
         <fan.preference.DropDownPreference
             android:defaultValue="0"
             android:key="prefs_key_home_recent_clear_action_os4"
             android:persistent="false"
             android:title="@string/home_recent_clear_button"
             app:entries="@array/home_recent_clear_action_os4"
-            app:entryValues="@array/home_recent_clear_action_os4_values"
-            app:isPreferenceVisible="false" />
+            app:entryValues="@array/home_recent_clear_action_os4_values" />
 
         <SwitchPreference
             android:defaultValue="false"
@@ -163,18 +94,9 @@
             android:title="@string/home_recent_hide_text"
             android:summary="@string/home_recent_hide_text_summary" />
 
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_home_recent_unlock_pin"
-            android:title="@string/home_recent_unlock_pin" />
-
     </PreferenceCategory>
 
     <PreferenceCategory>
-        <EditTextPreference
-            android:key="prefs_key_home_recent_text"
-            android:title="@string/home_recent_text" />
-
         <SeekBarPreferenceCompat
             android:key="prefs_key_task_view_corners"
             android:title="@string/home_recent_task_view_card_rounded_corners"

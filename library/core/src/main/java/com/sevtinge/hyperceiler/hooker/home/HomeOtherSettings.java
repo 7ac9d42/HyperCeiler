@@ -18,54 +18,18 @@
  */
 package com.sevtinge.hyperceiler.hooker.home;
 
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.Miui.isPad;
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isHyperOSVersion;
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreHyperOSVersion;
-
-import androidx.preference.SwitchPreference;
-
 import com.sevtinge.hyperceiler.core.R;
 import com.sevtinge.hyperceiler.dashboard.DashboardFragment;
 
 public class HomeOtherSettings extends DashboardFragment {
 
-    SwitchPreference mMoveToMinusOneScreen;
-    SwitchPreference mWindowedMode;
-    SwitchPreference mShareAPK;
-    SwitchPreference mEnableMoreSettings;
-    SwitchPreference mHideReportText;
-    SwitchPreference mDisablePreLoad;
-
-
     @Override
     public int getPreferenceScreenResId() {
-        if (isMoreHyperOSVersion(3f)) {
-            return R.xml.home_other_new;
-        }
-        return R.xml.home_other;
+        return R.xml.home_other_new;
     }
 
     @Override
     public void initPrefs() {
-        if (isMoreHyperOSVersion(3f)) {
-            mMoveToMinusOneScreen = findPreference("prefs_key_home_widget_allow_moved_to_minus_one_screen");
-            if (isPad() && !isHyperOSVersion(4f)) setFuncHint(mMoveToMinusOneScreen, 1);
-        }
-
-        mWindowedMode = findPreference("prefs_key_home_other_freeform_shortcut_menu");
-        mShareAPK = findPreference("prefs_key_home_other_allow_share_apk");
-        mHideReportText = findPreference("prefs_key_home_title_hide_report_text");
-        mDisablePreLoad = findPreference("prefs_key_home_other_disable_prestart");
-
-        if (isPad() && !isHyperOSVersion(4f)) {
-            setFuncHint(mWindowedMode, 2);
-            setFuncHint(mShareAPK, 1);
-            setFuncHint(mHideReportText, 1);
-            setFuncHint(mDisablePreLoad, 1);
-        }
-
-        mEnableMoreSettings = findPreference("prefs_key_home_other_mi_pad_enable_more_setting");
-        mEnableMoreSettings.setVisible(isPad() && !isMoreHyperOSVersion(3f));
         HomeOS4AdaptationGate.apply(getPreferenceScreen(), getPreferenceScreenResId());
     }
 

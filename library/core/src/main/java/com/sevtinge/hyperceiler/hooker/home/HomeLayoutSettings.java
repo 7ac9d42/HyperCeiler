@@ -20,9 +20,7 @@ package com.sevtinge.hyperceiler.hooker.home;
 
 import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.Miui.isPad;
 import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isHyperOSVersion;
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreHyperOSVersion;
 
-import androidx.preference.PreferenceCategory;
 import androidx.preference.SwitchPreference;
 
 import com.sevtinge.hyperceiler.core.R;
@@ -34,7 +32,6 @@ import fan.preference.SeekBarPreferenceCompat;
 
 public class HomeLayoutSettings extends DashboardFragment {
 
-    PreferenceCategory mSearch;
     SwitchPreference mIconLayoutNew;
     SwitchPreference mLayoutH;
     SwitchPreference mWidth;
@@ -63,7 +60,6 @@ public class HomeLayoutSettings extends DashboardFragment {
         boolean mWidthEnable = getSharedPreferences().getBoolean("prefs_key_home_folder_width", false);
         boolean mPaddingEnable = getSharedPreferences().getBoolean("prefs_key_home_folder_horizontal_padding_enable", false);
 
-        mSearch = findPreference("prefs_key_home_layout_searchbar_title");
         mIconLayoutNew = findPreference("prefs_key_home_layout_unlock_grids_new");
         mLayoutH = findPreference("prefs_key_home_layout_workspace_padding_horizontal_enable");
         mWidth = findPreference("prefs_key_home_folder_width");
@@ -80,16 +76,8 @@ public class HomeLayoutSettings extends DashboardFragment {
         indicatorMargin.setMinValue(-300);
 
         if (isPad()) {
-            if (isMoreHyperOSVersion(4f)) mSearch.setVisible(false);
-            else setPreVisible(mSearch, false);
             setFuncHint(mLayoutH, 1);
             setFuncHint(mIconLayoutNew, 1);
-        }
-
-        if (isMoreHyperOSVersion(4f)) {
-            // The OS4 capsule has its own Indicator controls. Remove the obsolete
-            // search-bar group from this screen without changing persisted choices.
-            getPreferenceScreen().removePreference(mSearch);
         }
 
         BiConsumer<Boolean, Boolean> updateVisibility = (widthEnabled, paddingEnabled) -> {

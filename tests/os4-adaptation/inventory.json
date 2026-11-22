@@ -3,20 +3,6 @@
   "entries": [
     {
       "page": "home_title_new",
-      "key": "prefs_key_home_title_icon_size_enable",
-      "title": "图标大小",
-      "status": "replaced_or_legacy_hidden",
-      "dependency": null
-    },
-    {
-      "page": "home_title_new",
-      "key": "prefs_key_home_title_icon_size",
-      "title": "",
-      "status": "replaced_or_legacy_hidden",
-      "dependency": "prefs_key_home_title_icon_size_enable"
-    },
-    {
-      "page": "home_title_new",
       "key": "prefs_key_home_layout_icon_scale_enable",
       "title": "普通图标缩放",
       "status": "declared_adapted_requires_evidence",
@@ -70,83 +56,6 @@
       "title": "",
       "status": "declared_adapted_requires_evidence",
       "dependency": "prefs_key_home_layout_widget_scale_enable"
-    },
-    {
-      "page": "home_title_new",
-      "key": "prefs_key_home_title_big_icon_corner",
-      "title": "中等图标圆角跟随",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_title_new",
-      "key": "prefs_key_home_title_disable_hide_file",
-      "title": "禁止隐藏 \\\"文件\\\" 图标",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_title_new",
-      "key": "prefs_key_home_title_disable_hide_theme",
-      "title": "禁止隐藏 \\\"主题壁纸\\\" 图标",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_title_new",
-      "key": "prefs_key_home_title_fake_non_default_icon",
-      "title": "伪装为非默认图标",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_title_new",
-      "key": "prefs_key_home_title_download_animation",
-      "title": "下载动画",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_title_new",
-      "key": "prefs_key_home_other_icon_mono_chrome",
-      "title": "图标背景色",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_title_new",
-      "key": "prefs_key_home_other_icon_monet_color",
-      "title": "使用 Monet 取色",
-      "status": "ui_gate_unadapted",
-      "dependency": "prefs_key_home_other_icon_mono_chrome"
-    },
-    {
-      "page": "home_title_new",
-      "key": "prefs_key_home_other_use_edit_color",
-      "title": "使用自定义颜色",
-      "status": "ui_gate_unadapted",
-      "dependency": "prefs_key_home_other_icon_mono_chrome"
-    },
-    {
-      "page": "home_title_new",
-      "key": "prefs_key_home_other_your_color_qwq",
-      "title": "编辑颜色",
-      "status": "ui_gate_unadapted",
-      "dependency": "prefs_key_home_other_use_edit_color"
-    },
-    {
-      "page": "home_title_new",
-      "key": "prefs_key_home_title_notif_color",
-      "title": "通知角标颜色自定义",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_title_new",
-      "key": "prefs_key_home_title_notif_color_picker",
-      "title": "选择颜色",
-      "status": "ui_gate_unadapted",
-      "dependency": "prefs_key_home_title_notif_color"
     },
     {
       "page": "home_title_new",
@@ -220,43 +129,8 @@
     },
     {
       "page": "home_recent",
-      "key": "prefs_key_home_recent_blur",
-      "title": "背景模糊",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_recent",
-      "key": "prefs_key_home_recent_show_launch",
-      "title": "最近任务视图不隐藏桌面",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_recent",
-      "key": "prefs_key_home_recent_show_launch_size",
-      "title": "桌面缩放大小",
-      "status": "ui_gate_unadapted",
-      "dependency": "prefs_key_home_recent_show_launch"
-    },
-    {
-      "page": "home_recent",
-      "key": "prefs_key_home_recent_show_launch_alpha",
-      "title": "桌面透明度",
-      "status": "ui_gate_unadapted",
-      "dependency": "prefs_key_home_recent_show_launch"
-    },
-    {
-      "page": "home_recent",
       "key": "prefs_key_home_recent_show_memory_info",
       "title": "展示内存信息",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_recent",
-      "key": "prefs_key_home_recent_show_real_memory",
-      "title": "显示真实使用内存量",
       "status": "ui_gate_unadapted",
       "dependency": null
     },
@@ -265,13 +139,6 @@
       "key": "prefs_key_home_recent_modify_animation",
       "title": "修改划卡动画",
       "status": "declared_adapted_requires_evidence",
-      "dependency": null
-    },
-    {
-      "page": "home_recent",
-      "key": "prefs_key_home_recent_fix_card_title_padding",
-      "title": "修复卡片标题底部间距",
-      "status": "ui_gate_unadapted",
       "dependency": null
     },
     {
@@ -287,34 +154,6 @@
       "title": "隐藏状态栏",
       "status": "declared_adapted_requires_evidence",
       "dependency": null
-    },
-    {
-      "page": "home_recent",
-      "key": "prefs_key_home_recent_hide_world_circulate",
-      "title": "隐藏投送应用浮窗",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_recent",
-      "key": "prefs_key_home_recent_hide_freeform",
-      "title": "隐藏小窗按钮",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_recent",
-      "key": "prefs_key_home_recent_hide_clean_up",
-      "title": "隐藏清理按钮",
-      "status": "replaced_or_legacy_hidden",
-      "dependency": null
-    },
-    {
-      "page": "home_recent",
-      "key": "prefs_key_always_show_clean_up",
-      "title": "无卡片时不隐藏清理图标",
-      "status": "replaced_or_legacy_hidden",
-      "dependency": "prefs_key_home_recent_hide_clean_up"
     },
     {
       "page": "home_recent",
@@ -335,20 +174,6 @@
       "key": "prefs_key_home_recent_hide_text",
       "title": "隐藏文本",
       "status": "declared_adapted_requires_evidence",
-      "dependency": null
-    },
-    {
-      "page": "home_recent",
-      "key": "prefs_key_home_recent_unlock_pin",
-      "title": "解锁固定应用",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_recent",
-      "key": "prefs_key_home_recent_text",
-      "title": "无后台时显示的文本",
-      "status": "ui_gate_unadapted",
       "dependency": null
     },
     {
@@ -430,20 +255,6 @@
     },
     {
       "page": "home_other_new",
-      "key": "prefs_key_home_widget_all_widget_animation",
-      "title": "强制所有小部件使用动画",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_other_new",
-      "key": "prefs_key_home_widget_show_miui_widget",
-      "title": "显示系统小部件",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_other_new",
       "key": "prefs_key_home_widget_allow_moved_to_minus_one_screen",
       "title": "允许将安卓小部件移动至负一屏",
       "status": "declared_adapted_requires_evidence",
@@ -451,51 +262,9 @@
     },
     {
       "page": "home_other_new",
-      "key": "prefs_key_home_big_folder_item_max_count",
-      "title": "真·九宫格",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_other_new",
       "key": "prefs_key_home_folder_auto_close",
       "title": "自动关闭",
       "status": "declared_adapted_requires_evidence",
-      "dependency": null
-    },
-    {
-      "page": "home_other_new",
-      "key": "prefs_key_home_other_freeform_shortcut_menu",
-      "title": "小窗模式",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_other_new",
-      "key": "prefs_key_home_other_tasks_shortcut_menu",
-      "title": "多开模式",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_other_new",
-      "key": "prefs_key_home_other_allow_share_apk",
-      "title": "允许分享应用",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_other_new",
-      "key": "prefs_key_home_other_shortcut_remove_restrictions",
-      "title": "解锁快捷菜单数量限制",
-      "status": "ui_gate_unadapted",
-      "dependency": null
-    },
-    {
-      "page": "home_other_new",
-      "key": "prefs_key_home_other_mi_pad_enable_more_setting",
-      "title": "解锁桌面设置更多选项",
-      "status": "ui_gate_unadapted",
       "dependency": null
     },
     {

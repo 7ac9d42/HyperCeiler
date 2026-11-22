@@ -18,16 +18,12 @@
 */
 package com.sevtinge.hyperceiler.hooker.home;
 
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.Miui.isPad;
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isHyperOSVersion;
-import static com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreHyperOSVersion;
 import static com.sevtinge.hyperceiler.sub.SubPickerActivity.INPUT_MODE;
 
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.preference.Preference;
-import androidx.preference.SwitchPreference;
 
 import com.sevtinge.hyperceiler.core.R;
 import com.sevtinge.hyperceiler.dashboard.DashboardFragment;
@@ -36,27 +32,16 @@ import com.sevtinge.hyperceiler.sub.SubPickerActivity;
 
 public class HomeTitleSettings extends DashboardFragment {
 
-    SwitchPreference mDisableMonoChrome;
-    SwitchPreference mDisableMonetColor;
-    SwitchPreference mDisableHideTheme;
     Preference mIconTitleCustomization;
     RecommendPreference mRecommend;
 
     @Override
     public int getPreferenceScreenResId() {
-        if (isMoreHyperOSVersion(3f)) return R.xml.home_title_new;
-        return R.xml.home_title;
+        return R.xml.home_title_new;
     }
 
     @Override
     public void initPrefs() {
-        mDisableMonoChrome = findPreference("prefs_key_home_other_icon_mono_chrome");
-
-        mDisableMonoChrome.setOnPreferenceChangeListener((preference, o) -> true);
-        mDisableMonetColor = findPreference("prefs_key_home_other_icon_monet_color");
-        mDisableMonetColor.setOnPreferenceChangeListener((preference, o) -> true);
-        mDisableHideTheme = findPreference("prefs_key_home_title_disable_hide_theme");
-
         mIconTitleCustomization = findPreference("prefs_key_home_title_title_icontitlecustomization");
         mIconTitleCustomization.setOnPreferenceClickListener(preference -> {
             Intent intent = new Intent(getActivity(), SubPickerActivity.class);
@@ -66,18 +51,6 @@ public class HomeTitleSettings extends DashboardFragment {
             return true;
         });
 
-        if (isHyperOSVersion(4f)) {
-            mDisableHideTheme.setVisible(isPad());
-        } else {
-            setPreVisible(mDisableHideTheme, isPad());
-        }
-
-        // Only OS4 uses the native icon scale controls. Keep OS2/OS3 values and UI intact.
-        if (isHyperOSVersion(4f)) {
-            replaceIconSizeForOS4();
-        }
-
-        Bundle args1 = new Bundle();
         Bundle args2 = new Bundle();
         mRecommend = new RecommendPreference(requireContext());
         getPreferenceScreen().addPreference(mRecommend);
@@ -90,31 +63,6 @@ public class HomeTitleSettings extends DashboardFragment {
             R.string.home_other
         );
 
-        if (!isMoreHyperOSVersion(3f)) {
-            args1.putString(":settings:fragment_args_key", "prefs_key_home_other_shortcut_background_blur");
-            mRecommend.addRecommendView(getString(R.string.home_other_shortcut_background_blur),
-                null,
-                HomeOtherSettings.class,
-                args1,
-                R.string.home_other
-            );
-        }
-
         HomeOS4AdaptationGate.apply(getPreferenceScreen(), getPreferenceScreenResId());
-    }
-
-    /** Relocate the existing native keys, without rewriting either generation's saved values. */
-    private void replaceIconSizeForOS4() {
-        findPreference("prefs_key_home_title_icon_size_enable").setVisible(false);
-        findPreference("prefs_key_home_title_icon_size").setVisible(false);
-        findPreference("prefs_key_home_layout_icon_scale_enable").setVisible(true);
-        findPreference("prefs_key_home_layout_icon_scale").setVisible(true);
-        findPreference("prefs_key_home_layout_small_folder_scale_enable").setVisible(true);
-        findPreference("prefs_key_home_layout_small_folder_scale").setVisible(true);
-        findPreference("prefs_key_home_layout_big_folder_scale_enable").setVisible(true);
-        findPreference("prefs_key_home_layout_big_folder_scale").setVisible(true);
-        findPreference("prefs_key_home_layout_widget_scale_enable").setVisible(true);
-        findPreference("prefs_key_home_layout_widget_scale").setVisible(true);
-
     }
 }

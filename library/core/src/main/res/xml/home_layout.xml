@@ -58,13 +58,6 @@
 
         <SwitchPreference
             android:defaultValue="false"
-            android:key="prefs_key_home_layout_unlock_grids_no_word"
-            android:summary="@string/home_layout_unlock_grids_no_words_desc"
-            android:title="@string/home_layout_unlock_grids_no_words"
-            app:isPreferenceVisible="false" />
-
-        <SwitchPreference
-            android:defaultValue="false"
             android:key="prefs_key_home_layout_workspace_padding_top_enable"
             android:summary="@string/home_layout_workspace_padding_top_desc"
             android:title="@string/top_margin" />
@@ -162,42 +155,6 @@
             android:defaultValue="70"
             android:dependency="prefs_key_home_layout_hotseats_margin_bottom_enable"
             android:key="prefs_key_home_layout_hotseats_margin_bottom"
-            android:layout="@layout/miuix_preference_widget_seekbar_compat_no_title"
-            app:defaultValueTitle="@string/array_default"
-            app:format="%s dp"
-            app:maxValue="150"
-            app:stepValue="1" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:title="@string/home_layout_searchbar_title"
-        android:key="prefs_key_home_layout_searchbar_title" >
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_home_layout_searchbar_width_enable"
-            android:title="@string/home_layout_searchbar_width" />
-
-        <SeekBarPreferenceCompat
-            android:defaultValue="30"
-            android:dependency="prefs_key_home_layout_searchbar_width_enable"
-            android:key="prefs_key_home_layout_searchbar_width"
-            android:layout="@layout/miuix_preference_widget_seekbar_compat_no_title"
-            app:defaultValueTitle="@string/array_default"
-            app:format="%s dp"
-            app:maxValue="400"
-            app:stepValue="1" />
-
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="prefs_key_home_layout_searchbar_margin_bottom_enable"
-            android:summary="@string/home_layout_searchbar_margin_bottom_desc"
-            android:title="@string/bottom_margin" />
-
-        <SeekBarPreferenceCompat
-            android:defaultValue="30"
-            android:dependency="prefs_key_home_layout_searchbar_margin_bottom_enable"
-            android:key="prefs_key_home_layout_searchbar_margin_bottom"
             android:layout="@layout/miuix_preference_widget_seekbar_compat_no_title"
             app:defaultValueTitle="@string/array_default"
             app:format="%s dp"
