@@ -99,6 +99,9 @@ Install its Python dependency with `python3 -m pip install -r tests/requirements
 The old Home companion build instructions are in Git history.
 [`tools/build_hyos_companion.py`](../tools/build_hyos_companion.py) now builds
 and stages only the Weather companion (`HYPERCEILER_HYOS_WEATHER_ONLY=ON`).
+Build the APK and companion from the same revision: the on-demand Weather
+bridge can return an unavailable first reply, which older companions do not
+retry before deciding whether to install their startup hooks.
 
 The external Zygisk Next API header is not bundled. Use `zygisk_next_api.h` from
 commit `22fe320814656e7b44715b5f32c967ceb51cda08`; the script requires SHA-256
