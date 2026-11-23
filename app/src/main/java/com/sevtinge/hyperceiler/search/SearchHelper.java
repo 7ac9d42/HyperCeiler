@@ -221,12 +221,6 @@ public class SearchHelper {
         return false;
     }
 
-    public static void clearIndex() {
-        REGISTERED.clear();
-        GROUP_PACKAGE_MAP.clear();
-        GROUP_ICON_MAP.clear();
-    }
-
     private static Resources getLocaleResources(Context context) {
         Configuration config = new Configuration(context.getResources().getConfiguration());
         config.setLocale(LanguageHelper.getCurrentLocale(context));
