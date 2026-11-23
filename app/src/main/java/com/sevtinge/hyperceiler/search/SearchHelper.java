@@ -145,15 +145,15 @@ public class SearchHelper {
 
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 if (eventType == XmlPullParser.START_TAG) {
-                    String tag = xml.getName();
+                    EntryTag tag = classifyEntryTag(xml.getName());
 
-                    if (isPreferenceScreenTag(tag)) {
+                    if (tag == EntryTag.SCREEN) {
                         String myLoc = xml.getAttributeValue(APP_NS, "myLocation");
                         if (myLoc != null && location == null) {
                             location = resolveStringRef(res, myLoc);
                             locationId = resolveResId(myLoc);
                         }
-                    } else if (!shouldSkipTag(tag)) {
+                    } else if (tag == EntryTag.ENTRY) {
                         String titleAttr = xml.getAttributeValue(ANDROID_NS, "title");
                         String keyAttr = xml.getAttributeValue(ANDROID_NS, "key");
                         String isVisibleAttr = xml.getAttributeValue(APP_NS, "isPreferenceVisible");
@@ -241,42 +241,30 @@ public class SearchHelper {
         return 0;
     }
 
-    private static boolean shouldSkipTag(String tag) {
-        return isPreferenceCategoryTag(tag)
-            || isLayoutPreferenceTag(tag)
-            || isContainerTag(tag);
+    private enum EntryTag { SCREEN, SKIP, ENTRY }
+
+    private static EntryTag classifyEntryTag(String tag) {
+        if (hasTagName(tag, PreferenceScreen.class)) return EntryTag.SCREEN;
+        if (hasTagName(tag, PreferenceCategory.class) || hasTagName(tag, LayoutPreference.class)) {
+            return EntryTag.SKIP;
+        }
+        Class<?> tagClass = loadTagClass(tag);
+        if (tagClass == null) return EntryTag.ENTRY;
+        if (PreferenceScreen.class.isAssignableFrom(tagClass)) return EntryTag.SCREEN;
+        if (PreferenceGroup.class.isAssignableFrom(tagClass) || LayoutPreference.class.isAssignableFrom(tagClass)) {
+            return EntryTag.SKIP;
+        }
+        return EntryTag.ENTRY;
     }
 
     private static boolean isPreferenceHeaderTag(String tag) {
-        return "header".equals(tag) || isTagOrSubclass(tag, PreferenceHeader.class);
-    }
-
-    private static boolean isPreferenceScreenTag(String tag) {
-        return isTagOrSubclass(tag, PreferenceScreen.class);
-    }
-
-    private static boolean isPreferenceCategoryTag(String tag) {
-        return isTagOrSubclass(tag, PreferenceCategory.class);
-    }
-
-    private static boolean isLayoutPreferenceTag(String tag) {
-        return isTagOrSubclass(tag, LayoutPreference.class);
-    }
-
-    private static boolean isContainerTag(String tag) {
+        if ("header".equals(tag) || hasTagName(tag, PreferenceHeader.class)) return true;
         Class<?> tagClass = loadTagClass(tag);
-        return tagClass != null && PreferenceGroup.class.isAssignableFrom(tagClass);
+        return tagClass != null && PreferenceHeader.class.isAssignableFrom(tagClass);
     }
 
-    private static boolean isTagOrSubclass(String tag, Class<?> targetClass) {
-        if (TextUtils.isEmpty(tag)) {
-            return false;
-        }
-        if (targetClass.getSimpleName().equals(tag) || targetClass.getName().equals(tag)) {
-            return true;
-        }
-        Class<?> tagClass = loadTagClass(tag);
-        return tagClass != null && targetClass.isAssignableFrom(tagClass);
+    private static boolean hasTagName(String tag, Class<?> targetClass) {
+        return targetClass.getSimpleName().equals(tag) || targetClass.getName().equals(tag);
     }
 
     private static Class<?> loadTagClass(String tag) {
