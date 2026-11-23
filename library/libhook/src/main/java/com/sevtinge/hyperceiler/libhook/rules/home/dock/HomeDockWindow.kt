@@ -725,7 +725,6 @@ class HomeDockWindow : BaseHook() {
                     }
                     param.result = true
                 }
-                HomeLayoutNativeEndpointOS4.startCombinedPrefetch()
                 glassClient.record("native motion IWindowManager endpoint ready")
             }.onFailure {
                 glassClient.record("native motion IWindowManager endpoint unavailable=${it.javaClass.simpleName}")

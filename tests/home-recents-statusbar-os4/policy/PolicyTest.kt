@@ -40,8 +40,13 @@ fun main(){
  c(send(12)==1);c(home.getRequestedVisibleTypes()==14)
  val prefDeadline=HomeLayoutNativeEndpointOS4.pref.deadline();SystemClock.source=java.util.function.LongSupplier{prefDeadline}
  wm.mH.expire();c(home.getRequestedVisibleTypes()==15);c(dc.policy.appliedTypes==15);SystemClock.source=java.util.function.LongSupplier{System.nanoTime()}
+ HomeLayoutNativeEndpointOS4.pref=HomeLayoutNativeEndpointOS4.RecentsBarPreference(false,false,0)
+ HomeLayoutNativeEndpointOS4.observation=1
+ c(send(8)==1);c(HomeLayoutNativeEndpointOS4.renewal==null);c(home.getRequestedVisibleTypes()==15)
+ c(send(9)==1);c(home.getRequestedVisibleTypes()==15)
  HomeLayoutNativeEndpointOS4.pref=HomeLayoutNativeEndpointOS4.RecentsBarPreference(true,true,Long.MAX_VALUE)
- c(send(9)==1);c(home.getRequestedVisibleTypes()==14)
+ HomeLayoutNativeEndpointOS4.renewal.run();wm.mH.drain();c(home.getRequestedVisibleTypes()==14)
+ HomeLayoutNativeEndpointOS4.observation=null
  val replacement=WindowState(dc,Session(10123,21));dc.mCurrentFocus=replacement;p.bind(replacement,wm);wm.mH.drain()
  c(home.getRequestedVisibleTypes()==15);c(replacement.getRequestedVisibleTypes()==15)
  c(send(9)==0);c(replacement.getRequestedVisibleTypes()==15)

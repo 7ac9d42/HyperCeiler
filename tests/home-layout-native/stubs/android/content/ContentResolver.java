@@ -2,17 +2,17 @@ package android.content;
 
 /** Legacy per-key and atomic single-row provider fixtures; no Android/device dependency. */
 public class ContentResolver {
-    private static final java.util.Map<String, Object> ROWS = new java.util.HashMap<>();
+    private static final java.util.Map<String, Object> ROWS = new java.util.concurrent.ConcurrentHashMap<>();
     public static boolean recentsExtras = false;
     public static boolean recentHeaderExtras = false;
     public static boolean recentDismissExtras = false;
     private static String[][] specs = new String[0][];
-    private static int failureIndex = -1, queries;
+    private static volatile int failureIndex = -1, queries;
     private static String failureMode;
     private static boolean wrongSchema, emptyBatch;
-    private static android.database.ContentObserver observer;
+    private static volatile android.database.ContentObserver observer;
     private static String observedUri;
-    private static int registrations, unregistrations;
+    private static volatile int registrations, unregistrations;
     public static java.util.function.Consumer<String> afterRead;
     public void registerContentObserver(android.net.Uri uri, boolean descendants,
         android.database.ContentObserver candidate) {

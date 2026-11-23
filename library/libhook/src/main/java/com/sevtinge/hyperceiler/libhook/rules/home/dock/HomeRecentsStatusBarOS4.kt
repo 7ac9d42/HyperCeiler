@@ -151,9 +151,12 @@ internal class HomeRecentsStatusBarOS4(private val record: (String) -> Unit) {
     }
     private fun shouldHide(): Boolean {
         val pref = preference
-        val target = window
-        if (stopped || !ready || target == null || !pref.available() || !pref.enabled()
-            || SystemClock.elapsedRealtimeNanos() >= pref.deadline() || !state.overview(System.nanoTime())) return false
+        return !stopped && ready && pref.available() && pref.enabled()
+            && SystemClock.elapsedRealtimeNanos() < pref.deadline() && state.overview(System.nanoTime())
+            && isVisibleOverviewWindow()
+    }
+    private fun isVisibleOverviewWindow(): Boolean {
+        val target = window ?: return false
         return runCatching {
             val dc = display.invoke(target)
             dc != null && focus.get(dc) === target && visible.invoke(target) == true
@@ -161,7 +164,7 @@ internal class HomeRecentsStatusBarOS4(private val record: (String) -> Unit) {
         }.getOrDefault(false)
     }
     fun receive(data: Parcel, reply: Parcel, flags: Int) {
-        var pref = HomeLayoutNativeEndpointOS4.RecentsBarPreference(false, false, 0)
+        var observation = -1
         try {
             data.enforceInterface("android.view.IWindowManager")
             if (!stopped && ready && flags and IBinder.FLAG_ONEWAY == 0 && data.dataAvail() == 40
@@ -176,21 +179,24 @@ internal class HomeRecentsStatusBarOS4(private val record: (String) -> Unit) {
                     && now - timestamp < HomeRecentsBarState.MAX_AGE_NS && mask == 0L && revision == 0L && confirm == 0L
                 if (probe || state.accept(Binder.getCallingUid(), Binder.getCallingPid(), sequence,
                         timestamp, mask, revision, confirm, now)) {
-                    pref = HomeLayoutNativeEndpointOS4.recentsBarPreference()
-                    preference = pref
+                    val overview = !probe && state.overview(now) && isVisibleOverviewWindow()
+                    observation = HomeLayoutNativeEndpointOS4.requestRecentsBarPreference(
+                        overview, if (overview) Runnable { schedule() } else null)
                     schedule()
                 }
             }
         } catch (_: Throwable) { /* Fail closed, preserve the original request. */ }
         reply.writeInt(ACK)
-        reply.writeInt(if (pref.available()) 1 else 0)
-        reply.writeInt(if (pref.available() && pref.enabled()) 1 else 0)
+        reply.writeInt(if (observation >= 0) 1 else 0)
+        reply.writeInt(if (observation == 1) 1 else 0)
     }
     private fun schedule() {
         val h = handler ?: return
         if (queued.compareAndSet(false, true) && !h.post {
                 queued.set(false)
                 val wmLock = lock ?: return@post
+                preference = runCatching { HomeLayoutNativeEndpointOS4.recentsBarPreference() }
+                    .getOrElse { HomeLayoutNativeEndpointOS4.RecentsBarPreference(false, false, 0) }
                 synchronized(wmLock) { refresh() }
             }) queued.set(false)
     }

@@ -121,7 +121,10 @@ public final class HomeLayoutAtomicReloadTest {
         });
         test("real refresher thread terminates before accepting hot reload", () -> {
             establish(184); Field worker = HomeLayoutNativeEndpointOS4.class.getDeclaredField("refresher");
-            worker.setAccessible(true); worker.set(null, null); check(ready() != null, "worker startup");
+            worker.setAccessible(true);
+            check(HomeLayoutNativeEndpointOS4.pauseForHotReload(), "mock worker failed to retire");
+            HomeLayoutNativeEndpointOS4.resumeAfterRejectedHotReload();
+            check(ready() != null, "worker startup lost the hot reload cache");
             Thread live = (Thread) worker.get(null);
             check(live != null && live.isAlive(), "refresher thread was not started");
             check((Boolean) HomeLayoutNativeEndpointOS4.class.getMethod("pauseForHotReload").invoke(null), "refresher failed to terminate");

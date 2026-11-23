@@ -165,23 +165,28 @@ public final class RecentsAuthorizationTest {
    AtomicBoolean ok=new AtomicBoolean(true);Thread a=new Thread(()->ok.set(HomeLayoutNativeEndpointOS4.refreshFromProvider()));a.start();g.entered();
    check(HomeLayoutNativeEndpointOS4.pauseForHotReload());g.release.countDown();join(a);check(!ok.get());unavailable();
   });
-  run("prefetch worker renews leases without a preference notification",()->{
-   set("refresher",null);SystemClock.source=System::nanoTime;ContentResolver.values=recentsPrefs();
-   Gate invalidation=new Gate();
-   HomeLayoutNativeEndpointOS4.startCombinedPrefetch();
+  run("idle scene observation survives expiry; only a true overview renews Insets authorization",()->{
+   set("refresher",null);ContentResolver.values=recentsPrefs();
    try {
-    long until=System.nanoTime()+TimeUnit.SECONDS.toNanos(7);
-    while(!read().available()&&System.nanoTime()<until)Thread.sleep(20);
-    enabled(true);long firstDeadline=read().deadline();
-    while(read().deadline()<=firstDeadline&&System.nanoTime()<until)Thread.sleep(20);
-    enabled(true);check(read().deadline()>firstDeadline);
-    ContentResolver.values=recentsPrefs("allow_hook",false);ContentResolver.afterSnapshot=invalidation::block;
-    ContentResolver.signalChange("content://com.sevtinge.hyperceiler.provider.sharedprefs/pref/boolean/allow_hook");
-    invalidation.entered();unavailable();invalidation.release.countDown();
+    eq(HomeLayoutNativeEndpointOS4.requestRecentsBarPreference(false,null),-1);
     for(int i=0;i<100&&!read().available();i++)Thread.sleep(10);
-    enabled(false);
+    enabled(true);eq(ContentResolver.queries.get(),1);
+    now.addAndGet(6_000_000_000L);Thread.sleep(200);
+    for(int i=0;i<20;i++)eq(HomeLayoutNativeEndpointOS4.requestRecentsBarPreference(false,null),1);
+    unavailable();eq(ContentResolver.queries.get(),1);
+    CountDownLatch updated=new CountDownLatch(1);
+    eq(HomeLayoutNativeEndpointOS4.requestRecentsBarPreference(true,updated::countDown),1);
+    check(updated.await(3,TimeUnit.SECONDS));enabled(true);eq(ContentResolver.queries.get(),2);
+    ContentResolver.values=recentsPrefs("allow_hook",false);
+    ContentResolver.signalChange("content://com.sevtinge.hyperceiler.provider.sharedprefs/pref/boolean/allow_hook");
+    unavailable();eq(ContentResolver.queries.get(),2);
+    for(int i=0;i<100&&!read().available();i++){
+     HomeLayoutNativeEndpointOS4.requestRecentsBarPreference(false,null);Thread.sleep(10);
+    }
+    enabled(false);eq(HomeLayoutNativeEndpointOS4.requestRecentsBarPreference(false,null),0);
+    eq(ContentResolver.queries.get(),3);
    } catch(InterruptedException e){throw new AssertionError(e);}
-   finally {invalidation.release.countDown();check(HomeLayoutNativeEndpointOS4.pauseForHotReload());}
+   finally {check(HomeLayoutNativeEndpointOS4.pauseForHotReload());}
   });
   System.out.println("RESULT passes="+passed+" failures="+failed+"; production Java layout and Recents publication, simulated Android/clock; device NOT_TESTED");
   if(failed>0)System.exit(1);
