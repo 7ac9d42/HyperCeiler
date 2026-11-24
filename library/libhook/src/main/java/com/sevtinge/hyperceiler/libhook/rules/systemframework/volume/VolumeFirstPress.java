@@ -39,7 +39,7 @@ public class VolumeFirstPress extends BaseHook {
                 int streamType = (int) param.getArgs()[0];
                 if (streamType != AudioManager.STREAM_MUSIC) return;
                 boolean isMuteAdjust = (boolean) param.getArgs()[2];
-                if (isMuteAdjust) return;
+                if (isMuteAdjust || param.getHasThrowable() || !Boolean.TRUE.equals(param.getResult())) return;
                 Object mController = getObjectField(param.getThisObject(), "mController");
                 if (mController == null) return;
                 param.setResult(false);

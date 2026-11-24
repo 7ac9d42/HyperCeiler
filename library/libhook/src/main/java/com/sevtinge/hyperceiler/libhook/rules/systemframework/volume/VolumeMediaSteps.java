@@ -31,8 +31,8 @@ public class VolumeMediaSteps extends BaseHook {
             @Override
             public void before(HookParam param) {
                 if ("ro.config.media_vol_steps".equals(param.getArgs()[0])) {
-                    if (PrefsBridge.getInt("system_framework_volume_media_steps", 15) > 15)
-                        param.setResult(PrefsBridge.getInt("system_framework_volume_media_steps", 15));
+                    int steps = PrefsBridge.getInt("system_framework_volume_media_steps", 15);
+                    if (steps > 15) param.setResult(steps);
                 }
             }
         });

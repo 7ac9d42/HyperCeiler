@@ -18,39 +18,80 @@
  */
 package com.sevtinge.hyperceiler.libhook.rules.systemframework.volume;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.ContentObserver;
+import android.net.Uri;
 import android.os.Handler;
 
 import com.sevtinge.hyperceiler.common.utils.PrefsBridge;
-import com.sevtinge.hyperceiler.common.utils.prefs.PrefType;
-import com.sevtinge.hyperceiler.common.utils.prefs.PrefsChangeObserver;
+import com.sevtinge.hyperceiler.common.utils.prefs.PrefsChangeObserver.PrefToUri;
 import com.sevtinge.hyperceiler.libhook.base.BaseHook;
-import io.github.lingqiqi5211.ezhooktool.xposed.java.IMethodHook;
-
 import io.github.lingqiqi5211.ezhooktool.xposed.common.HookParam;
+import io.github.lingqiqi5211.ezhooktool.xposed.java.IMethodHook;
 
 public class VolumeDefaultStream extends BaseHook {
 
-    Class<?> mAudioService;
+    private static final String KEY = "prefs_key_system_framework_default_volume_stream";
+    private volatile boolean observing;
+    private volatile boolean closed;
+    private Runnable unregister;
 
     @Override
     public void init() {
-        mAudioService = findClassIfExists("com.android.server.audio.AudioService");
-
-        findAndHookMethod(mAudioService, "getActiveStreamType", int.class, new IMethodHook() {
+        Class<?> audioService = findClassIfExists("com.android.server.audio.AudioService");
+        if (audioService == null) return;
+        registerHotReloadCleanup(this::close);
+        findAndHookMethod(audioService, "getActiveStreamType", int.class, new IMethodHook() {
             @Override
             public void before(HookParam param) {
-
-                Context mContext = (Context) getObjectField(param.getThisObject(), "mContext");
-                Handler mHandler = new Handler(mContext.getMainLooper());
-                new PrefsChangeObserver(mContext, mHandler, true, PrefType.String,
-                        "prefs_key_system_framework_default_volume_stream", "0");
-
-                int mDefaultVolumeStream = PrefsBridge.getStringAsInt("system_framework_default_volume_stream", 0);
-
-                param.setResult(mDefaultVolumeStream);
-
+                if (closed) return;
+                if (!observing) observe(param.getThisObject());
+                if (!closed) param.setResult(PrefsBridge.getStringAsInt(KEY, 0));
             }
         });
+    }
+
+    private synchronized void observe(Object service) {
+        if (closed || observing) return;
+        Context context = (Context) getObjectField(service, "mContext");
+        if (context == null) return;
+        Handler handler = new Handler(context.getMainLooper());
+        SharedPreferences remote = PrefsBridge.isHookProcess() ? PrefsBridge.getSharedPreferences() : null;
+        if (remote != null) {
+            SharedPreferences.OnSharedPreferenceChangeListener listener = (prefs, key) -> {
+                if (!closed && KEY.equals(key)) handler.post(this::refreshPreference);
+            };
+            remote.registerOnSharedPreferenceChangeListener(listener);
+            unregister = () -> remote.unregisterOnSharedPreferenceChangeListener(listener);
+        } else {
+            ContentResolver resolver = context.getContentResolver();
+            ContentObserver observer = new ContentObserver(handler) {
+                @Override
+                public void onChange(boolean selfChange, Uri uri) {
+                    if (!selfChange) refreshPreference();
+                }
+            };
+            resolver.registerContentObserver(PrefToUri.stringPrefToUri(KEY), false, observer);
+            unregister = () -> resolver.unregisterContentObserver(observer);
+        }
+        observing = true;
+    }
+
+    private synchronized void refreshPreference() {
+        if (closed) return;
+        PrefsBridge.removeHookCache(KEY);
+        PrefsBridge.putHookCache(KEY, PrefsBridge.getString(KEY, "0"));
+    }
+
+    private void close() {
+        Runnable cleanup;
+        synchronized (this) {
+            closed = true;
+            cleanup = unregister;
+            unregister = null;
+        }
+        if (cleanup != null) cleanup.run();
     }
 }

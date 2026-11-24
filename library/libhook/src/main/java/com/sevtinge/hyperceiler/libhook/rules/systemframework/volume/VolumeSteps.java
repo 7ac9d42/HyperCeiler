@@ -27,6 +27,8 @@ import io.github.lingqiqi5211.ezhooktool.xposed.common.HookParam;
 public class VolumeSteps extends BaseHook {
 
     Class<?> mAudioService;
+    private int[] originalMaxStreamVolume;
+    private int[] appliedMaxStreamVolume;
 
     @Override
     public void init() {
@@ -38,11 +40,17 @@ public class VolumeSteps extends BaseHook {
             public void before(HookParam param) {
 
                 int[] maxStreamVolume = (int[]) getStaticObjectField(mAudioService, "MAX_STREAM_VOLUME");
+                if (maxStreamVolume == null) return;
+                if (maxStreamVolume != appliedMaxStreamVolume) {
+                    originalMaxStreamVolume = maxStreamVolume.clone();
+                }
                 int mult = PrefsBridge.getInt("system_framework_volume_steps", 0);
                 if (mult <= 0) return;
-                for (int i = 0; i < maxStreamVolume.length; i++)
-                    maxStreamVolume[i] = Math.round(maxStreamVolume[i] * mult / 100.0f);
-                setStaticObjectField(mAudioService, "MAX_STREAM_VOLUME", maxStreamVolume);
+                int[] adjusted = originalMaxStreamVolume.clone();
+                for (int i = 0; i < adjusted.length; i++)
+                    adjusted[i] = Math.round(adjusted[i] * mult / 100.0f);
+                appliedMaxStreamVolume = adjusted;
+                setStaticObjectField(mAudioService, "MAX_STREAM_VOLUME", adjusted);
             }
         });
     }

@@ -19,7 +19,6 @@
 package com.sevtinge.hyperceiler.libhook.rules.systemframework.others;
 
 import static com.sevtinge.hyperceiler.libhook.utils.api.PropUtils.getProp;
-import static com.sevtinge.hyperceiler.libhook.utils.hookapi.effect.EffectItem.DELAY_DUMP;
 import static com.sevtinge.hyperceiler.libhook.utils.hookapi.effect.EffectItem.DELAY_STATE_CHANGE;
 import static com.sevtinge.hyperceiler.libhook.utils.hookapi.effect.EffectItem.DEVICE_TYPE_BLUETOOTH_A2DP;
 import static com.sevtinge.hyperceiler.libhook.utils.hookapi.effect.EffectItem.DEVICE_TYPE_BLUETOOTH_LE;
@@ -29,7 +28,6 @@ import static com.sevtinge.hyperceiler.libhook.utils.hookapi.effect.EffectItem.E
 import static com.sevtinge.hyperceiler.libhook.utils.hookapi.effect.EffectItem.EFFECT_KEEP;
 import static com.sevtinge.hyperceiler.libhook.utils.hookapi.effect.EffectItem.EFFECT_MISOUND;
 import static com.sevtinge.hyperceiler.libhook.utils.hookapi.effect.EffectItem.EFFECT_NONE;
-import static com.sevtinge.hyperceiler.libhook.utils.hookapi.effect.EffectItem.MSG_DUMP;
 import static com.sevtinge.hyperceiler.libhook.utils.hookapi.effect.EffectItem.MSG_STATE_CHANGE;
 import static com.sevtinge.hyperceiler.libhook.utils.hookapi.effect.EffectItem.PREFS_KEY_DEFAULT_EFFECT;
 import static com.sevtinge.hyperceiler.libhook.utils.hookapi.effect.EffectItem.PREFS_KEY_LOCK_SELECTION;
@@ -41,6 +39,7 @@ import android.bluetooth.BluetoothA2dp;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothLeAudio;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -48,7 +47,6 @@ import android.database.ContentObserver;
 import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
 
@@ -147,16 +145,16 @@ public class AutoEffectSwitchForSystem extends BaseHook {
         if (mContext == null) return;
 
         try {
+            ContentResolver resolver = mContext.getContentResolver();
             int lockSelection = Settings.Global.getInt(
-                mContext.getContentResolver(), SETTINGS_KEY_LOCK_SELECTION, mLockSelection ? 1 : 0);
+                resolver, SETTINGS_KEY_LOCK_SELECTION, mLockSelection ? 1 : 0);
             mLockSelection = lockSelection == 1;
 
             int rememberDevice = Settings.Global.getInt(
-                mContext.getContentResolver(), SETTINGS_KEY_REMEMBER_DEVICE, mRememberDevice ? 1 : 0);
+                resolver, SETTINGS_KEY_REMEMBER_DEVICE, mRememberDevice ? 1 : 0);
             mRememberDevice = rememberDevice == 1;
 
-            String defaultEffect = Settings.Global.getString(
-                mContext.getContentResolver(), SETTINGS_KEY_DEFAULT_EFFECT);
+            String defaultEffect = Settings.Global.getString(resolver, SETTINGS_KEY_DEFAULT_EFFECT);
             if (defaultEffect != null && !defaultEffect.isEmpty()) {
                 mDefaultEffect = defaultEffect;
             }
@@ -322,8 +320,9 @@ public class AutoEffectSwitchForSystem extends BaseHook {
     private static boolean isEarphoneDeviceConnected(AudioManager audioManager) {
         AudioDeviceInfo[] outputs = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS);
         for (AudioDeviceInfo info : outputs) {
+            int deviceType = info.getType();
             for (int type : EARPHONE_DEVICE_TYPES) {
-                if (info.getType() == type) return true;
+                if (deviceType == type) return true;
             }
         }
         return false;
@@ -458,7 +457,6 @@ public class AutoEffectSwitchForSystem extends BaseHook {
         applyEffectForDevice(deviceId, deviceName);
 
         reportEarphoneState();
-        scheduleDump();
     }
 
     /**
@@ -499,7 +497,6 @@ public class AutoEffectSwitchForSystem extends BaseHook {
         restoreEffectForSpeaker();
 
         reportEarphoneState();
-        scheduleDump();
     }
 
     /**
@@ -584,17 +581,6 @@ public class AutoEffectSwitchForSystem extends BaseHook {
     }
 
     /**
-     * 延迟输出状态
-     */
-    private void scheduleDump() {
-        Handler handler = sHandlerRef.get();
-        if (handler != null) {
-            handler.removeMessages(MSG_DUMP);
-            handler.sendEmptyMessageDelayed(MSG_DUMP, DELAY_DUMP);
-        }
-    }
-
-    /**
      * 初始化设备记忆（需要在 MiSound 进程中调用）
      */
     public void initDeviceMemory() {
@@ -647,7 +633,6 @@ public class AutoEffectSwitchForSystem extends BaseHook {
     private static class EarphoneBroadcastReceiver extends BroadcastReceiver {
 
         private final AutoEffectSwitchForSystem mHost;
-        private Handler mDumpHandler;
 
         EarphoneBroadcastReceiver(AutoEffectSwitchForSystem host) {
             this.mHost = host;
@@ -655,10 +640,6 @@ public class AutoEffectSwitchForSystem extends BaseHook {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (mDumpHandler == null) {
-                mDumpHandler = new DumpHandler(context.getMainLooper(), mHost.mEffectController);
-            }
-
             String action = intent.getAction();
             if (action == null) return;
 
@@ -760,26 +741,6 @@ public class AutoEffectSwitchForSystem extends BaseHook {
                     String deviceId = DeviceEffectMemory.generateWiredDeviceId();
                     mHost.onDeviceDisconnected(deviceId, null);
                 }
-            }
-        }
-    }
-
-    /**
-     * 用于延迟输出音效状态的 Handler
-     */
-    private static class DumpHandler extends Handler {
-
-        private final IControlForSystem mController;
-
-        DumpHandler(Looper looper, IControlForSystem controller) {
-            super(looper);
-            this.mController = controller;
-        }
-
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            if (msg.what == MSG_DUMP && mController != null) {
-                mController.dumpAudioEffectState();
             }
         }
     }

@@ -74,9 +74,7 @@ public final class EffectItem {
 
     // ==================== Handler Message ====================
     public static final int MSG_STATE_CHANGE = 0;
-    public static final int MSG_DUMP = 1;
     public static final long DELAY_STATE_CHANGE = 1000L;
-    public static final long DELAY_DUMP = 1000L;
 
     // ==================== 设备类型 ====================
     public static final String DEVICE_TYPE_WIRED = "wired";

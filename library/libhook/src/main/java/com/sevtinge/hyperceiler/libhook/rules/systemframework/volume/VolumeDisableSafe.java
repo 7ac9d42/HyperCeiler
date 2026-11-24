@@ -32,6 +32,7 @@ import io.github.lingqiqi5211.ezhooktool.xposed.java.IMethodHook;
 import io.github.lingqiqi5211.ezhooktool.xposed.common.HookParam;
 
 public class VolumeDisableSafe extends BaseHook {
+    private static final Integer SAFE_MEDIA_VOLUME_OVERRIDE = 2147483646;
     private static final String HOT_RELOAD_CONTEXT_KEY =
         "VolumeDisableSafe.audioContext";
     private static final String HOT_RELOAD_HEADSET_STATE_KEY =
@@ -61,10 +62,10 @@ public class VolumeDisableSafe extends BaseHook {
             @Override
             public void before(HookParam param) {
                 if (mode == 1) {
-                    param.setResult(2147483646);
+                    param.setResult(SAFE_MEDIA_VOLUME_OVERRIDE);
                     return;
                 }
-                if (isHeadsetOn) param.setResult(2147483646);
+                if (isHeadsetOn) param.setResult(SAFE_MEDIA_VOLUME_OVERRIDE);
             }
         });
 
@@ -72,23 +73,22 @@ public class VolumeDisableSafe extends BaseHook {
             @Override
             public void before(HookParam param) {
                 if (mode == 1) {
-                    param.setResult(2147483646);
+                    param.setResult(SAFE_MEDIA_VOLUME_OVERRIDE);
                     return;
                 }
-                if (isHeadsetOn) param.setResult(2147483646);
+                if (isHeadsetOn) param.setResult(SAFE_MEDIA_VOLUME_OVERRIDE);
             }
         });
 
-        hookAllConstructors(SoundDoseHelper, new IMethodHook() {
-            @Override
-            public void after(HookParam param) {
-                if (mode == 1) {
-                    return;
+        if (mode != 1) {
+            hookAllConstructors(SoundDoseHelper, new IMethodHook() {
+                @Override
+                public void after(HookParam param) {
+                    Context context = (Context) param.getArgs()[1];
+                    registerHeadsetReceiver(context);
                 }
-                Context context = (Context) param.getArgs()[1];
-                registerHeadsetReceiver(context);
-            }
-        });
+            });
+        }
 
     }
 

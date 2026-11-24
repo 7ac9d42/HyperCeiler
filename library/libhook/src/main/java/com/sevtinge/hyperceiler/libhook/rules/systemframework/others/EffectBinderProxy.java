@@ -27,6 +27,7 @@ import android.os.Bundle;
 
 import com.sevtinge.hyperceiler.common.log.XposedLog;
 import com.sevtinge.hyperceiler.libhook.base.BaseHook;
+import com.sevtinge.hyperceiler.libhook.utils.hookapi.effect.binder.EffectInfoService;
 import io.github.lingqiqi5211.ezhooktool.xposed.java.IMethodHook;
 
 import java.util.Set;
@@ -88,27 +89,22 @@ public class EffectBinderProxy extends BaseHook {
             // 检查是否是目标包名
             if (!TARGET_PACKAGES.contains(callerPackage)) return;
 
-            // 检查 EffectInfoService 是否已初始化
-            if (mEffectInfoService == null) {
+            EffectInfoService service = mEffectInfoService;
+            if (service == null) {
                 XposedLog.w(TAG, "EffectInfoService is null, cannot inject binder for: " + callerPackage);
                 return;
             }
 
-            // 注入 Binder
-            injectBinder(intent, callerPackage);
-            param.setResult(intent);} catch (Exception e) {
+            Bundle bundle = new Bundle();
+            bundle.putBinder(BINDER_KEY_EFFECT_INFO, service.asBinder());
+            // 宿主可能直接返回粘性广播缓存中的 Intent，不能就地注入。
+            Intent reply = new Intent(intent);
+            reply.putExtra(BINDER_KEY_EFFECT_INFO, bundle);
+
+            XposedLog.d(TAG, "Binder injected for package: " + callerPackage);
+            param.setResult(reply);
+        } catch (Exception e) {
             XposedLog.e(TAG, "handleRegisterReceiver failed", e);
         }
-    }
-
-    /**
-     * 将 Binder 注入到 Intent 中
-     */
-    private void injectBinder(Intent intent, String callerPackage) {
-        Bundle bundle = new Bundle();
-        bundle.putBinder(BINDER_KEY_EFFECT_INFO, mEffectInfoService.asBinder());
-        intent.putExtra(BINDER_KEY_EFFECT_INFO, bundle);
-
-        XposedLog.d(TAG, "Binder injected for package: " + callerPackage);
     }
 }
