@@ -50,18 +50,10 @@ object OldWeather : BaseHook() {
                             ViewGroup.LayoutParams.WRAP_CONTENT
                         ) as ViewGroup.MarginLayoutParams
 
-                layoutParam.setObjectField(
-                    "endToStart",
-                    context.getIdByName("notification_shade_shortcut")
-                )
-                layoutParam.setObjectField(
-                    "topToTop",
-                    context.getIdByName("notification_shade_shortcut")
-                )
-                layoutParam.setObjectField(
-                    "bottomToBottom",
-                    context.getIdByName("notification_shade_shortcut")
-                )
+                val anchorId = context.getIdByName("notification_shade_shortcut")
+                layoutParam.setObjectField("endToStart", anchorId)
+                layoutParam.setObjectField("topToTop", anchorId)
+                layoutParam.setObjectField("bottomToBottom", anchorId)
 
                 mWeatherView = WeatherView(context, isDisplayCity).apply {
                     setTextAppearance(

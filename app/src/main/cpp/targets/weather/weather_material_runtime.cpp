@@ -115,6 +115,10 @@ bool has_residue() {
     return g_phase.load(std::memory_order_acquire) == Phase::Residue;
 }
 
+bool is_installed() {
+    return g_phase.load(std::memory_order_acquire) == Phase::Installed;
+}
+
 bool start_before_entry(uintptr_t weather_base, ReadFresh read_fresh, DartBase dart_base) {
     auto cold = Phase::Cold;
     if (!g_phase.compare_exchange_strong(cold, Phase::Preparing, std::memory_order_acq_rel))

@@ -8,6 +8,7 @@ import android.database.ContentObserver
 import android.os.Handler
 import android.os.Message
 import android.text.TextUtils
+import android.view.View
 import android.widget.TextView
 import androidx.core.net.toUri
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
@@ -26,15 +27,15 @@ class WeatherView(context: Context?, private val showCity: Boolean) : TextView(c
     }
     private val mWeatherObserver = WeatherContentObserver(mHandler)
     private val mWeatherRunnable: WeatherRunnable
+    @Volatile private var observerRegistered = false
+    @Volatile private var hotReloadClosed = false
 
     init {
         mWeatherRunnable = WeatherRunnable()
-        context?.contentResolver?.let { resolver ->
-            resolver.registerContentObserver(weatherUri, true, mWeatherObserver)
-            BaseHook.registerContentObserverHotReloadCleanup(resolver, mWeatherObserver)
+        BaseHook.registerHotReloadCleanup {
+            hotReloadClosed = true
+            deactivateWeather()
         }
-        BaseHook.registerHotReloadCleanup { mHandler.removeCallbacksAndMessages(null) }
-        updateWeatherInfo()
     }
 
     private inner class WeatherContentObserver(handler: Handler?) : ContentObserver(handler) {
@@ -45,6 +46,7 @@ class WeatherView(context: Context?, private val showCity: Boolean) : TextView(c
 
     inner class WeatherRunnable : Runnable {
         override fun run() {
+            if (!observerRegistered || hotReloadClosed || !isShown) return
             var str = ""
             mContext.contentResolver.query(weatherUri, null, null, null, null)?.use { query ->
                 if (query.moveToFirst()) {
@@ -59,6 +61,7 @@ class WeatherView(context: Context?, private val showCity: Boolean) : TextView(c
                 }
             }
 
+            if (!observerRegistered || hotReloadClosed || !isShown) return
             mHandler.obtainMessage().apply {
                 what = 100
                 obj = str
@@ -68,13 +71,47 @@ class WeatherView(context: Context?, private val showCity: Boolean) : TextView(c
     }
 
     private fun updateWeatherInfo() {
+        if (!observerRegistered || hotReloadClosed || !isShown) return
         mHandler.removeCallbacks(mWeatherRunnable)
         mHandler.postDelayed(mWeatherRunnable, 200)
     }
 
-    public override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
+    private fun activateWeather() {
+        if (hotReloadClosed || observerRegistered || !isShown) return
+        mContext.contentResolver.registerContentObserver(weatherUri, true, mWeatherObserver)
+        observerRegistered = true
+        updateWeatherInfo()
+    }
+
+    private fun deactivateWeather() {
+        mHandler.removeCallbacksAndMessages(null)
+        if (!observerRegistered) return
         runCatching { mContext.contentResolver.unregisterContentObserver(mWeatherObserver) }
+        observerRegistered = false
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        refreshWeatherActivity()
+    }
+
+    public override fun onDetachedFromWindow() {
+        deactivateWeather()
+        super.onDetachedFromWindow()
+    }
+
+    override fun onVisibilityChanged(changedView: View, visibility: Int) {
+        super.onVisibilityChanged(changedView, visibility)
+        refreshWeatherActivity()
+    }
+
+    override fun onWindowVisibilityChanged(visibility: Int) {
+        super.onWindowVisibilityChanged(visibility)
+        refreshWeatherActivity()
+    }
+
+    private fun refreshWeatherActivity() {
+        if (isShown) activateWeather() else deactivateWeather()
     }
 
     fun startWeatherApp() {

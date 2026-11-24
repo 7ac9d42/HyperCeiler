@@ -12,4 +12,6 @@ using DartBase = uintptr_t (*)();
 bool start_before_entry(uintptr_t weather_base, ReadFresh read_fresh, DartBase dart_base);
 // Unresolved GOT ownership or RELRO restoration closes the shared startup batch.
 bool has_residue();
+// True while the material hook still consumes Weather snapshots.
+bool is_installed();
 } // namespace weather_material_runtime

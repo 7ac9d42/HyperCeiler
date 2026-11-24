@@ -4,7 +4,6 @@ package com.sevtinge.hyperceiler.libhook.provider;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import java.util.HashMap;
 import java.util.Map;
 
 /** Weather settings and hook authorization from one physical preference snapshot. */
@@ -30,7 +29,7 @@ public final class WeatherPrefsSnapshot {
     public static Cursor cursor(SharedPreferences prefs) {
         if (prefs == null) return null;
         try {
-            Map<String, ?> values = new HashMap<>(prefs.getAll());
+            Map<String, ?> values = prefs.getAll();
             String[] columns = new String[KEYS.length + 1];
             columns[0] = "schema";
             for (int i = 0; i < KEYS.length; i++) columns[i + 1] = KEYS[i][1];

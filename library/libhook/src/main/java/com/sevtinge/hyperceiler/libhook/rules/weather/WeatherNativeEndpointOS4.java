@@ -42,8 +42,8 @@ public final class WeatherNativeEndpointOS4 {
     private long epoch;
     private long revision;
     private long ticket;
-    // Guarded by WORKER_LOCK. The queued PID remains set until the query finishes.
-    private int refreshPid;
+    // Written under WORKER_LOCK; nonzero from enqueue through completion and backoff publication.
+    private volatile int refreshPid;
     private long lastRefreshNs;
     private long retryDelayNs = ACTIVE_REFRESH_NS;
 
@@ -75,6 +75,7 @@ public final class WeatherNativeEndpointOS4 {
 
     @SuppressWarnings("PMD.CompareObjectsWithEquals")
     private void requestRefresh(int pid) {
+        if (refreshPid != 0) return;
         boolean interactive = screenInteractive();
         long now = SystemClock.elapsedRealtimeNanos();
         synchronized (WORKER_LOCK) {
@@ -176,6 +177,7 @@ public final class WeatherNativeEndpointOS4 {
 
     boolean refreshFromProvider(int pid) {
         final long attempt;
+        final boolean needsEpoch;
         synchronized (lock) {
             if (retired) return false;
             if (ticket == Long.MAX_VALUE || revision == Long.MAX_VALUE) {
@@ -183,10 +185,11 @@ public final class WeatherNativeEndpointOS4 {
                 return false;
             }
             attempt = ++ticket;
+            needsEpoch = epoch == 0;
         }
         final long started = SystemClock.elapsedRealtimeNanos();
         boolean success;
-        try { success = refresh(pid, attempt, started); }
+        try { success = refresh(pid, attempt, started, needsEpoch); }
         catch (RuntimeException | Error unavailable) { success = false; }
         synchronized (lock) {
             if (!success && ticket == attempt && !retired) invalidateLocked();
@@ -194,17 +197,16 @@ public final class WeatherNativeEndpointOS4 {
         return success;
     }
 
-    private boolean refresh(int pid, long attempt, long started) {
+    private boolean refresh(int pid, long attempt, long started, boolean needsEpoch) {
         if (started <= 0 || started > Long.MAX_VALUE - LEASE_NS) return false;
         Values values = queryProviderValues();
         if (values == null) return false;
-        long nonce = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
-        if (nonce == 0) nonce = 1;
+        long nonce = needsEpoch ? Math.max(1L, UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE) : 0L;
         synchronized (lock) {
             long now = SystemClock.elapsedRealtimeNanos();
             if (retired || ticket != attempt || revision == Long.MAX_VALUE
                 || now < started || now >= started + LEASE_NS) return false;
-            if (epoch == 0) epoch = nonce;
+            if (needsEpoch) epoch = nonce;
             published = new Published(pid, values, epoch, ++revision, started + LEASE_NS);
         }
         return true;

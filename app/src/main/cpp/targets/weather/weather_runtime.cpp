@@ -107,6 +107,15 @@ bool query(weather_snapshot::Words &words) {
     return valid;
 }
 
+bool has_active_consumer() {
+    if (g_level_installed.load(std::memory_order_acquire)
+        || weather_material_runtime::is_installed()) return true;
+    const auto phase = weather_card_runtime::status().phase;
+    return phase == weather_card_runtime::Phase::Prepared
+        || phase == weather_card_runtime::Phase::Installing
+        || phase == weather_card_runtime::Phase::Installed;
+}
+
 // Only a valid unavailable reply can mean that the system worker is filling its cache.
 bool poll() {
     weather_snapshot::Words words{};
@@ -121,6 +130,11 @@ bool poll() {
     // Reuse this one HWS worker. Card maintenance only checks ownership and
     // publishes an absolute lease; it never installs or repairs live Dart code.
     weather_card_runtime::service();
+    if (g_phase.load(std::memory_order_acquire) == Phase::Installed
+        && (g_dart_rejected.load(std::memory_order_acquire) || !has_active_consumer())) {
+        g_cache.revoke();
+        g_stop.store(true, std::memory_order_release);
+    }
     return pending;
 }
 
