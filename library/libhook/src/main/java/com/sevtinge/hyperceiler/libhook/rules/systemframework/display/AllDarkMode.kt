@@ -47,13 +47,20 @@ class AllDarkMode : BaseHook() {
                 }
             }
 
+        val isSystemApp = runCatching {
+            ApplicationInfo::class.java.getDeclaredMethod("isSystemApp").apply { isAccessible = true }
+        }.getOrNull()
         clazzForceDarkAppListManager.findAllMethods { name("shouldShowInSettings") }
             .createHooks {
                 before { param ->
                     val info = param.args[0] as ApplicationInfo?
-                    param.result =
-                        !(info == null || (
-                            info.callMethod("isSystemApp") as Boolean) || info.uid < 10000)
+                    param.result = info != null && info.uid >= 10000 && !(
+                        if (isSystemApp != null && info.javaClass == ApplicationInfo::class.java) {
+                            isSystemApp.invoke(info) as Boolean
+                        } else {
+                            info.callMethod("isSystemApp") as Boolean
+                        }
+                    )
                 }
             }
     }

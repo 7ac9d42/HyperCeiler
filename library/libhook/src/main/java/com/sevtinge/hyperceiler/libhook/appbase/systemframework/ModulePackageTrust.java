@@ -66,12 +66,12 @@ public class ModulePackageTrust extends BaseHook {
             });
 
         chainAllMethods("com.android.server.pm.ComputerEngine",
-            "queryIntentActivitiesInternal",
+            "queryIntentActivitiesInternal", 6,
             new XposedInterface.Hooker() {
                 @Override
                 public Object intercept(XposedInterface.Chain chain) throws Throwable {
                     Object result = chain.proceed();
-                    if (chain.getArgs().size() < 6 || !(result instanceof List<?> infos)) {
+                    if (!(result instanceof List<?> infos)) {
                         return result;
                     }
                     for (Object item : infos) {
@@ -93,6 +93,9 @@ public class ModulePackageTrust extends BaseHook {
             @Override
             public Object intercept(XposedInterface.Chain chain) throws Throwable {
                 Object result = chain.proceed();
+                if (result == Boolean.TRUE) {
+                    return result;
+                }
                 ApplicationInfo applicationInfo = (ApplicationInfo) chain.getThisObject();
                 if (applicationInfo != null && systemPackages.contains(applicationInfo.packageName)) {
                     return true;
@@ -105,6 +108,9 @@ public class ModulePackageTrust extends BaseHook {
             @Override
             public Object intercept(XposedInterface.Chain chain) throws Throwable {
                 Object result = chain.proceed();
+                if (result == Boolean.TRUE) {
+                    return result;
+                }
                 ApplicationInfo applicationInfo = (ApplicationInfo) chain.getThisObject();
                 if (applicationInfo != null && systemPackages.contains(applicationInfo.packageName)) {
                     return true;

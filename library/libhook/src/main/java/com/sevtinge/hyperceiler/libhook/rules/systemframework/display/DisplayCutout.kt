@@ -21,9 +21,8 @@ package com.sevtinge.hyperceiler.libhook.rules.systemframework.display
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
 import io.github.lingqiqi5211.ezhooktool.core.findMethod
 import io.github.lingqiqi5211.ezhooktool.core.findAllMethods
+import io.github.lingqiqi5211.ezhooktool.core.findField
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.getStaticObjectField
-import io.github.lingqiqi5211.ezhooktool.xposed.dsl.getObjectField
-import io.github.lingqiqi5211.ezhooktool.xposed.dsl.setObjectField
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.createAfterHook
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.createAfterHooks
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.createBeforeHooks
@@ -62,8 +61,9 @@ object DisplayCutout : BaseHook() {
 
     private fun ensureNonNullDisplayCutout(displayInfo: Any?, noCutout: Any?) {
         if (displayInfo == null || noCutout == null) return
-        if (displayInfo.getObjectField("displayCutout") == null) {
-            displayInfo.setObjectField("displayCutout", noCutout)
+        val cutoutField = displayInfo.javaClass.findField { name("displayCutout") }
+        if (cutoutField.get(displayInfo) == null) {
+            cutoutField.set(displayInfo, noCutout)
         }
     }
 }

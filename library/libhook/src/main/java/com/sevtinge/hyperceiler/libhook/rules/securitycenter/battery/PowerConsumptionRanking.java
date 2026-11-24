@@ -40,6 +40,7 @@ import io.github.lingqiqi5211.ezhooktool.xposed.common.HookParam;
 public class PowerConsumptionRanking extends BaseHook {
     private List<Class<?>> mMatcher1ClazzList;
     private List<Method> mMiuiVersionCodeMethods;
+    private volatile boolean methodsHooked;
 
     @Override
     protected boolean useDexKit() {
@@ -100,22 +101,29 @@ public class PowerConsumptionRanking extends BaseHook {
                 hookAllConstructors(clazz, new IMethodHook() {
                     @Override
                     public void before(HookParam param) {
-                        for (Method method : mMiuiVersionCodeMethods) {
-                            XposedLog.d(TAG, getPackageName(), "Current hooking method is " + method);
-                            try {
-                                hookMethod(method, new IMethodHook() {
-                                    @Override
-                                    public void before(HookParam param) {
-                                        param.setResult(false);
-                                    }
-                                });
-                            } catch (Exception ignore) {
-                            }
-                        }
+                        hookVersionMethodsOnce();
                     }
                 });
             } catch (Exception ignored) {
             }
         }
+    }
+
+    private synchronized void hookVersionMethodsOnce() {
+        if (methodsHooked) return;
+        if (mMiuiVersionCodeMethods == null) return;
+        for (Method method : mMiuiVersionCodeMethods) {
+            XposedLog.d(TAG, getPackageName(), "Current hooking method is " + method);
+            try {
+                hookMethod(method, new IMethodHook() {
+                    @Override
+                    public void before(HookParam param) {
+                        param.setResult(false);
+                    }
+                });
+            } catch (Exception ignore) {
+            }
+        }
+        methodsHooked = true;
     }
 }

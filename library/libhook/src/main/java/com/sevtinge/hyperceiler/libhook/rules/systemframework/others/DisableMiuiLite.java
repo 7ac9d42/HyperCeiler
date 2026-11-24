@@ -32,8 +32,9 @@ public class DisableMiuiLite extends BaseHook {
                 param.setResult(false);
             }
         });
-        setStaticBooleanField(findClassIfExists("miui.util.DeviceLevel"), "IS_MIUI_GO_VERSION", false);
-        setStaticBooleanField(findClassIfExists("miui.util.DeviceLevel"), "IS_MIUI_LITE_VERSION", false);
-        setStaticBooleanField(findClassIfExists("miui.util.DeviceLevel"), "IS_MIUI_MIDDLE_VERSION", false);
+        Class<?> deviceLevel = findClassIfExists("miui.util.DeviceLevel");
+        setStaticBooleanField(deviceLevel, "IS_MIUI_GO_VERSION", false);
+        setStaticBooleanField(deviceLevel, "IS_MIUI_LITE_VERSION", false);
+        setStaticBooleanField(deviceLevel, "IS_MIUI_MIDDLE_VERSION", false);
     }
 }

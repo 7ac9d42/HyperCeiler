@@ -65,18 +65,20 @@ public class BypassForceMiAppStore extends BaseHook {
                         Intent intent = (Intent) args[intentIndex];
                         if (intent == null || !Intent.ACTION_VIEW.equals(intent.getAction())) return;
 
+                        Uri data = intent.getData();
+                        if (data == null) return;
+                        String scheme = data.getScheme();
+                        if (!"market".equals(scheme) && !"mimarket".equals(scheme)) return;
+
                         final boolean forceChooserEnabled = PrefsBridge.getBoolean(PREF_FORCE_CHOOSER);
                         final boolean detailMiniEnabled = PrefsBridge.getBoolean(PREF_DETAIL_MINI);
                         if (!forceChooserEnabled && !detailMiniEnabled) return;
-
-                        Uri data = intent.getData();
-                        if (data == null) return;
 
                         Uri newData = data;
                         String type = intent.getType();
 
                         // 注意：该 hook 属于系统层 startActivity 拦截，开关间存在联动影响，必须将改写范围收窄到 market 相关 URI。
-                        if ("mimarket".equals(newData.getScheme())) {
+                        if ("mimarket".equals(scheme)) {
                             newData = newData.buildUpon().scheme("market").build();
                         }
 
@@ -113,12 +115,11 @@ public class BypassForceMiAppStore extends BaseHook {
 
                             // 如果启用了 bypass_force_mi_appstore，则强制使用 chooser 打开应用商店
                             if (forceChooserEnabled) {
-                                intent = Intent.createChooser(intent, null);
+                                Intent chooser = Intent.createChooser(intent, null);
                                 XposedLog.d(TAG, getPackageName(), "Forced chooser for market://details intent");
+                                args[intentIndex] = chooser;
                             }
                         }
-
-                        args[intentIndex] = intent;
                     } catch (Throwable t) {
                         XposedLog.w(TAG, getPackageName(), "Error - " + Log.getStackTraceString(t));
                     }

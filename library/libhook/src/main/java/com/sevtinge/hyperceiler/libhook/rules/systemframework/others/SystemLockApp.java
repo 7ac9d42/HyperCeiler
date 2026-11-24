@@ -191,18 +191,18 @@ public class SystemLockApp extends BaseHook {
             findAndChainMethod(policyClass, "postKeyFunction", new XposedInterface.Hooker() {
                 @Override
                 public Object intercept(XposedInterface.Chain chain) throws Throwable {
-                    Object[] args = chain.getArgs().toArray();
-                    String shortcut = (String) args[2];
+                    String shortcut = (String) chain.getArg(2);
                     if (!ACTION_IMPERCEPTIBLE_PRESS_POWER_KEY.equals(shortcut)
                         && !ACTION_LONG_PRESS_POWER_KEY.equals(shortcut)) {
-                        return chain.proceed(args);
+                        return chain.proceed();
                     }
                     if (shouldSuppressPowerActionNow()) {
                         return null;
                     }
-                    if (!isLock) return chain.proceed(args);
+                    if (!isLock) return chain.proceed();
 
                     // 固定应用中统一改为 3 秒触发，并把 0.5 秒链路归并到 long_press_power_key 处理。
+                    Object[] args = chain.getArgs().toArray();
                     args[1] = (int) POWER_HOLD_EXIT_MS;
                     if (ACTION_IMPERCEPTIBLE_PRESS_POWER_KEY.equals(shortcut)) {
                         args[2] = ACTION_LONG_PRESS_POWER_KEY;

@@ -66,9 +66,15 @@ public class BackgroundBlur extends BaseHook {
             Object get = isBlurProp(key);
             // logE(TAG, "key: " + key + " def: " + def + " result: " + result + " get: " + get);
             if (get != null) {
-                if ("get".equals(param.getExecutable().getName())) {
-                    param.setResult(String.valueOf(get));
-                } else param.setResult(get);
+                switch (param.getExecutable().getName()) {
+                    case "get" -> param.setResult(String.valueOf(get));
+                    case "getInt" -> {
+                        if (get instanceof Integer) param.setResult(get);
+                    }
+                    case "getBoolean" -> {
+                        if (get instanceof Boolean) param.setResult(get);
+                    }
+                }
             }
             if (supported.equals(key)) {
                 try {

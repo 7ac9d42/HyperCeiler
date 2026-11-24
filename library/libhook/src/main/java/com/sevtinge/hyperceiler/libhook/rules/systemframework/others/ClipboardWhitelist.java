@@ -21,6 +21,7 @@ package com.sevtinge.hyperceiler.libhook.rules.systemframework.others;
 import com.sevtinge.hyperceiler.common.utils.PrefsBridge;
 import com.sevtinge.hyperceiler.libhook.base.BaseHook;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import io.github.lingqiqi5211.ezhooktool.xposed.common.HookParam;
@@ -31,15 +32,12 @@ public class ClipboardWhitelist extends BaseHook {
     public void init() {
         Class<?> clipboardClass = findClass("com.android.server.clipboard.ClipboardService");
         String key = "system_framework_clipboard_whitelist_apps";
-        Set<String> selectedApps = PrefsBridge.getStringSet(key);
+        Set<String> selectedApps = new HashSet<>(PrefsBridge.getStringSet(key));
         hookAllMethods(clipboardClass, "clipboardAccessAllowed", new IMethodHook() {
             @Override
             public void after(HookParam param) {
-                for (String pkgName : selectedApps) {
-                    if (pkgName.equals(param.getArgs()[1])) {
-                        param.setResult(true);
-                        return;
-                    }
+                if (selectedApps.contains(param.getArgs()[1])) {
+                    param.setResult(true);
                 }
             }
         });

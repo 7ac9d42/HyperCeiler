@@ -26,9 +26,10 @@ object EnhanceRecentsVisibility : BaseHook() {
     override fun init() {
         findClass("android.content.Intent").findAllMethods { name("setFlags") }
             .createBeforeHooks {
-                var flags = it.args[0] as Int
-                flags = flags and 0xFF7FFFFF.toInt()
-                it.args[0] = flags
+                val args = it.args
+                val flags = args[0] as Int
+                val visibleFlags = flags and 0xFF7FFFFF.toInt()
+                if (visibleFlags != flags) args[0] = visibleFlags
             }
     }
 }

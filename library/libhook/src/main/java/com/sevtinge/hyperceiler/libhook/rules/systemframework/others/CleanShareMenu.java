@@ -68,28 +68,33 @@ public class CleanShareMenu extends BaseHook {
                     if (action == null) return;
                     if (!action.equals(Intent.ACTION_SEND) && !action.equals(Intent.ACTION_SENDTO) && !action.equals(Intent.ACTION_SEND_MULTIPLE))
                         return;
-                    Intent intent = (Intent) origIntent.clone();
-                    if (intent.getDataString() != null && intent.getDataString().contains(":"))
+                    if (origIntent.getDataString() != null && origIntent.getDataString().contains(":"))
                         return;
-                    if (intent.hasExtra("HyperCeiler") && intent.getBooleanExtra("HyperCeiler", false))
+                    if (origIntent.hasExtra("HyperCeiler") && origIntent.getBooleanExtra("HyperCeiler", false))
                         return;
                     Set<String> selectedApps = PrefsBridge.getStringSet("system_framework_clean_share_apps");
+                    if (selectedApps.isEmpty()) return;
                     List<ResolveInfo> resolved = (List<ResolveInfo>) param.getResult();
+                    if (resolved == null || resolved.isEmpty()) return;
                     ResolveInfo resolveInfo;
                     Context mContext = (Context) getObjectField(param.getThisObject(), "mContext");
                     PackageManager pm = mContext.getPackageManager();
                     Iterator<ResolveInfo> itr = resolved.iterator();
                     while (itr.hasNext()) {
                         resolveInfo = itr.next();
-                        boolean removeOriginal = selectedApps.contains(resolveInfo.activityInfo.packageName) || selectedApps.contains(resolveInfo.activityInfo.packageName + "|0");
-                        boolean removeDual = selectedApps.contains(resolveInfo.activityInfo.packageName + "|999");
+                        String packageName = resolveInfo.activityInfo.packageName;
+                        boolean removeOriginal = selectedApps.contains(packageName) || selectedApps.contains(packageName + "|0");
+                        if (!removeOriginal) continue;
+                        if (selectedApps.contains(packageName + "|999")) {
+                            itr.remove();
+                            continue;
+                        }
                         boolean hasDual = false;
                         try {
-                            hasDual = callMethod(pm, "getPackageInfoAsUser", resolveInfo.activityInfo.packageName, 0, 999) != null;
+                            hasDual = callMethod(pm, "getPackageInfoAsUser", packageName, 0, 999) != null;
                         } catch (Throwable ignore) {
                         }
-                        if ((removeOriginal && !hasDual) || removeOriginal && hasDual && removeDual)
-                            itr.remove();
+                        if (!hasDual) itr.remove();
                     }
                     param.setResult(resolved);
                 } catch (Throwable t) {

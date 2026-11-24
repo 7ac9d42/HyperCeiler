@@ -103,6 +103,15 @@ object GMSDozeFixFramework : BaseHook() {
                 String::class.java,
                 String::class.java
             ) { chain ->
+                val callerPkgName = chain.getArg(1) as? String
+                val action = chain.getArg(4) as? String
+                if (callerPkgName == GMS_PACKAGE_NAME && action == ACTION_REMOTE_INTENT) {
+                    return@interceptHookMethod true
+                }
+                if (action == null || action !in cnDeferBroadcast) {
+                    return@interceptHookMethod chain.proceed()
+                }
+
                 var calleePkgName = chain.getArg(3) as? String
                 try {
                     val calleeUid = chain.getArg(2) as? Int
@@ -117,15 +126,8 @@ object GMSDozeFixFramework : BaseHook() {
                 } catch (e: Exception) {
                     XposedLog.e(TAG, packageName, "Failed to get callee package name", e)
                 }
-                val action = chain.getArg(4) as? String
-                if (action != null) {
-                    val callerPkgName = chain.getArg(1) as? String
-                    if ((callerPkgName == GMS_PACKAGE_NAME && action == ACTION_REMOTE_INTENT) ||
-                        ((calleePkgName == GMS_PACKAGE_NAME || calleePkgName == GMS_PERSISTENT_PROCESS_NAME) &&
-                            action in cnDeferBroadcast)
-                    ) {
-                        return@interceptHookMethod true
-                    }
+                if (calleePkgName == GMS_PACKAGE_NAME || calleePkgName == GMS_PERSISTENT_PROCESS_NAME) {
+                    return@interceptHookMethod true
                 }
                 chain.proceed()
             }

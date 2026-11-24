@@ -25,7 +25,6 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.BadParcelableException;
 import android.os.Handler;
-import android.util.Pair;
 import android.view.View;
 
 import com.sevtinge.hyperceiler.common.log.XposedLog;
@@ -43,8 +42,26 @@ import io.github.lingqiqi5211.ezhooktool.xposed.common.HookParam;
 import io.github.lingqiqi5211.ezhooktool.xposed.java.IMethodHook;
 
 public class CleanOpenMenu extends BaseHook {
+    private static final String PREF_KEY = "system_framework_clean_open_apps";
+    private static final String PHYSICAL_PREF_KEY = "prefs_key_" + PREF_KEY;
+    private static final int MIN_QUERY_PARAMETER_COUNT = 6;
+    private volatile Set<String> selectedApps;
 
     Class<?> mPackageManagerService;
+
+    private Set<String> selectedApps() {
+        Set<String> snapshot = selectedApps;
+        if (snapshot != null) return snapshot;
+        synchronized (this) {
+            if (selectedApps == null) refreshSelectedApps();
+            return selectedApps;
+        }
+    }
+
+    private synchronized void refreshSelectedApps() {
+        PrefsBridge.removeHookCache(PHYSICAL_PREF_KEY);
+        selectedApps = Set.copyOf(PrefsBridge.getStringSet(PREF_KEY));
+    }
 
     @Override
     public void init() {
@@ -60,21 +77,20 @@ public class CleanOpenMenu extends BaseHook {
                     @Override
                     public void onChange(PrefType type, Uri uri, String name, Object def) {
                         try {
-                            if (!name.contains("pref_key_system_framework_clean_open_apps")) return;
-
-                            PrefsBridge.removeHookCache(name);
-                            switch (type) {
-                                case PrefType.StringSet ->
-                                    PrefsBridge.putHookCache(name, PrefsBridge.getStringSet(name));
-
-                                case PrefType.Integer ->
-                                    PrefsBridge.putHookCache(name, PrefsBridge.getInt(name, 0));
+                            if (PHYSICAL_PREF_KEY.equals(name)) {
+                                refreshSelectedApps();
+                            } else if (name != null && name.startsWith(PHYSICAL_PREF_KEY + "_")) {
+                                PrefsBridge.removeHookCache(name);
+                                if (type == PrefType.Integer) {
+                                    PrefsBridge.putHookCache(name, PrefsBridge.getInt(name, AppsTool.MimeType.ALL));
+                                }
                             }
                         } catch (Throwable t) {
                             XposedLog.e(TAG, getPackageName(), t);
                         }
                     }
                 };
+                refreshSelectedApps();
             }
         });
 
@@ -83,39 +99,29 @@ public class CleanOpenMenu extends BaseHook {
             @SuppressWarnings("unchecked")
             public void after(HookParam param) {
                 try {
-                    if (param.getArgs()[0] == null) return;
-                    if (param.getArgs().length < 6) return;
-                    Intent origIntent = (Intent) param.getArgs()[0];
-                    Intent intent = (Intent) origIntent.clone();
-                    String action = intent.getAction();
-                    // XposedBridge.log(action + ": " + intent.getType() + " | " + intent.getDataString());
-                    if (!Intent.ACTION_VIEW.equals(action)) return;
-                    if (intent.hasExtra("HyperCeiler") && intent.getBooleanExtra("HyperCeiler", false))
-                        return;
+                    Object[] args = param.getArgs();
+                    if (args.length < MIN_QUERY_PARAMETER_COUNT || !(args[0] instanceof Intent intent)) return;
+                    if (!Intent.ACTION_VIEW.equals(intent.getAction())) return;
+                    if (intent.hasExtra("HyperCeiler") && intent.getBooleanExtra("HyperCeiler", false)) return;
                     String scheme = intent.getScheme();
                     boolean validSchemes = "http".equals(scheme) || "https".equals(scheme) || "vnd.youtube".equals(scheme);
                     if (intent.getType() == null && !validSchemes) return;
 
-                    Context mContext = (Context) getObjectField(param.getThisObject(), "mContext");
-                    String mimeType = getContentType(mContext, intent);
-                    // XposedBridge.log("mimeType: " + mimeType);
-
-                    String key = "system_framework_clean_open_apps";
-                    Set<String> selectedApps = PrefsBridge.getStringSet(key);
                     List<ResolveInfo> resolved = (List<ResolveInfo>) param.getResult();
-                    ResolveInfo resolveInfo;
+                    if (resolved == null || resolved.isEmpty()) return;
+                    Set<String> selectedApps = selectedApps();
+                    if (selectedApps.isEmpty()) return;
+
+                    Context mContext = (Context) getObjectField(param.getThisObject(), "mContext");
+                    int mimeFlag = getMimeFlag(getContentType(mContext, intent));
                     PackageManager pm = mContext.getPackageManager();
                     Iterator<ResolveInfo> itr = resolved.iterator();
                     while (itr.hasNext()) {
-                        resolveInfo = itr.next();
-                        Pair<Boolean, Boolean> isRemove = isRemoveApp(false, mContext, resolveInfo.activityInfo.packageName, selectedApps, mimeType);
-                        boolean hasDual = false;
-                        try {
-                            hasDual = callMethod(pm, "getPackageInfoAsUser", resolveInfo.activityInfo.packageName, 0, 999) != null;
-                        } catch (Throwable ignore) {
-                        }
-                        if ((isRemove.first && !hasDual) || isRemove.first && hasDual && isRemove.second)
+                        String packageName = itr.next().activityInfo.packageName;
+                        if (!matchesOriginal(selectedApps, packageName, mimeFlag)) continue;
+                        if (matchesDual(selectedApps, packageName, mimeFlag) || !hasDualApp(pm, packageName)) {
                             itr.remove();
+                        }
                     }
 
                     param.setResult(resolved);
@@ -125,7 +131,7 @@ public class CleanOpenMenu extends BaseHook {
             }
         };
 
-        hookAllMethods("com.android.server.pm.ComputerEngine", "queryIntentActivitiesInternal", hook);
+        hookAllMethods("com.android.server.pm.ComputerEngine", "queryIntentActivitiesInternal", MIN_QUERY_PARAMETER_COUNT, hook);
 
         com.sevtinge.hyperceiler.libhook.base.BaseHook.hookAllMethods("miui.securityspace.XSpaceResolverActivityHelper.ResolverActivityRunner", null, "run", new IMethodHook() {
             @Override
@@ -134,47 +140,48 @@ public class CleanOpenMenu extends BaseHook {
                 if (mOriginalIntent == null) return;
                 String action = mOriginalIntent.getAction();
                 if (!Intent.ACTION_VIEW.equals(action)) return;
-                // if (mOriginalIntent.getDataString() != null && mOriginalIntent.getDataString().contains(":")) return;
 
                 Context mContext = (Context) getObjectField(param.getThisObject(), "mContext");
                 String mAimPackageName = (String) getObjectField(param.getThisObject(), "mAimPackageName");
                 if (mContext == null || mAimPackageName == null) return;
-                Set<String> selectedApps = PrefsBridge.getStringSet("system_framework_clean_open_apps");
-                String mimeType = getContentType(mContext, mOriginalIntent);
-                Pair<Boolean, Boolean> isRemove = isRemoveApp(true, mContext, mAimPackageName, selectedApps, mimeType);
+                Set<String> selectedApps = selectedApps();
+                if (selectedApps.isEmpty()) return;
+                int mimeFlag = getMimeFlag(getContentType(mContext, mOriginalIntent));
+                String choice;
+                if (matchesOriginal(selectedApps, mAimPackageName, mimeFlag)) choice = "app2";
+                else if (matchesDual(selectedApps, mAimPackageName, mimeFlag)) choice = "app1";
+                else return;
 
                 View mRootView = (View) getObjectField(param.getThisObject(), "mRootView");
-                int appResId1 = mContext.getResources().getIdentifier("app1", "id", "android.miui");
-                int appResId2 = mContext.getResources().getIdentifier("app2", "id", "android.miui");
-                View originalApp = mRootView.findViewById(appResId1);
-                View dualApp = mRootView.findViewById(appResId2);
-                if (isRemove.first) dualApp.performClick();
-                else if (isRemove.second) originalApp.performClick();
+                int resId = mContext.getResources().getIdentifier(choice, "id", "android.miui");
+                if (mRootView == null) return;
+                View target = mRootView.findViewById(resId);
+                if (target != null) target.performClick();
             }
         });
-        // if (!findAndHookMethodSilently(mPackageManagerService, "queryIntentActivitiesInternal", Intent.class, String.class, int.class, int.class, int.class, boolean.class, boolean.class, hook))
-        // findAndHookMethod(mPackageManagerService, "queryIntentActivitiesInternal", Intent.class, String.class, int.class, int.class, hook);//error
     }
-    // if (!findAndHookMethodSilently(mPackageManagerService, "queryIntentActivitiesInternal", Intent.class, String.class, long.class, long.class, int.class, boolean.class, boolean.class, hook))
-    // findAndHookMethod(mPackageManagerService, "queryIntentActivitiesInternal", Intent.class, String.class, long.class, int.class, hook);
-    //}
 
-
-    // 存在问题
-    private static Pair<Boolean, Boolean> isRemoveApp(boolean dynamic, Context context, String pkgName, Set<String> selectedApps, String mimeType) {
-        String key = "system_framework_clean_open_apps";
-        int mimeFlags0;
-        int mimeFlags999;
-        if (dynamic) {
-            mimeFlags0 = PrefsBridge.getInt(key + "_" + pkgName + "|0", AppsTool.MimeType.ALL);
-            mimeFlags999 = PrefsBridge.getInt(key + "_" + pkgName + "|999", AppsTool.MimeType.ALL);
-        } else {
-            mimeFlags0 = PrefsBridge.getInt(key + "_" + pkgName + "|0", AppsTool.MimeType.ALL);
-            mimeFlags999 = PrefsBridge.getInt(key + "_" + pkgName + "|999", AppsTool.MimeType.ALL);
+    private static boolean hasDualApp(PackageManager pm, String packageName) {
+        try {
+            return callMethod(pm, "getPackageInfoAsUser", packageName, 0, 999) != null;
+        } catch (Throwable ignored) {
+            return false;
         }
-        boolean removeOriginal = (selectedApps.contains(pkgName) || selectedApps.contains(pkgName + "|0")) && hideMimeType(mimeFlags0, mimeType);
-        boolean removeDual = selectedApps.contains(pkgName + "|999") && hideMimeType(mimeFlags999, mimeType);
-        return new Pair<>(removeOriginal, removeDual);
+    }
+
+    private static boolean matchesOriginal(Set<String> selectedApps, String packageName, int mimeFlag) {
+        String entry = packageName + "|0";
+        return (selectedApps.contains(packageName) || selectedApps.contains(entry)) && matchesMime(entry, mimeFlag);
+    }
+
+    private static boolean matchesDual(Set<String> selectedApps, String packageName, int mimeFlag) {
+        String entry = packageName + "|999";
+        return selectedApps.contains(entry) && matchesMime(entry, mimeFlag);
+    }
+
+    private static boolean matchesMime(String entry, int mimeFlag) {
+        int mask = PrefsBridge.getInt(PREF_KEY + "_" + entry, AppsTool.MimeType.ALL);
+        return (mask & mimeFlag) == mimeFlag;
     }
 
     private static String getContentType(Context context, Intent intent) {
@@ -189,7 +196,7 @@ public class CleanOpenMenu extends BaseHook {
         return mimeType;
     }
 
-    private static boolean hideMimeType(int mimeFlags, String mimeType) {
+    private static int getMimeFlag(String mimeType) {
         int dataType = AppsTool.MimeType.OTHERS;
         if (mimeType != null)
             if (mimeType.startsWith("image/")) dataType = AppsTool.MimeType.IMAGE;
@@ -216,7 +223,7 @@ public class CleanOpenMenu extends BaseHook {
                     mimeType.startsWith("application/java-archive"))
                 dataType = AppsTool.MimeType.ARCHIVE;
             else if (mimeType.startsWith("link/")) dataType = AppsTool.MimeType.LINK;
-        return (mimeFlags & dataType) == dataType;
+        return dataType;
     }
 
 

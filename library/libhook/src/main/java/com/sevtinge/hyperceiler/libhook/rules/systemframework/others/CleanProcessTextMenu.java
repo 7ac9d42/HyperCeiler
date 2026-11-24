@@ -67,31 +67,33 @@ public class CleanProcessTextMenu extends BaseHook {
                     if (action == null) return;
                     if (!action.equals(Intent.ACTION_PROCESS_TEXT))
                         return;
+                    List<ResolveInfo> resolved = (List<ResolveInfo>) param.getResult();
+                    if (resolved == null || resolved.isEmpty()) return;
                     Intent intent = (Intent) origIntent.clone();
                     if (intent.hasExtra("HyperCeiler") &&
                             intent.getBooleanExtra("HyperCeiler", false))
                         return;
                     Set<String> selectedApps = PrefsBridge.getStringSet("system_framework_clean_process_text_apps");
-                    List<ResolveInfo> resolved = (List<ResolveInfo>) param.getResult();
-                    ResolveInfo resolveInfo;
+                    if (selectedApps.isEmpty()) return;
                     Context mContext = (Context) getObjectField(param.getThisObject(), "mContext");
                     PackageManager pm = mContext.getPackageManager();
                     Iterator<ResolveInfo> itr = resolved.iterator();
                     while (itr.hasNext()) {
-                        resolveInfo = itr.next();
+                        String packageName = itr.next().activityInfo.packageName;
                         boolean removeOriginal =
-                                selectedApps.contains(resolveInfo.activityInfo.packageName) ||
-                                selectedApps.contains(resolveInfo.activityInfo.packageName + "|0");
-                        boolean removeDual =
-                                selectedApps.contains(resolveInfo.activityInfo.packageName + "|999");
+                                selectedApps.contains(packageName) ||
+                                selectedApps.contains(packageName + "|0");
+                        if (!removeOriginal) continue;
+                        if (selectedApps.contains(packageName + "|999")) {
+                            itr.remove();
+                            continue;
+                        }
                         boolean hasDual = false;
                         try {
-                            hasDual = callMethod(pm, "getPackageInfoAsUser",
-                                    resolveInfo.activityInfo.packageName, 0, 999) != null;
+                            hasDual = callMethod(pm, "getPackageInfoAsUser", packageName, 0, 999) != null;
                         } catch (Throwable ignore) {
                         }
-                        if ((removeOriginal && !hasDual) || removeOriginal && hasDual && removeDual)
-                            itr.remove();
+                        if (!hasDual) itr.remove();
                     }
                     param.setResult(resolved);
                 } catch (Throwable t) {

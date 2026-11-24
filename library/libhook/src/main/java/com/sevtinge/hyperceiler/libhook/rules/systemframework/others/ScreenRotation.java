@@ -30,7 +30,8 @@ public class ScreenRotation extends BaseHook {
 
     @Override
     public void init() {
-        findAndHookMethod("com.android.internal.view.RotationPolicy", "areAllRotationsAllowed", Context.class, returnConstant(PrefsBridge.getBoolean("system_framework_screen_all_rotations")));
+        boolean allowAllRotations = PrefsBridge.getBoolean("system_framework_screen_all_rotations");
+        findAndHookMethod("com.android.internal.view.RotationPolicy", "areAllRotationsAllowed", Context.class, returnConstant(allowAllRotations));
 
         hookAllConstructors("com.android.server.wm.DisplayRotation", new IMethodHook() {
             @Override
@@ -39,6 +40,6 @@ public class ScreenRotation extends BaseHook {
             }
         });
 
-        setObjectReplacement("android", "bool", "config_allowAllRotations", PrefsBridge.getBoolean("system_framework_screen_all_rotations"));
+        setObjectReplacement("android", "bool", "config_allowAllRotations", allowAllRotations);
     }
 }

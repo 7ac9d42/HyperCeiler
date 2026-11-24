@@ -66,13 +66,14 @@ public class AntiQues extends BaseHook {
 
     private void hookWifiUtils(ClassLoader classLoader) {
         try {
-            findAndHookMethod(WIFI_UTILS_CLASS, classLoader, WIFI_UTILS_METHOD,
+            XposedInterface.HookHandle hook = findAndHookMethod(WIFI_UTILS_CLASS, classLoader, WIFI_UTILS_METHOD,
                 Context.class, int.class, String.class, new IMethodHook() {
                     @Override
                     public void before(HookParam param) {
                         param.setResult(false);
                     }
                 });
+            if (hook == null) return;
         } catch (Throwable t) {
             // 目标类尚未加载或加载器不符时保留外层 Hook，等下一次 loadClassFromLoader 再试，
             // 同时把失败原因写进日志（原实现静默吞掉异常，导致失效时无从排查）。
