@@ -54,6 +54,10 @@ object StateFlowHelper {
         return STATE_FLOW_KT.callStaticMethod("MutableStateFlow", initValue) as Any
     }
 
+    internal fun canAssignReadonlyStateFlowTo(fieldType: Class<*>): Boolean {
+        return fieldType.isAssignableFrom(READONLY_STATE_FLOW)
+    }
+
     @JvmStatic
     fun newReadonlyStateFlow(initValue: Any?): Any {
         return READONLY_STATE_FLOW_CONSTRUCTOR.newInstance(newStateFlow(initValue))

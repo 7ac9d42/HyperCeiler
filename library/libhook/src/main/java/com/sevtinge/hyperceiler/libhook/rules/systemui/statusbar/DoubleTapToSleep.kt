@@ -55,11 +55,11 @@ object DoubleTapToSleep : BaseHook() {
             val lastX = v.getAdditionalInstanceField("lastTouchX") as? Float ?: 0f
             val lastY = v.getAdditionalInstanceField("lastTouchY") as? Float ?: 0f
 
-            val currentTime = System.currentTimeMillis()
+            val currentTime = SystemClock.elapsedRealtime()
             val currentX = event.x
             val currentY = event.y
 
-            val isDoubleTap = currentTime - lastTime < DOUBLE_TAP_TIMEOUT
+            val isDoubleTap = lastTime != 0L && currentTime - lastTime < DOUBLE_TAP_TIMEOUT
                 && abs(currentX - lastX) < TOUCH_SLOP
                 && abs(currentY - lastY) < TOUCH_SLOP
 

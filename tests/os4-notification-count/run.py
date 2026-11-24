@@ -44,13 +44,16 @@ public static int getInt(String k,int d){return d;}public static int getStringAs
 public static String getString(String k,String d){return d;}public static java.util.Set<String>getStringSet(String k){return java.util.Set.of();}}''')
   write(w,'com.sevtinge.hyperceiler.libhook.base.BaseLoad','''package com.sevtinge.hyperceiler.libhook.base;
 public abstract class BaseLoad {public abstract void onPackageLoaded();protected void initHook(BaseHook h){h.init();}protected void initHook(BaseHook h,boolean enabled){if(enabled)h.init();}}''')
-  write(w,'com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper','package com.sevtinge.hyperceiler.libhook.utils.api; public class DeviceHelper {public static class Miui {public static boolean isPad(){return false;}}public static class System {public static float version=4f;public static boolean isMoreHyperOSVersion(float v){if(v!=4f)throw new AssertionError("unexpected gate threshold");return version>=v;}}}')
-  for name in re.findall(r'^import (com\.[\w.]+);',route,re.M):
+  write(w,'com.sevtinge.hyperceiler.common.BuildConfig','package com.sevtinge.hyperceiler.common; public class BuildConfig {public static final boolean STATUS_BAR_FOLLOW_AVAILABLE=false;}')
+  write(w,'com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper','package com.sevtinge.hyperceiler.libhook.utils.api; public class DeviceHelper {public static class Miui {public static boolean isPad(){return false;}}public static class System {public static float version=4f;public static boolean isHyperOSVersion(float v){return version==v;}public static boolean isMoreHyperOSVersion(float v){if(v!=4f)throw new AssertionError("unexpected gate threshold");return version>=v;}}}')
+  peers=re.findall(r'^import (com\.[\w.]+);',route,re.M)
+  peers+=re.findall(r'\bnew (com\.sevtinge\.hyperceiler\.libhook\.rules\.[\w.]+)\(',route)
+  for name in peers:
    if (w/(name.replace('.','/')+'.java')).exists():continue
    package,short=name.rsplit('.',1)
    write(w,name,f'package {package};public class {short} extends com.sevtinge.hyperceiler.libhook.base.BaseHook {{public static final {short} INSTANCE=new {short}();public void init(){{}}public static void createHook(){{}}}}')
   cmd=[str(JAVA/'javac'),'--release','21','-proc:none','-encoding','UTF-8','-cp',cp,'-d',str(w/'classes'),*map(str,w.rglob('*.java'))]
-  z=subprocess.run(cmd,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT);(out/'build.txt').write_text(z.stdout)
+  z=subprocess.run(cmd,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,timeout=60);(out/'build.txt').write_text(z.stdout)
   if z.returncode:print(z.stdout);raise RuntimeError('fixture compile failed')
   z=subprocess.run([str(JAVA/'java'),'-ea','-cp',str(w/'classes')+os.pathsep+cp,'TestMain'],text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,timeout=60);(out/'tests.txt').write_text(z.stdout);print(z.stdout,end='');m=re.search(r'RESULT passes=(\d+) failures=(\d+)',z.stdout)
   if not m:raise RuntimeError('fixture did not complete')

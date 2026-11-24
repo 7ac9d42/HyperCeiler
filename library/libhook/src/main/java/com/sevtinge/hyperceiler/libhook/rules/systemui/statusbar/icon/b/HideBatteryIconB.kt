@@ -66,15 +66,16 @@ object HideBatteryIconB : BaseHook() {
                                     View.GONE
                             }
                         }
+                        val hidePercent = PrefsBridge.getBoolean("system_ui_status_bar_battery_percent")
                         // 隐藏电池百分号
-                        if (PrefsBridge.getBoolean("system_ui_status_bar_battery_percent") ||
+                        if (hidePercent ||
                             PrefsBridge.getBoolean("system_ui_status_bar_battery_percent_mark")
                         ) {
                             (param.thisObject.getObjectFieldAs<TextView>("mBatteryPercentMarkView"))?.textSize = 0F
                         }
                         // 隐藏电池的百分比
                         // Todo：内显百分比暂无法隐藏，因为布局已修改
-                        if (PrefsBridge.getBoolean("system_ui_status_bar_battery_percent")) {
+                        if (hidePercent) {
                             (param.thisObject.getObjectFieldAs<TextView>("mBatteryPercentView"))?.textSize = 0F
                         }
                     }
@@ -84,15 +85,16 @@ object HideBatteryIconB : BaseHook() {
         mBatteryMeterViewClass.findMethod { name("updateChargeAndText") }.createHook {
                 after { param ->
                     if (param.thisObject != null) {
+                        val hidePercent = PrefsBridge.getBoolean("system_ui_status_bar_battery_percent")
                         // 隐藏电池百分号
-                        if (PrefsBridge.getBoolean("system_ui_status_bar_battery_percent") ||
+                        if (hidePercent ||
                             PrefsBridge.getBoolean("system_ui_status_bar_battery_percent_mark")
                         ) {
                             (param.thisObject.getObjectFieldAs<TextView>("mBatteryPercentMarkView"))?.textSize = 0F
                         }
                         // 隐藏电池的百分比
                         // Todo：内显百分比暂无法隐藏，因为布局已修改
-                        if (PrefsBridge.getBoolean("system_ui_status_bar_battery_percent")) {
+                        if (hidePercent) {
                             (param.thisObject.getObjectFieldAs<TextView>("mBatteryPercentView"))?.textSize = 0F
                         }
 

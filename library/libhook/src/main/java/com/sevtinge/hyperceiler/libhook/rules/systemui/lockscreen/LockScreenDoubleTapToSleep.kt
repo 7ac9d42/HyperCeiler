@@ -89,9 +89,9 @@ object LockScreenDoubleTapToSleep : BaseHook() {
                 currentTouchY = 0f
             }
 
-            setAdditionalInstanceField("currentTouchTime", currentTouchTime)
-            setAdditionalInstanceField("currentTouchX", currentTouchX)
-            setAdditionalInstanceField("currentTouchY", currentTouchY)
+            v.setAdditionalInstanceField("currentTouchTime", currentTouchTime)
+            v.setAdditionalInstanceField("currentTouchX", currentTouchX)
+            v.setAdditionalInstanceField("currentTouchY", currentTouchY)
             v.performClick()
             false
         })

@@ -424,9 +424,18 @@ object VolumeOrQSBrightnessValue {
                 ?: param.thisObject.getObjectFieldOrNullAs<Float>("size")
                 ?: return@createAfterHook
             val left = (dpToPx(50f, topValue.resources.displayMetrics) - icon.layoutParams.width).toInt() / 2
-            topValue.left = icon.left - left
-            topValue.right = icon.right + left
-            topValue.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13f + 2f * sizeBgX)
+            val targetLeft = icon.left - left
+            val targetRight = icon.right + left
+            if (topValue.left != targetLeft) topValue.left = targetLeft
+            if (topValue.right != targetRight) topValue.right = targetRight
+            val targetTextSize = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                13f + 2f * sizeBgX,
+                topValue.resources.displayMetrics
+            )
+            if (topValue.textSize != targetTextSize) {
+                topValue.setTextSize(TypedValue.COMPLEX_UNIT_PX, targetTextSize)
+            }
         }
 
         if (!isMoreHyperOSVersion(3f)) {

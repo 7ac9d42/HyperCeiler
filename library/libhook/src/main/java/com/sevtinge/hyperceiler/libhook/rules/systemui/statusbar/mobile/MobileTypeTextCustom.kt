@@ -18,6 +18,7 @@
 */
 package com.sevtinge.hyperceiler.libhook.rules.systemui.statusbar.mobile
 
+import android.content.SharedPreferences
 import com.sevtinge.hyperceiler.common.utils.PrefsBridge
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
 import io.github.lingqiqi5211.ezhooktool.core.findMethod
@@ -25,14 +26,49 @@ import io.github.lingqiqi5211.ezhooktool.core.loadClass
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.createHook
 
 object MobileTypeTextCustom : BaseHook() {
+    private const val PREF_KEY = "system_ui_status_bar_mobile_type_custom"
+    private const val PHYSICAL_PREF_KEY = "prefs_key_$PREF_KEY"
+    private const val DEFAULT_TEXT = "ERR"
+
+    @Volatile
+    private var customTextPrefs: SharedPreferences? = null
+
     override fun init() {
+        cacheCustomText()
         loadClass("com.android.systemui.statusbar.pipeline.mobile.domain.interactor.MiuiMobileIconInteractorImpl")
             .findMethod { name("getMobileTypeName"); parameterTypes(Int::class.javaPrimitiveType!!) }
             .createHook {
-                after {
-                    it.result =
-                        PrefsBridge.getString("system_ui_status_bar_mobile_type_custom", "ERR")
-                }
+                after { it.result = PrefsBridge.getString(PREF_KEY, DEFAULT_TEXT) }
             }
+    }
+
+    @Synchronized
+    private fun cacheCustomText() {
+        if (customTextPrefs != null) return
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (key != PHYSICAL_PREF_KEY && key != PREF_KEY) return@OnSharedPreferenceChangeListener
+            PrefsBridge.removeHookCache(PHYSICAL_PREF_KEY)
+            PrefsBridge.putHookCache(
+                PHYSICAL_PREF_KEY,
+                PrefsBridge.getString(PREF_KEY, DEFAULT_TEXT)
+            )
+        }
+        runCatching {
+            PrefsBridge.putHookCache(
+                PHYSICAL_PREF_KEY,
+                PrefsBridge.getString(PREF_KEY, DEFAULT_TEXT)
+            )
+            val prefs = PrefsBridge.getSharedPreferences()
+            prefs.registerOnSharedPreferenceChangeListener(listener)
+            BaseHook.registerHotReloadCleanup {
+                prefs.unregisterOnSharedPreferenceChangeListener(listener)
+                PrefsBridge.removeHookCache(PHYSICAL_PREF_KEY)
+                customTextPrefs = null
+            }
+            customTextPrefs = prefs
+        }.onFailure {
+            customTextPrefs = null
+            PrefsBridge.removeHookCache(PHYSICAL_PREF_KEY)
+        }
     }
 }

@@ -88,6 +88,8 @@ public abstract class TileUtils extends BaseHook {
     private static final String CLASS_RESOURCE_ICON = "com.android.systemui.qs.tileimpl.QSTileImpl$ResourceIcon";
     private static final String CLASS_EXPANDABLE = "com.android.systemui.animation.Expandable";
     private static final String CLASS_CONTROL_CENTER_UTILS = "com.android.systemui.controlcenter.utils.ControlCenterUtils";
+
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private static final String CLASS_SYSTEMUI_APP = "com.android.systemui.SystemUIApplication";
 
     private static final String FIELD_CUSTOM_NAME = "hc_customTileName";
@@ -212,6 +214,7 @@ public abstract class TileUtils extends BaseHook {
     @Override
     @CallSuper
     public void init() {
+        registerHotReloadCleanup(() -> mainHandler.removeCallbacksAndMessages(null));
         // 获取配置
         mConfig = onCreateTileConfig();
         if (mConfig == null) {
@@ -524,7 +527,6 @@ public abstract class TileUtils extends BaseHook {
                     // 如果配置了图标，延迟刷新状态确保系统状态已更新
                     if (mConfig.hasIcons() && !hasCustomClick) {
                         Object tile = chain.getThisObject();
-                        Handler mainHandler = new Handler(Looper.getMainLooper());
                         Runnable delayedRefresh = () -> {
                             try {
                                 com.sevtinge.hyperceiler.libhook.base.BaseHook.callMethod(tile, "refreshState");

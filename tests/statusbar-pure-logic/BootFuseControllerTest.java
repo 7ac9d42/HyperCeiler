@@ -1,6 +1,8 @@
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 package com.sevtinge.hyperceiler.libhook.rules.systemui.statusbarfollow;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -37,7 +39,31 @@ public final class BootFuseControllerTest {
         explicitReset();
         writeFailureAndCorruptState();
         reentrancyAndConcurrency();
+        fileStoreBoundsAndEncoding();
         System.out.println("BootFuseControllerTest passed");
+    }
+
+    private static void fileStoreBoundsAndEncoding() throws Exception {
+        Path directory = Files.createTempDirectory("hc-fuse-test-");
+        Path marker = directory.resolve("fuse");
+        try (var store = new BootFuseFileStore(marker)) {
+            check("".equals(store.read()), "missing marker remains idle");
+            String maximum = "界".repeat(512);
+            check(store.write(maximum), "valid maximum-length UTF-8 marker writes");
+            check(maximum.equals(store.read()), "valid maximum-length UTF-8 marker reads");
+            check(!store.write(maximum + "x"), "oversized write rejected");
+            Files.writeString(marker, "x".repeat(513));
+            check(store.read() == null, "too many UTF-16 code units rejected");
+            Files.writeString(marker, maximum + "x");
+            check(store.read() == null, "read limit rejects trailing bytes rather than truncating");
+            Files.write(marker, new byte[]{(byte) 0xC3, 0x28});
+            check(store.read() == null, "malformed UTF-8 stays unreadable");
+            check(store.clear() && "".equals(store.read()), "clear restores missing-marker behavior");
+        } finally {
+            Files.deleteIfExists(directory.resolve("fuse.tmp"));
+            Files.deleteIfExists(marker);
+            Files.delete(directory);
+        }
     }
 
     private static void normalCompletion() {

@@ -10,7 +10,7 @@ OS4 ROM's merged UI/background Handler class, UI visibility cancellation and
 immediate restart, and BG `!mIsStatusBarHidden` condition. They do not execute ART,
 Android MessageQueue, LSPosed, Xiaomi SystemUI, battery or long-duration workloads.
 
-50 cases cover:
+51 cases cover:
 
 - Legal UI intervals 10..100 (100 ms units), invalid imported values and the older
   direct `postUpdateNetworkSpeedDelay(4000)` path. Delay 0 and other values remain.
@@ -31,9 +31,12 @@ Android MessageQueue, LSPosed, Xiaomi SystemUI, battery or long-duration workloa
   detects preference IPC accidentally moved inside the state lock. Physical-thread
   cancellation and restart tests bracket original BG/after execution with latches.
 
-Current UI-serialized implementation: 50 passes, 0 failures. Historical test2
-candidate with only BG identity/hasMessages guarding: 31 passes, 19 failures under
-this expanded suite. Earlier 20-pass evidence did not cover the cancellation gap.
+Current implementation: 51 passes, 0 failures. The reflection-count check dispatches
+200 unrelated `100004` messages across both handlers and checks that they leave the
+scheduled refresh alone. Field reads drop from 600 on the pre-filter baseline to 0.
+In the previous 50-case suite, the historical test2 candidate with only BG
+identity/hasMessages guarding passed 31 cases and failed 19. Earlier 20-pass
+evidence did not cover the cancellation gap.
 
 ROM basis outside the source tree:
 `acceptance/systemui-evidence/NetworkSpeedController.java`, full DEX cross references

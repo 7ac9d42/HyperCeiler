@@ -18,6 +18,9 @@
  */
 package com.sevtinge.hyperceiler.libhook.rules.systemui.controlcenter
 
+import android.os.Handler
+import android.os.Looper
+
 import io.github.lingqiqi5211.ezhooktool.xposed.common.HookParam
 import com.sevtinge.hyperceiler.common.utils.PrefsBridge
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
@@ -36,6 +39,7 @@ import io.github.lingqiqi5211.ezhooktool.xposed.dsl.getObjectFieldOrNull
 
 object AutoDismissExpandedPopupsHook : BaseHook() {
 
+    private val mainHandler by lazy { Handler(Looper.getMainLooper()) }
     private val showTime by lazy {
         PrefsBridge.getInt("system_ui_control_center_expand_notification_show_time", 45) * 100L
     }
@@ -45,6 +49,7 @@ object AutoDismissExpandedPopupsHook : BaseHook() {
     }
 
     override fun init() {
+        registerHotReloadCleanup { mainHandler.removeCallbacksAndMessages(null) }
         mHeadsUpEntryPhoneClass.findMethod { name("updateEntry") }.createAfterHook {
                 val headsUpEntry = it.thisObject
                 val expanded =
@@ -64,7 +69,7 @@ object AutoDismissExpandedPopupsHook : BaseHook() {
                     val extended = headsUpEntry.getBooleanField("extended")
 
                     // Android 15 开始没有 Handler
-                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(
+                    mainHandler.postDelayed(
                         mRemoveAlertRunnable, if (extended) 10000 else showTime
                     )
 
@@ -116,7 +121,7 @@ object AutoDismissExpandedPopupsHook : BaseHook() {
                     ) as? Runnable ?: return
 
                     // Android 15 开始没有 Handler
-                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(
+                    mainHandler.postDelayed(
                         mRemoveAlertRunnable, showTime
                     )
                 }

@@ -100,8 +100,10 @@ object RotationButtonB : BaseHook() {
         val contentObserver: ContentObserver =
             object : ContentObserver(Handler(context.mainLooper)) {
                 override fun onChange(selfChange: Boolean, uri: Uri?) {
-                    val isShow = getBoolean(context)
-                    val rotation = getInt(context)
+                    val data = Settings.System.getString(context.contentResolver, "rotation_button_data")
+                    val fields = data?.split(',')?.dropLastWhile { it.isEmpty() }
+                    val isShow = fields?.get(1)?.contains("true") ?: false
+                    val rotation = fields?.get(0)?.toInt() ?: -1
                     navigationBar.callMethod("onRotationProposal", rotation, isShow)
                 }
             }
@@ -124,22 +126,5 @@ object RotationButtonB : BaseHook() {
             Surface.ROTATION_90, Surface.ROTATION_270 -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             else -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
-    }
-
-    private fun getData(context: Context): String? {
-        return Settings.System.getString(context.contentResolver, "rotation_button_data")
-    }
-
-    private fun getBoolean(context: Context): Boolean {
-        val data = getData(context) ?: return false
-        val sp = data.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        val s = java.util.ArrayList<String>(listOf<String?>(*sp))[1]
-        return s.contains("true")
-    }
-
-    private fun getInt(context: Context): Int {
-        val data = getData(context) ?: return -1
-        val sp = data.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        return ArrayList(listOf<String?>(*sp))[0]!!.toInt()
     }
 }

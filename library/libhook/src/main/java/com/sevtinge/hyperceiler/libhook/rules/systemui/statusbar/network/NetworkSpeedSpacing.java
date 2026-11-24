@@ -104,6 +104,10 @@ public class NetworkSpeedSpacing extends BaseHook {
         public void before(HookParam param) {
             try {
                 if (!(param.getArgs()[0] instanceof Message message)) return;
+                boolean periodicMessage = message.what == MSG_UPDATE_NETWORK_SPEED;
+                boolean visibilityMessage = isVisibilityMessage(message.what);
+                if (!periodicMessage && !visibilityMessage) return;
+
                 Object target = param.getThisObject();
                 Object controller = getObjectField(target, "this$0");
                 Object background = getObjectField(controller, "mBgHandler");
@@ -112,8 +116,8 @@ public class NetworkSpeedSpacing extends BaseHook {
                     || bg == ui || bg.getClass() != ui.getClass()) return;
                 // This fallback observes both dispatchers through the same merged
                 // class. Different classes need a separate, verified hook plan.
-                boolean periodic = target == bg && message.what == MSG_UPDATE_NETWORK_SPEED;
-                boolean visibility = target == ui && isVisibilityMessage(message.what);
+                boolean periodic = target == bg && periodicMessage;
+                boolean visibility = target == ui && visibilityMessage;
                 if (!periodic && !visibility) return;
 
                 beginDispatch(param.getArgs(), controller, bg, ui, periodic, visibility);

@@ -226,7 +226,7 @@ public class SunlightModeTile extends TileUtils {
         if (listening) {
             registerContentObserver(ctx, context);
         } else {
-            unregisterContentObserver(ctx, context);
+            unregisterContentObserver(ctx, context, ctx.getAdditionalField(FIELD_CONTENT_OBSERVER));
         }
     }
 
@@ -609,6 +609,8 @@ public class SunlightModeTile extends TileUtils {
      * 注册内容观察者
      */
     private void registerContentObserver(TileContext ctx, Context context) {
+        if (ctx.getAdditionalField(FIELD_CONTENT_OBSERVER) != null) return;
+
         // 确保自定义亮度模式设置存在
         getCustomBrightnessMode(context);
 
@@ -642,23 +644,22 @@ public class SunlightModeTile extends TileUtils {
                 Settings.System.getUriFor(SETTING_SUNLIGHT_MODE), false, observer);
         }
 
-        registerContentObserverHotReloadCleanup(context.getContentResolver(), observer);
         ctx.setAdditionalField(FIELD_CONTENT_OBSERVER, observer);
+        registerHotReloadCleanup(() -> unregisterContentObserver(ctx, context, observer));
     }
 
     /**
      * 注销内容观察者
      */
-    private void unregisterContentObserver(TileContext ctx, Context context) {
-        ContentObserver observer = ctx.getAdditionalField(FIELD_CONTENT_OBSERVER);
-        if (observer != null) {
-            try {
-                context.getContentResolver().unregisterContentObserver(observer);
-            } catch (IllegalArgumentException ignored) {
-                // 已在热重载清理阶段注销。
-            }
-            ctx.removeAdditionalField(FIELD_CONTENT_OBSERVER);
+    private void unregisterContentObserver(TileContext ctx, Context context, @Nullable ContentObserver observer) {
+        if (observer == null || ctx.getAdditionalField(FIELD_CONTENT_OBSERVER) != observer) return;
+
+        try {
+            context.getContentResolver().unregisterContentObserver(observer);
+        } catch (IllegalArgumentException ignored) {
+            // 观察者已注销。
         }
+        ctx.removeAdditionalField(FIELD_CONTENT_OBSERVER);
     }
 
     /**

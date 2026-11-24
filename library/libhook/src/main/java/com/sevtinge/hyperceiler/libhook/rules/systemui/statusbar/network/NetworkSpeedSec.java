@@ -38,14 +38,13 @@ public class NetworkSpeedSec extends BaseHook {
 
     private boolean tryHookSingleParam() {
         try {
-            findAndHookMethod(NETWORK_SPEED_VIEW_CLASS, "setNetworkSpeed", String.class,
+            return findAndHookMethod(NETWORK_SPEED_VIEW_CLASS, "setNetworkSpeed", String.class,
                 new IMethodHook() {
                     @Override
                     public void before(HookParam param) {
                         param.getArgs()[0] = cleanNetworkSpeedText((String) param.getArgs()[0]);
                     }
-                });
-            return true;
+                }) != null;
         } catch (Throwable e) {
             return false;
         }
@@ -53,14 +52,13 @@ public class NetworkSpeedSec extends BaseHook {
 
     private boolean tryHookDoubleParam() {
         try {
-            findAndHookMethod(NETWORK_SPEED_VIEW_CLASS, "setNetworkSpeed", String.class, String.class,
+            return findAndHookMethod(NETWORK_SPEED_VIEW_CLASS, "setNetworkSpeed", String.class, String.class,
                 new IMethodHook() {
                     @Override
                     public void before(HookParam param) {
                         param.getArgs()[1] = cleanNetworkSpeedText((String) param.getArgs()[1]);
                     }
-                });
-            return true;
+                }) != null;
         } catch (Throwable e) {
             return false;
         }

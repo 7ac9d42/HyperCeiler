@@ -7,6 +7,7 @@ public abstract class BaseHook {
     public static IMethodHook registered;
     public static String hookedName;
     public static String failedField;
+    public static final java.util.concurrent.atomic.AtomicInteger fieldReads = new java.util.concurrent.atomic.AtomicInteger();
     public abstract void init();
     public static Class<?> findClass(String name) {
         if (name.equals("com.android.systemui.statusbar.policy.NetworkSpeedController"))
@@ -28,6 +29,7 @@ public abstract class BaseHook {
         hookedName = name;
     }
     public static Object getObjectField(Object target, String name) {
+        fieldReads.incrementAndGet();
         if (name.equals(failedField)) throw new IllegalStateException("injected field failure");
         try { return target.getClass().getField(name).get(target); } catch (Exception e) { throw new IllegalStateException(e); }
     }

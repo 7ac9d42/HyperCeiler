@@ -69,7 +69,7 @@ public class UiLockApp extends BaseHook {
 
     private boolean mObserverRegistered = false;
     private View mStatusBarView;
-    private Boolean mLastLockedState = null;
+    private volatile Boolean mLastLockedState = null;
 
     private final List<WeakReference<View>> mGestureHandleViews = new ArrayList<>();
     private final List<WeakReference<Object>> mNavigationBars = new ArrayList<>();
@@ -170,7 +170,7 @@ public class UiLockApp extends BaseHook {
             public Object intercept(XposedInterface.Chain chain) throws Throwable {
                 if (!(chain.getThisObject() instanceof View handleView)) return chain.proceed();
                 Context context = handleView.getContext();
-                if (context == null || getLockApp(context) == -1) return chain.proceed();
+                if (context == null || !isLocked(context)) return chain.proceed();
                 Object[] args = chain.getArgs().toArray();
                 args[0] = View.GONE;
                 return chain.proceed(args);
@@ -182,7 +182,7 @@ public class UiLockApp extends BaseHook {
             public Object intercept(XposedInterface.Chain chain) throws Throwable {
                 if (!(chain.getThisObject() instanceof View handleView)) return chain.proceed();
                 Context context = handleView.getContext();
-                if (context == null || getLockApp(context) == -1) return chain.proceed();
+                if (context == null || !isLocked(context)) return chain.proceed();
                 Object[] args = chain.getArgs().toArray();
                 args[0] = 0f;
                 return chain.proceed(args);
@@ -194,7 +194,7 @@ public class UiLockApp extends BaseHook {
             public Object intercept(XposedInterface.Chain chain) throws Throwable {
                 if (!(chain.getThisObject() instanceof View handleView)) return chain.proceed();
                 Context context = handleView.getContext();
-                if (context == null || getLockApp(context) == -1) return chain.proceed();
+                if (context == null || !isLocked(context)) return chain.proceed();
                 return null;
             }
         });
@@ -208,7 +208,7 @@ public class UiLockApp extends BaseHook {
         Context context = view.getContext();
         if (context == null) return;
         registerObserverIfNeeded(context);
-        updateGestureHandleVisibility(getLockApp(context) != -1);
+        updateGestureHandleVisibility(isLocked(context));
     }
 
     private void hookNavigationBarClass(String className) {
@@ -277,7 +277,7 @@ public class UiLockApp extends BaseHook {
                 Object[] args = chain.getArgs().toArray();
                 if (args.length > 0 && "stopScreenPinning".equals(args[0])) {
                     Context context = resolveContext(chain.getThisObject());
-                    if (context != null && getLockApp(context) != -1) {
+                    if (context != null && isLocked(context)) {
                         XposedLog.d(TAG, "block LauncherProxyService.stopScreenPinning while locked");
                         return null;
                     }
@@ -527,6 +527,14 @@ public class UiLockApp extends BaseHook {
         } catch (Throwable ignored) {
         }
         return null;
+    }
+
+    private boolean isLocked(Context context) {
+        Boolean cached = mLastLockedState;
+        if (cached != null) return cached;
+        boolean locked = getLockApp(context) != -1;
+        mLastLockedState = locked;
+        return locked;
     }
 
     public static int getLockApp(Context context) {

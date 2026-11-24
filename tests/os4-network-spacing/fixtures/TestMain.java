@@ -19,6 +19,7 @@ public class TestMain {
     static void equal(Object got,Object want) { if (!java.util.Objects.equals(got,want)) throw new AssertionError("got="+got+" expected="+want); }
     static void init(boolean legacy) {
         SystemClock.now=0; Log.warnings=0; PrefsBridge.value=15; PrefsBridge.fail=false; PrefsBridge.onRead=null; BaseHook.failedField=null;
+        BaseHook.fieldReads.set(0);
         BaseHook.legacy=legacy; BaseHook.registered=null; new NetworkSpeedSpacing().init();
         equal(BaseHook.hookedName,legacy ? "postUpdateNetworkSpeedDelay" : "handleMessage");
     }
@@ -73,9 +74,21 @@ public class TestMain {
             init(false); var c=new NetworkSpeedController(); c.mBgHandler.sendEmptyMessageDelayed(200001,2300L);
             invoke(c.mHandler,200001); c.mHandler.drain(); delay(c,2300L); equal(c.mBgHandler.sends,1);
         });
-        test("unrelated background message preserves queue",()->{
+        test("unrelated messages preserve queue without field reflection",()->{
             init(false); var c=new NetworkSpeedController(); c.mBgHandler.sendEmptyMessageDelayed(200001,2700L);
-            invoke(c.mBgHandler,100004); c.mHandler.drain(); delay(c,2700L);
+            for (int i=0; i<100; i++) {
+                invoke(c.mBgHandler,100004);
+                invoke(c.mHandler,100004);
+            }
+            c.mHandler.drain(); delay(c,2700L); equal(c.mBgHandler.sends,1);
+            int reads=BaseHook.fieldReads.get();
+            System.out.println("unrelated messages=200 field reads="+reads);
+            equal(reads,0);
+        });
+        test("target message codes still verify Handler identity",()->{
+            init(false); var c=new NetworkSpeedController();
+            invoke(c.mHandler,200001); invoke(c.mBgHandler,100002);
+            equal(BaseHook.fieldReads.get(),6); equal(c.mHandler.tasks.size(),0);
         });
         test("different controller queues and generations stay separate",()->{
             init(false); var first=new NetworkSpeedController(); var second=new NetworkSpeedController();
@@ -182,6 +195,7 @@ public class TestMain {
         });
         test("nested skipped-before after does not consume caller frame",()->{
             init(false); var c=new NetworkSpeedController(); var outer=begin(c.mBgHandler,200001);
+            invoke(c.mBgHandler,100004);
             BaseHook.registered.after(new HookParam(c.mBgHandler,new Message(200001)));
             original(outer); finish(outer); c.mHandler.drain(); delay(c,1500L);
         });

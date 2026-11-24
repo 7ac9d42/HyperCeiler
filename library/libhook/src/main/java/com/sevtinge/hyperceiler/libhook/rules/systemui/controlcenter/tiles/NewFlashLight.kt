@@ -437,17 +437,21 @@ object NewFlashLight : TileUtils() {
     private fun setPermission(path: String) {
         try {
             val checkCommand = "test -e $path && echo exists || echo not_found"
-            val result = ShellUtils.execCommand(checkCommand, false).toString()
+            val probe = ShellUtils.execCommand(checkCommand, false)
 
-            if (result.contains("not_found")) {
-                XposedLog.e(TAG, "Path does not exist: $path")
+            if (probe.result != 0 || probe.successMsg != "exists") {
+                if (probe.result == 0 && probe.successMsg == "not_found") {
+                    XposedLog.e(TAG, "Path does not exist: $path")
+                } else {
+                    XposedLog.e(TAG, "Failed to check path $path: $probe")
+                }
                 return
             }
 
             val chmodCommand = "chmod 777 $path"
-            val chmodResult = ShellUtils.execCommand(chmodCommand, false).toString()
+            val chmodResult = ShellUtils.execCommand(chmodCommand, false)
 
-            if (chmodResult.isEmpty()) {
+            if (chmodResult.result == 0) {
                 XposedLog.d(TAG, "Successfully set permissions for $path")
             } else {
                 XposedLog.e(TAG, "Failed to set permissions for $path: $chmodResult")

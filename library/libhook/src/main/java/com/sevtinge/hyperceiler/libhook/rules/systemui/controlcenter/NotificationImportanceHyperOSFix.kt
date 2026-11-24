@@ -30,15 +30,24 @@ object NotificationImportanceHyperOSFix : BaseHook() {
             .beforeHookMethod("onAfterRenderList") { param ->
                 val mNotificationEntries = param.args[0] as List<*>
                 if (mNotificationEntries.isNotEmpty()) {
-                    val list = ArrayList<Any>()
-                    mNotificationEntries.forEach {
+                    var filtered: ArrayList<Any>? = null
+                    mNotificationEntries.forEachIndexed { index, entry ->
                         val importance =
-                            it!!.callMethod("getRepresentativeEntry")!!
+                            entry!!.callMethod("getRepresentativeEntry")!!
                                 .getObjectField("mRanking")!!
                                 .callMethod("getImportance") as Int
-                        if (importance > 1) list.add(it)
+                        if (importance > 1) {
+                            filtered?.add(entry)
+                        } else if (filtered == null) {
+                            val kept = ArrayList<Any>()
+                            if (index > 0) {
+                                val prefix = mNotificationEntries.iterator()
+                                repeat(index) { kept.add(prefix.next()!!) }
+                            }
+                            filtered = kept
+                        }
                     }
-                    if (list.size != mNotificationEntries.size) param.args[0] = list
+                    filtered?.let { param.args[0] = it }
                 }
             }
     }

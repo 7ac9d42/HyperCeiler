@@ -8,6 +8,7 @@ javac -d "$OUT" \
   "$ROOT/tests/statusbar-pure-logic/BootFuseControllerTest.java" \
   "$ROOT/tests/statusbar-pure-logic/ServerBarLifecycleTest.java" \
   "$ROOT/library/libhook/src/main/java/com/sevtinge/hyperceiler/libhook/rules/systemui/statusbarfollow/BootFuseController.java" \
+  "$ROOT/library/libhook/src/main/java/com/sevtinge/hyperceiler/libhook/rules/systemui/statusbarfollow/BootFuseFileStore.java" \
   "$ROOT/library/libhook/src/main/java/com/sevtinge/hyperceiler/libhook/rules/systemui/barfollow/AppBarFeatureState.java" \
   "$ROOT/library/libhook/src/main/java/com/sevtinge/hyperceiler/libhook/rules/systemui/barfollow/AppBarModeSession.java" \
   "$ROOT/library/libhook/src/main/java/com/sevtinge/hyperceiler/libhook/rules/systemui/barfollow/BarFolmeCommands.java" \

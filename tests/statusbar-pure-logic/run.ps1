@@ -9,6 +9,7 @@ try {
         (Join-Path $PSScriptRoot "BootFuseControllerTest.java"),
         (Join-Path $PSScriptRoot "ServerBarLifecycleTest.java"),
         (Join-Path $root "library\libhook\src\main\java\com\sevtinge\hyperceiler\libhook\rules\systemui\statusbarfollow\BootFuseController.java"),
+        (Join-Path $root "library\libhook\src\main\java\com\sevtinge\hyperceiler\libhook\rules\systemui\statusbarfollow\BootFuseFileStore.java"),
         (Join-Path $root "library\libhook\src\main\java\com\sevtinge\hyperceiler\libhook\rules\systemui\barfollow\AppBarFeatureState.java"),
         (Join-Path $root "library\libhook\src\main\java\com\sevtinge\hyperceiler\libhook\rules\systemui\barfollow\AppBarModeSession.java"),
         (Join-Path $root "library\libhook\src\main\java\com\sevtinge\hyperceiler\libhook\rules\systemui\barfollow\BarFolmeCommands.java"),

@@ -69,6 +69,19 @@ public class FiveGTile extends TileUtils {
     private ContentObserver contentObserver;
     private boolean isDetailHooked = false;
     private String fiveGLabel = null;
+    private volatile TelephonyManager telephonyManager;
+
+    private TelephonyManager resolveTelephonyManager() {
+        TelephonyManager manager = telephonyManager;
+        return manager != null ? manager : TelephonyManager.getDefault();
+    }
+
+    private boolean isFiveGCapable() {
+        TelephonyManager manager = resolveTelephonyManager();
+        boolean capable = manager.isFiveGCapable();
+        if (capable) telephonyManager = manager;
+        return capable;
+    }
 
     @NonNull
     @Override
@@ -105,7 +118,7 @@ public class FiveGTile extends TileUtils {
 
     @Override
     protected boolean onCheckAvailable(TileContext ctx) {
-        return TelephonyManager.getDefault().isFiveGCapable();
+        return isFiveGCapable();
     }
 
     @Override
@@ -162,7 +175,7 @@ public class FiveGTile extends TileUtils {
     @Nullable
     @Override
     protected TileState onUpdateState(TileContext ctx) {
-        return TileState.of(TelephonyManager.getDefault().isUserFiveGEnabled());
+        return TileState.of(resolveTelephonyManager().isUserFiveGEnabled());
     }
 
     // ==================== Mode 3 Logic ====================
@@ -309,9 +322,11 @@ public class FiveGTile extends TileUtils {
         if (rawItems == null || rawItems.length == 0) return;
 
         // 如果不支持 5G，直接返回，不添加选项
-        if (!TelephonyManager.getDefault().isFiveGCapable()) {
+        TelephonyManager manager = resolveTelephonyManager();
+        if (!manager.isFiveGCapable()) {
             return;
         }
+        telephonyManager = manager;
 
         int insertIndex = findInsertIndex(rawItems);
         if (insertIndex == -1) {
@@ -342,7 +357,7 @@ public class FiveGTile extends TileUtils {
 
         newItems[insertIndex] = mDividerConstructor.newInstance(networkTitle);
 
-        Object toggleItem = createToggleItem(fiveGLabel);
+        Object toggleItem = createToggleItem(fiveGLabel, manager);
         if (toggleItem != null) {
             // 因为会被 GC 回收导致第一次调用会 null, 设置强引用或者字符串判断为佳
             // com.sevtinge.hyperceiler.libhook.base.BaseHook.setAdditionalInstanceField(toggleItem, FIELD_IS_CUSTOM_5G, true);
@@ -409,8 +424,8 @@ public class FiveGTile extends TileUtils {
         }
     }
 
-    private Object createToggleItem(String label) {
-        boolean enabled = TelephonyManager.getDefault().isUserFiveGEnabled();
+    private Object createToggleItem(String label, TelephonyManager manager) {
+        boolean enabled = manager.isUserFiveGEnabled();
         try {
             if (mToggleConstructor3 != null) {
                 return mToggleConstructor3.newInstance(label, null, enabled);
@@ -424,9 +439,10 @@ public class FiveGTile extends TileUtils {
     }
 
     private void toggleFiveG() {
-        TelephonyManager manager = TelephonyManager.getDefault();
+        TelephonyManager manager = resolveTelephonyManager();
         boolean newState = !manager.isUserFiveGEnabled();
         manager.setUserFiveGEnabled(newState);
+        telephonyManager = manager;
         XposedLog.d(TAG, "5G switched to: " + newState);
     }
 }

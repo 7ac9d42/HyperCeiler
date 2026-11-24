@@ -814,7 +814,7 @@ object MobileTypeSingle2Hook : BaseHook() {
         val targetSubId = renderStateStore.resolveRenderSubId(
             viewSubId = viewSubId,
             isEnableDouble = isEnableDouble,
-            isSingleSimMode = MobileViewHelper.isSingleSimMode()
+            isSingleSimMode = isEnableDouble && MobileViewHelper.isSingleSimMode()
         )
         val renderState = renderStateStore.snapshot(targetSubId)
 
@@ -832,9 +832,9 @@ object MobileTypeSingle2Hook : BaseHook() {
             forceDualMode = isEnableDouble && (mobileNetworkType == 0 || mobileNetworkType == 2)
         )
         val effectiveWifiConnected = if (!showMobileType && mobileNetworkType == 2) {
-            safeIsWifiConnected() ?: renderState.wifiConnected
+            wifiConnectedNow ?: renderState.wifiConnected
         } else {
-            renderState.wifiConnected ?: safeIsWifiConnected()
+            renderState.wifiConnected ?: wifiConnectedNow
         }
         val resolvedSmallVisible = visibilityResolver.resolveSmallMobileTypeVisibility(
             mobileTypeVisible = renderState.mobileTypeVisible,

@@ -631,8 +631,8 @@ object BatteryDetailIndicator : BaseHook() {
         }
 
         private fun processBatteryUpdate() {
-            val context = mStatusbarTextIcons.firstOrNull()?.context
-            val powerMgr = context?.getSystemService(Context.POWER_SERVICE) as? PowerManager
+            val context = mStatusbarTextIcons.firstOrNull()?.context ?: return
+            val powerMgr = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
             val isScreenOn = powerMgr?.isInteractive ?: true
             if (!isScreenOn) {
                 return

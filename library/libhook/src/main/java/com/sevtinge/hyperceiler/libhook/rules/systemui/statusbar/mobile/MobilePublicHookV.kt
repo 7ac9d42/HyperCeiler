@@ -31,6 +31,7 @@ import androidx.annotation.RequiresPermission
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
 import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreAndroidVersion
 import com.sevtinge.hyperceiler.libhook.utils.api.DeviceHelper.System.isMoreHyperOSVersion
+import com.sevtinge.hyperceiler.libhook.utils.hookapi.StateFlowHelper.canAssignReadonlyStateFlowTo
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.StateFlowHelper.newReadonlyStateFlow
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.StateFlowHelper.setStateFlowValue
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.MobileClass.miuiCellularIconVM
@@ -45,15 +46,20 @@ import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.MobileViewHelper
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.MobileViewHelper.isMobileDataConnected
 import com.sevtinge.hyperceiler.libhook.utils.hookapi.systemui.MobileViewHelper.isWifiConnected
 import io.github.lingqiqi5211.ezhooktool.core.callMethodAs
+import io.github.lingqiqi5211.ezhooktool.core.findField
 import io.github.lingqiqi5211.ezhooktool.core.findMethod
 import io.github.lingqiqi5211.ezhooktool.core.loadClass
+import io.github.libxposed.api.XposedInterface
 import io.github.lingqiqi5211.ezhooktool.xposed.EzXposed
+import io.github.lingqiqi5211.ezhooktool.xposed.common.HookParam
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.createAfterHook
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.getAdditionalInstanceFieldAs
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.getObjectFieldAs
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.hookAllConstructors
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.setAdditionalInstanceField
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.setObjectField
+import io.github.lingqiqi5211.ezhooktool.xposed.java.IMethodHook
+import java.lang.reflect.Modifier
 import java.util.concurrent.ConcurrentHashMap
 
 class MobilePublicHookV : BaseHook() {
@@ -71,14 +77,48 @@ class MobilePublicHookV : BaseHook() {
     @Volatile
     private var pairCtor: java.lang.reflect.Constructor<*>? = null
 
+    @Volatile
+    private var os4RoamingGetterOwner: Class<*>? = null
+
     @RequiresPermission(allOf = [Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.READ_PHONE_STATE])
     override fun init() {
         restoreVisibilityFlowsAfterHotReload()
 
         if (isMoreAndroidVersion(37)) {
+            if (hideRoaming) hookOs4RoamingGetters()
             hookOs4Visibility()
         } else {
             hookLegacyVisibility()
+        }
+    }
+
+    private fun hookOs4RoamingGetters() {
+        val handles = ArrayList<XposedInterface.HookHandle>(2)
+        runCatching {
+            val vm = loadClass("com.android.systemui.statusbar.pipeline.mobile.ui.viewmodel.MiuiMobileIconVMImpl")
+            val small = vm.getDeclaredMethod("getSmallRoamVisible")
+            val mobile = vm.getDeclaredMethod("getMobileRoamVisible")
+            val flowType = small.returnType
+            check(flowType.name == "kotlinx.coroutines.flow.Flow" && mobile.returnType == flowType &&
+                !Modifier.isStatic(small.modifiers) && !Modifier.isStatic(mobile.modifiers))
+            check(canAssignReadonlyStateFlowTo(flowType))
+            val hiddenFlow = newReadonlyStateFlow(false)
+            check(flowType.isInstance(hiddenFlow))
+            val hook = object : IMethodHook {
+                override fun before(param: HookParam) {
+                    if (os4RoamingGetterOwner != null) param.result = hiddenFlow
+                }
+            }
+            handles += checkNotNull(hookMethod(small, hook))
+            handles += checkNotNull(hookMethod(mobile, hook))
+            registerHotReloadCleanup { os4RoamingGetterOwner = null }
+            os4RoamingGetterOwner = vm
+        }.onFailure { error ->
+            for (handle in handles.asReversed()) {
+                runCatching { handle.unhook() }
+                    .onFailure { rollback -> if (error !== rollback) error.addSuppressed(rollback) }
+            }
+            debugCallbackError("OS4 roaming getters", error)
         }
     }
 
@@ -93,6 +133,10 @@ class MobilePublicHookV : BaseHook() {
         miuiMobileIconBinder.findMethod { name("bind") }
             .createAfterHook { param ->
                 val vmImpl = param.args[2] ?: return@createAfterHook
+                // bind 会对同一 VM 多次调用，已替换过则跳过，避免旧视图收集的 flow 失效
+                if (vmImpl.getAdditionalInstanceFieldAs<Boolean?>("visibilityReplaced") == true) {
+                    return@createAfterHook
+                }
                 val subId = runCatching {
                     vmImpl.getObjectFieldAs<Any>("iconInteractor")
                         .getObjectFieldAs<Int>("subId")
@@ -100,10 +144,6 @@ class MobilePublicHookV : BaseHook() {
                     param.args[1]?.getObjectFieldAs<Any>("commonImpl")
                         ?.callMethodAs<Int>("getSubscriptionId")
                 }.getOrNull() ?: return@createAfterHook
-                // bind 会对同一 VM 多次调用，已替换过则跳过，避免旧视图收集的 flow 失效
-                if (vmImpl.getAdditionalInstanceFieldAs<Boolean?>("visibilityReplaced") == true) {
-                    return@createAfterHook
-                }
                 vmImpl.setAdditionalInstanceField("visibilityReplaced", true)
                 applyVisibility(vmImpl, subId)
             }
@@ -123,11 +163,10 @@ class MobilePublicHookV : BaseHook() {
 
     @RequiresPermission(allOf = [Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.READ_PHONE_STATE])
     private fun applyVisibility(cellularIcon: Any, subId: Int) {
-        val isVisible = createVisibilityFlow()
-
         when {
             // 信号显示逻辑
             signalShowMode >= 1 -> {
+                val isVisible = createVisibilityFlow()
                 cellularIcon.setObjectField("isVisible", isVisible)
                 trackVisibilityFlow(subId, isVisible)
                 refreshVisibility(subId, isVisible)
@@ -135,6 +174,7 @@ class MobilePublicHookV : BaseHook() {
             }
             // 双排信号（signalShowMode == 0 且未隐藏卡）
             isEnableDouble && !(card1 || card2) -> {
+                val isVisible = createVisibilityFlow()
                 cellularIcon.setObjectField("isVisible", isVisible)
                 trackVisibilityFlow(subId, isVisible)
                 val slotIndex = SubscriptionManager.getSlotIndex(subId)
@@ -147,7 +187,7 @@ class MobilePublicHookV : BaseHook() {
             else -> {
                 val slotIndex = SubscriptionManager.getSlotIndex(subId)
                 if ((card1 && slotIndex == 0) || (card2 && slotIndex == 1)) {
-                    cellularIcon.setObjectField("isVisible", isVisible)
+                    cellularIcon.setObjectField("isVisible", createVisibilityFlow())
                 }
             }
         }
@@ -157,12 +197,7 @@ class MobilePublicHookV : BaseHook() {
                 cellularIcon.setObjectField("inOutVisible", newReadonlyStateFlow(false))
             }
         }
-        if (hideRoaming) {
-            // 新版 MiuiCellularIconVM 中 *RoamVisible 字段类型为
-            // FlowKt__ZipKt$combine$$inlined$combineUnsafe$FlowKt__ZipKt$1
-            // （combine 产生的匿名 Flow），直接 setObjectField 会抛
-            // IllegalArgumentException。先尝试旧版直接替换 StateFlow，
-            // 失败则改为劫持其内部 $transform$inlined$1 lambda 让合并结果恒为 false。
+        if (hideRoaming && os4RoamingGetterOwner?.isInstance(cellularIcon) != true) {
             forceRoamHidden(cellularIcon, "smallRoamVisible")
             forceRoamHidden(cellularIcon, "mobileRoamVisible")
         }
@@ -238,27 +273,22 @@ class MobilePublicHookV : BaseHook() {
     /**
      * 隐藏漫游图标。
      *
-     * 旧版 MiuiCellularIconVM 中 *RoamVisible 是 StateFlow，可以直接替换；
-     * 新版被改成了 combine(...) 产生的匿名 Flow（FlowKt__ZipKt$combine$$inlined$combineUnsafe$…），
-     * 反射赋值会报 IllegalArgumentException。
-     *
-     * 该匿名类内部字段：
-     *  - \$flows\$inlined        : Flow[]
-     *  - \$transform\$inlined\$1  : Function (Function4/5/6)
-     *  - \$r8\$classId           : Int   (R8 合并分支标识，不同值对应不同元数 lambda)
-     *
-     * 思路：保留字段对象本身，只把 transform lambda 换成一个同接口且永远返回 false
-     * 的动态代理。这样 combine 输出恒为 false，运行时几乎零额外开销，且不会再抛异常。
+     * 旧版字段可以接收 ReadonlyStateFlow；声明为具体 combine 类型的字段必须保留
+     * 原 Flow 对象，只能替换其 transform。其他 Flow 不一定有该 transform。
      */
     private fun forceRoamHidden(cellularIcon: Any, fieldName: String) {
-        // 先走旧版快路径：直接替换整个 StateFlow。
-        if (runCatching {
-                cellularIcon.setObjectField(fieldName, newReadonlyStateFlow(false))
-            }.isSuccess) return
+        val field = runCatching {
+            cellularIcon.javaClass.findField { name(fieldName) }
+        }.getOrNull() ?: return
 
-        // 新版快路径：劫持 combine 内部的 transform lambda。
+        if (runCatching {
+                if (!canAssignReadonlyStateFlowTo(field.type)) return@runCatching false
+                field.set(cellularIcon, newReadonlyStateFlow(false))
+                true
+            }.getOrDefault(false)) return
+
         runCatching {
-            val flowObj = cellularIcon.getObjectFieldAs<Any>(fieldName)
+            val flowObj = field.get(cellularIcon) ?: return
             val fakeTransform = createAlwaysFalseTransform(flowObj) ?: return
             flowObj.setObjectField($$"$transform$inlined$1", fakeTransform)
         }
@@ -295,14 +325,12 @@ class MobilePublicHookV : BaseHook() {
     @RequiresPermission(allOf = [Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.READ_PHONE_STATE])
     private fun refreshVisibility(subId: Int, isVisible: Any) {
         val isAirplane = MobileViewHelper.isAirplaneModeOn()
-        val defaultDataSubId = SubscriptionManager.getDefaultDataSubscriptionId()
-        val slotIndex = SubscriptionManager.getSlotIndex(subId)
-
-        val shouldShow = when (signalShowMode) {
-            1 -> !isAirplane && !isWifiConnected()
-            2 -> !isAirplane && subId == defaultDataSubId && isMobileDataConnected()
-            3 -> !isAirplane && subId == defaultDataSubId
-            else -> !isAirplane && (MobileViewHelper.isSingleSimMode() || slotIndex == 0)
+        val mode = signalShowMode
+        val shouldShow = !isAirplane && when (mode) {
+            1 -> !isWifiConnected()
+            2, 3 -> subId == SubscriptionManager.getDefaultDataSubscriptionId() &&
+                (mode == 3 || isMobileDataConnected())
+            else -> MobileViewHelper.isSingleSimMode() || SubscriptionManager.getSlotIndex(subId) == 0
         }
         updateVisibility(isVisible, shouldShow)
     }
@@ -310,19 +338,22 @@ class MobilePublicHookV : BaseHook() {
     @RequiresPermission(allOf = [Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.READ_PHONE_STATE])
     private fun refreshAllVisibility() {
         val isAirplane = MobileViewHelper.isAirplaneModeOn()
-        val isSingleSim = MobileViewHelper.isSingleSimMode()
-        val defaultDataSubId = SubscriptionManager.getDefaultDataSubscriptionId()
+        val mode = signalShowMode
+        val isSingleSim = mode !in 1..3 && MobileViewHelper.isSingleSimMode()
+        val defaultDataSubId = if (mode == 2 || mode == 3) {
+            SubscriptionManager.getDefaultDataSubscriptionId()
+        } else {
+            SubscriptionManager.INVALID_SUBSCRIPTION_ID
+        }
+        val wifiConnected = mode == 1 && MobileViewHelper.isWifiConnected()
+        val mobileDataConnected = mode == 2 && MobileViewHelper.isMobileDataConnected()
 
         visibilityFlows.forEach { (subId, isVisible) ->
-            val shouldShow = if (signalShowMode >= 1) {
-                when (signalShowMode) {
-                    1 -> !isAirplane && !isWifiConnected()
-                    2 -> !isAirplane && subId == defaultDataSubId && isMobileDataConnected()
-                    3 -> !isAirplane && subId == defaultDataSubId
-                    else -> !isAirplane && (isSingleSim || SubscriptionManager.getSlotIndex(subId) == 0)
-                }
-            } else {
-                !isAirplane && (isSingleSim || SubscriptionManager.getSlotIndex(subId) == 0)
+            val shouldShow = when (mode) {
+                1 -> !isAirplane && !wifiConnected
+                2 -> !isAirplane && subId == defaultDataSubId && mobileDataConnected
+                3 -> !isAirplane && subId == defaultDataSubId
+                else -> !isAirplane && (isSingleSim || SubscriptionManager.getSlotIndex(subId) == 0)
             }
             updateVisibility(isVisible, shouldShow)
         }
@@ -351,11 +382,9 @@ class MobilePublicHookV : BaseHook() {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val callback = object : ConnectivityManager.NetworkCallback() {
             @RequiresPermission(allOf = [Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.READ_PHONE_STATE])
-            override fun onAvailable(network: Network) = refreshAllVisibility()
-
-            @RequiresPermission(allOf = [Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.READ_PHONE_STATE])
             override fun onLost(network: Network) = refreshAllVisibility()
 
+            // 默认网络首次可用时，同一次通知还会分发 onCapabilitiesChanged。
             @RequiresPermission(allOf = [Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.READ_PHONE_STATE])
             override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
                 refreshAllVisibility()

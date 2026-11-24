@@ -1311,7 +1311,7 @@ public abstract class SystemUiBarFollowRuntime extends StatusBarFollowRuntime {
             catch (Throwable failure) { moduleLog(LOG_WARN, TAG, "BarAppearance diagnostic failed", failure); }
         });
         XiaomiShadeBarEvents events = shadeBarEvents;
-        if (events != null) {
+        if (events != null && barFeatureState.enabled()) {
             try { events.event(chain.getThisObject(), (Integer) chain.getArg(0)); }
             catch (RuntimeException failure) { moduleLog(LOG_WARN, TAG, "App bar task event unavailable", failure); }
         }

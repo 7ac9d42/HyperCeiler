@@ -44,6 +44,8 @@ import java.net.NetworkInterface
 import kotlin.math.roundToLong
 
 object NewNetworkSpeed : BaseHook() {
+    private var connectivityManager: ConnectivityManager? = null
+    private val trafficBytes = LongArray(2)
     private var measureTimeNanos: Long = 0L
 
     private var newTxBytesFixed: Long = 0
@@ -54,9 +56,6 @@ object NewNetworkSpeed : BaseHook() {
 
     private var txSpeed: Long = 0
     private var rxSpeed: Long = 0
-
-    private var txArrow = ""
-    private var rxArrow = ""
 
     //  隐藏慢速
     private val hideLow by lazy {
@@ -83,9 +82,6 @@ object NewNetworkSpeed : BaseHook() {
         PrefsBridge.getStringAsInt("system_ui_statusbar_network_speed_style", 0)
     }
 
-    private val needTotal by lazy {
-        (networkStyle == 1 || networkStyle == 2)
-    }
     private val sharedStrArr = arrayOf("", "")
     @Volatile
     private var cachedUnits: CharArray? = null
@@ -134,77 +130,58 @@ object NewNetworkSpeed : BaseHook() {
                 // 更新网速
                 updateNetworkSpeed(mContext)
 
-                // 设置上下行网速图标
-                val txLow = txSpeed < lowLevel
-                val rxLow = rxSpeed < lowLevel
-                txArrow = when (icons) {
-                    2 -> if (txLow) "△" else "▲"
-                    3 -> if (txLow) " ▵" else " ▴"
-                    4 -> if (txLow) " ☖" else " ☗"
-                    5 -> "↑"
-                    6 -> "⇧"
-                    else -> ""
-                }
-                rxArrow = when (icons) {
-                    2 -> if (rxLow) "▽" else "▼"
-                    3 -> if (rxLow) " ▿" else " ▾"
-                    4 -> if (rxLow) " ⛉" else " ⛊"
-                    5 -> "↓"
-                    6 -> "⇩"
-                    else -> ""
-                }
-
                 val strArr = sharedStrArr
                 strArr[0] = ""
                 strArr[1] = ""
-
-                // 设置 tx/rx 字符串
-                val txStr = if (hideLow && !allHideLow && txLow) "" else {
-                    if (swapPlaces) "$txArrow${humanReadableByteCount(mContext, txSpeed)}"
-                    else "${humanReadableByteCount(mContext, txSpeed)}$txArrow"
-                }
-                val rxStr = if (hideLow && !allHideLow && rxLow) "" else {
-                    if (swapPlaces) "$rxArrow${humanReadableByteCount(mContext, rxSpeed)}"
-                    else "${humanReadableByteCount(mContext, rxSpeed)}$rxArrow"
-                }
-                val totalStr = if (needTotal) humanReadableByteCount(mContext, txSpeed + rxSpeed) else ""
-
-                // 存储隐藏慢速判断结果
-                val isLowSpeed = hideLow && (txSpeed + rxSpeed) < lowLevel
-                val isAllLowSpeed = hideLow && allHideLow && txLow && rxLow
+                val totalSpeed = txSpeed + rxSpeed
+                val isLowSpeed = hideLow && totalSpeed < lowLevel
 
                 when (networkStyle) {
                     1, 2 -> {
                         // 单/双排显示总速率
-                        if (isLowSpeed) {
-                            strArr[0] = ""
-                        } else {
-                            strArr[0] = totalStr
+                        if (!isLowSpeed) {
+                            strArr[0] = humanReadableByteCount(mContext, totalSpeed)
                         }
                         it.args[0] = strArr
                     }
-                    3 -> {
-                        // 同一行显示上/下行
-                        if (isAllLowSpeed) {
-                            strArr[0] = ""
-                        } else {
-                            strArr[0] = if (rxStr.isNotEmpty()) "$txStr $rxStr" else txStr
-                        }
-                        it.args[0] = strArr
-                    }
-                    4 -> {
-                        // 上下两行显示
-                        if (isAllLowSpeed) {
-                            strArr[0] = ""
-                        } else {
-                            strArr[0] = "$txStr\n$rxStr"
+                    3, 4 -> {
+                        val txLow = txSpeed < lowLevel
+                        val rxLow = rxSpeed < lowLevel
+                        val isAllLowSpeed = hideLow && allHideLow && txLow && rxLow
+                        if (!isAllLowSpeed) {
+                            val hideEachLow = hideLow && !allHideLow
+                            val txStr = if (hideEachLow && txLow) "" else {
+                                val arrow = when (icons) {
+                                    2 -> if (txLow) "△" else "▲"
+                                    3 -> if (txLow) " ▵" else " ▴"
+                                    4 -> if (txLow) " ☖" else " ☗"
+                                    5 -> "↑"
+                                    6 -> "⇧"
+                                    else -> ""
+                                }
+                                formatDirection(mContext, txSpeed, arrow)
+                            }
+                            val rxStr = if (hideEachLow && rxLow) "" else {
+                                val arrow = when (icons) {
+                                    2 -> if (rxLow) "▽" else "▼"
+                                    3 -> if (rxLow) " ▿" else " ▾"
+                                    4 -> if (rxLow) " ⛉" else " ⛊"
+                                    5 -> "↓"
+                                    6 -> "⇩"
+                                    else -> ""
+                                }
+                                formatDirection(mContext, rxSpeed, arrow)
+                            }
+                            strArr[0] = when {
+                                networkStyle == 4 -> "$txStr\n$rxStr"
+                                rxStr.isNotEmpty() -> "$txStr $rxStr"
+                                else -> txStr
+                            }
                         }
                         it.args[0] = strArr
                     }
                     else -> {
                         if (isLowSpeed) {
-                            strArr[0] = ""
-                            strArr[1] = ""
                             it.args[0] = strArr
                         }
                     }
@@ -213,6 +190,11 @@ object NewNetworkSpeed : BaseHook() {
         }.onFailure { e ->
             XposedLog.e(TAG, lpparam.packageName, "hook failed by network speed: ${e.message}", e)
         }
+    }
+
+    private fun formatDirection(context: Context, speed: Long, arrow: String): String {
+        val text = humanReadableByteCount(context, speed)
+        return if (swapPlaces) "$arrow$text" else "$text$arrow"
     }
 
     private fun getTrafficBytes(out: LongArray) {
@@ -283,7 +265,8 @@ object NewNetworkSpeed : BaseHook() {
 
     @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
     private fun updateNetworkSpeed(mContext: Context) {
-        val connectivityManager = mContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager = this.connectivityManager ?: (mContext.getSystemService(Context.CONNECTIVITY_SERVICE)
+            as? ConnectivityManager)?.also { this.connectivityManager = it } ?: return
         val network = connectivityManager.activeNetwork
         val capabilities = network?.let { connectivityManager.getNetworkCapabilities(it) }
         val isConnected = capabilities?.run {
@@ -307,7 +290,7 @@ object NewNetworkSpeed : BaseHook() {
         if (measureTimeNanos == 0L || interval <= 0L) {
             measureTimeNanos = nowNanos
             // initialize totals but do not compute speeds this tick
-            val out = LongArray(2)
+            val out = trafficBytes
             getTrafficBytes(out)
             txBytesTotal = out[0]
             rxBytesTotal = out[1]
@@ -328,7 +311,7 @@ object NewNetworkSpeed : BaseHook() {
         }
         measureTimeNanos = nowNanos
 
-        val out = LongArray(2)
+        val out = trafficBytes
         getTrafficBytes(out)
         val newTxBytes = out[0]
         val newRxBytes = out[1]

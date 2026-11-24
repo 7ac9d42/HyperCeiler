@@ -83,8 +83,6 @@ object NewPluginHelperKt : BaseHook() {
     }
 
     private fun onPluginLoaded(factory: PluginFactory) {
-        val mCardStyleTiles = getTileList()
-
         val componentName = factory.mComponentName
         val pluginCtx = factory.pluginCtxRef.get()
         if (pluginCtx == null) {
@@ -173,9 +171,10 @@ object NewPluginHelperKt : BaseHook() {
                 if (PrefsBridge.getBoolean("systemui_plugin_card_tiles_enabled")) {
                     val tileStr = PrefsBridge.getString("systemui_plugin_card_tiles", "")
                     if (!tileStr.isNullOrEmpty()) {
+                        val cardStyleTiles = parseTileList(tileStr)
                         enabledLoaders.add(
                             Pair("CustomCardTiles") { cl ->
-                                CustomCardTiles.initCustomCardTiles(cl, mCardStyleTiles)
+                                CustomCardTiles.initCustomCardTiles(cl, cardStyleTiles)
                             }
                         )
                     }
@@ -268,8 +267,8 @@ object NewPluginHelperKt : BaseHook() {
         }
     }
 
-    private fun getTileList(): List<String> {
-        val raw = PrefsBridge.getString("systemui_plugin_card_tiles", "")?.removePrefix("List_") ?: ""
+    private fun parseTileList(tileStr: String): List<String> {
+        val raw = tileStr.removePrefix("List_")
         if (raw.isBlank()) return emptyList()
         return raw.split('|').filter { it.isNotEmpty() }
     }

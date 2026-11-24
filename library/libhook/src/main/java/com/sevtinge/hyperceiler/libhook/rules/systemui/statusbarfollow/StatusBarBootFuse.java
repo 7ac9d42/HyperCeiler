@@ -10,6 +10,7 @@ import android.os.SystemProperties;
 import com.sevtinge.hyperceiler.common.log.XposedLog;
 
 import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /** Android adapter for the pure boot fuse. Marker files are process-private and bounded. */
 public final class StatusBarBootFuse {
@@ -38,9 +39,11 @@ public final class StatusBarBootFuse {
     public static final class Session implements AutoCloseable {
         private final BootFuseController controller;
         private final BootFuseFileStore store;
+        private final AtomicBoolean closed = new AtomicBoolean();
+        private final AtomicBoolean readyStarted = new AtomicBoolean();
         private AutoCloseable observer;
-        private boolean installed;
-        private boolean observerStarted;
+        private volatile boolean installed;
+        private volatile boolean observerStarted;
 
         private Session(BootFuseController controller, BootFuseFileStore store) {
             this.controller = controller;
@@ -53,7 +56,8 @@ public final class StatusBarBootFuse {
 
         /** Returns false when boot completion cannot be observed; callers must not install. */
         public boolean startBootCompletionObserver(Context context, Runnable onReady) {
-            if (context == null) return false;
+            if (context == null || closed.get()) return false;
+            if (observerStarted) return true;
             try {
                 if (isBootCompleted()) {
                     if (!controller.markBootCompleted()) return false;
@@ -63,7 +67,7 @@ public final class StatusBarBootFuse {
                 }
                 BroadcastReceiver receiver = new BroadcastReceiver() {
                     @Override public void onReceive(Context receiverContext, Intent intent) {
-                        if (intent != null && Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())
+                        if (!closed.get() && intent != null && Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())
                             && controller.markBootCompleted()) {
                             startReady(onReady);
                         }
@@ -94,9 +98,10 @@ public final class StatusBarBootFuse {
             installed = true;
         }
 
-        private static void startReady(Runnable onReady) {
-            if (onReady == null) return;
+        private void startReady(Runnable onReady) {
+            if (onReady == null || closed.get() || !readyStarted.compareAndSet(false, true)) return;
             Thread thread = new Thread(() -> {
+                if (closed.get()) return;
                 try { onReady.run(); }
                 catch (Throwable ignored) { }
             }, "hc-statusbar-boot-ready");
@@ -105,6 +110,7 @@ public final class StatusBarBootFuse {
         }
 
         @Override public void close() {
+            if (!closed.compareAndSet(false, true)) return;
             if (observer != null) {
                 try { observer.close(); }
                 catch (Throwable ignored) { }

@@ -1,6 +1,8 @@
 /* SPDX-License-Identifier: AGPL-3.0-or-later */
 package com.sevtinge.hyperceiler.libhook.rules.systemui.statusbarfollow;
 
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
@@ -35,11 +37,22 @@ final class BootFuseFileStore implements BootFuseController.Store, AutoCloseable
     }
 
     @Override public String read() {
-        String value = call(() -> {
+        return call(() -> {
             if (!Files.exists(file)) return "";
-            return Files.readString(file, StandardCharsets.UTF_8);
+            // UTF-8 needs at most three bytes per UTF-16 code unit. One extra byte signals overflow.
+            byte[] bytes = new byte[MAX_VALUE * 3 + 1];
+            int size = 0;
+            try (InputStream input = Files.newInputStream(file)) {
+                while (size < bytes.length) {
+                    int count = input.read(bytes, size, bytes.length - size);
+                    if (count < 0) break;
+                    size += count;
+                }
+            }
+            if (size == bytes.length) return null;
+            String value = StandardCharsets.UTF_8.newDecoder().decode(ByteBuffer.wrap(bytes, 0, size)).toString();
+            return value.length() <= MAX_VALUE ? value : null;
         }, null);
-        return value == null || value.length() <= MAX_VALUE ? value : null;
     }
 
     @Override public boolean write(String value) {

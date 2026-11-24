@@ -48,8 +48,8 @@ public class SnowLeopardModeTile extends TileUtils {
 
     @Override
     protected boolean onCheckAvailable(TileContext ctx) {
-        String result = String.valueOf(ShellUtils.execCommand("ls /dev/snd/pcm*", false));
-        return !result.isEmpty();
+        ShellUtils.CommandResult result = ShellUtils.execCommand("ls /dev/snd/pcm*", false);
+        return result.result == 0 && result.successMsg != null && !result.successMsg.isEmpty();
     }
 
     @Override

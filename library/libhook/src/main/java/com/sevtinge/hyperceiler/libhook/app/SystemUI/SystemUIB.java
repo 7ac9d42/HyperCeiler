@@ -234,7 +234,9 @@ public class SystemUIB extends BaseLoad {
         int diBgMode = PrefsBridge.getStringAsInt("system_ui_island_media_control_background_mode", 0);
         initHook(NewUnlockCustomActions.INSTANCE, PrefsBridge.getBoolean("system_ui_control_center_media_control_unlock_custom_actions"));
         initHook(CustomBackground.INSTANCE, ncBgMode != 0 || diBgMode != 0);
-        initHook(MediaViewLayout.INSTANCE, PrefsBridge.getBoolean("system_ui_control_center_media_control_media_button_layout_switch"));
+        initHook(MediaViewLayout.INSTANCE,
+            PrefsBridge.getBoolean("system_ui_control_center_media_control_media_button_layout_switch") ||
+                PrefsBridge.getBoolean("system_ui_island_media_control_media_button_layout_switch"));
         initHook(MediaViewSize.INSTANCE, PrefsBridge.getBoolean("system_ui_control_center_media_control_media_button_size_switch") || PrefsBridge.getBoolean("system_ui_island_media_control_media_button_size_switch"));
         initHook(MediaSeekBar.INSTANCE, PrefsBridge.getBoolean("system_ui_control_center_media_control_progress_on") ||
             PrefsBridge.getBoolean("system_ui_island_media_control_progress_on"));

@@ -28,7 +28,7 @@ import android.view.View
 import android.widget.TextView
 import com.sevtinge.hyperceiler.common.utils.PrefsBridge
 import com.sevtinge.hyperceiler.libhook.base.BaseHook
-import com.sevtinge.hyperceiler.libhook.utils.api.DisplayUtils.dp2px
+import io.github.lingqiqi5211.ezhooktool.xposed.EzXposed.appContext
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.beforeHookMethod
 import io.github.lingqiqi5211.ezhooktool.core.callMethod
 import io.github.lingqiqi5211.ezhooktool.xposed.dsl.getObjectField
@@ -337,23 +337,26 @@ object StatusBarClockNew : BaseHook() {
         val expectedLineSpacingMult =
             if (getClockStyle != 0 && name == "clock") clockTextSpacing * 0.05f else null
 
+        val density = appContext.resources.displayMetrics.density
+        fun toPx(dp: Float) = (dp * density + 0.5f).toInt()
+
         val left = when (name) {
-            "clock" -> dp2px(sClockLeftMargin.toFloat())
-            "big_time" -> dp2px(bClockLeftMargin.toFloat())
-            "pad_clock" -> dp2px(pClockLeftMargin.toFloat())
-            else -> dp2px(nClockLeftMargin.toFloat())
+            "clock" -> toPx(sClockLeftMargin.toFloat())
+            "big_time" -> toPx(bClockLeftMargin.toFloat())
+            "pad_clock" -> toPx(pClockLeftMargin.toFloat())
+            else -> toPx(nClockLeftMargin.toFloat())
         }
         val right = when (name) {
-            "clock" -> dp2px(sClockRightMargin.toFloat())
-            "big_time" -> dp2px(bClockRightMargin.toFloat())
-            "pad_clock" -> dp2px(pClockRightMargin.toFloat())
-            else -> dp2px(nClockRightMargin.toFloat())
+            "clock" -> toPx(sClockRightMargin.toFloat())
+            "big_time" -> toPx(bClockRightMargin.toFloat())
+            "pad_clock" -> toPx(pClockRightMargin.toFloat())
+            else -> toPx(nClockRightMargin.toFloat())
         }
         val top = when (name) {
-            "clock" -> if (sClockVerticalOffset != 12) dp2px((sClockVerticalOffset - 12) * 0.5f) else 0
-            "big_time" -> if (bClockVerticalOffset != 12) dp2px((bClockVerticalOffset - 12) * 0.5f) else 0
-            "pad_clock" -> if (pClockVerticalOffset != 12) dp2px((pClockVerticalOffset - 12) * 0.5f) else 0
-            else -> if (nClockVerticalOffset != 12) dp2px((nClockVerticalOffset - 12) * 0.5f) else 0
+            "clock" -> if (sClockVerticalOffset != 12) toPx((sClockVerticalOffset - 12) * 0.5f) else 0
+            "big_time" -> if (bClockVerticalOffset != 12) toPx((bClockVerticalOffset - 12) * 0.5f) else 0
+            "pad_clock" -> if (pClockVerticalOffset != 12) toPx((pClockVerticalOffset - 12) * 0.5f) else 0
+            else -> if (nClockVerticalOffset != 12) toPx((nClockVerticalOffset - 12) * 0.5f) else 0
         }
         val expectedWidth = if (name == "clock" && fixedWidth > 30) {
             (text.resources.displayMetrics.density * fixedWidth).toInt()

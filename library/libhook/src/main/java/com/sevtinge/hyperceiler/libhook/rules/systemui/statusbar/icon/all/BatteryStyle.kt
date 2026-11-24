@@ -54,6 +54,12 @@ object BatteryStyle : BaseHook() {
     private val isEnableBatteryMark by lazy {
         PrefsBridge.getBoolean("system_ui_status_bar_battery_percent_mark")
     }
+    private val leftMargin by lazy {
+        dp2px(PrefsBridge.getInt("system_ui_status_bar_battery_style_left_margin", 0) * 0.5f)
+    }
+    private val rightMargin by lazy {
+        dp2px(PrefsBridge.getInt("system_ui_status_bar_battery_style_right_margin", 0) * 0.5f)
+    }
 
     private val mBatteryMeterViewClass by lazy {
         loadClass("com.android.systemui.statusbar.views.MiuiBatteryMeterView")
@@ -70,15 +76,9 @@ object BatteryStyle : BaseHook() {
     }
 
     private fun setMargin(view1: TextView, view2: TextView) {
-        // 左侧间距
-        var leftMargin =
-            PrefsBridge.getInt("system_ui_status_bar_battery_style_left_margin", 0)
-        leftMargin = dp2px(leftMargin * 0.5f)
-
-        // 右侧间距
-        var rightMargin =
-            PrefsBridge.getInt("system_ui_status_bar_battery_style_right_margin", 0)
-        rightMargin = dp2px(rightMargin * 0.5f)
+        // 左右间距已随其他电量样式配置缓存。
+        val leftMargin = this.leftMargin
+        val rightMargin = this.rightMargin
 
         // 上下偏移量
         var topMargin = 0
