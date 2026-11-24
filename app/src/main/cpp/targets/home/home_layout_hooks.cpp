@@ -91,12 +91,11 @@ void SetInLoaderCallback(bool value);
  *
  * Declared here rather than pulled from a header because the transport is compiled
  * in only with the dock feature: with it off there is nothing to ask, and the gate
- * degrades to "always interactive" (see layout_panel_refresh_and_check) so this
- * file still builds and the worker keeps its unconditional cadence.
+ * degrades to "always interactive" so this file still builds and the worker
+ * keeps its unconditional cadence.
  */
 #if defined(HYPERCEILER_DOCK_NATIVE_MOTION)
-bool refresh_dock_screen_state();
-bool dock_motion_screen_active();
+bool refresh_dock_screen_state(bool &drawable);
 // The dock translation unit owns the madvise guard used by every launcher
 // code patch. It checks readiness and registers the range atomically.
 bool home_madvise_protect_range(uintptr_t address, size_t bytes);
@@ -2241,16 +2240,17 @@ bool rate_limited(std::atomic_uint64_t &stamp, unsigned seconds) {
 /*
  * Ask whether the panel is interactive and the launcher window can be drawn.
  *
- * Fail-open in both directions: built without the dock transport there is nobody to ask, and with it
- * a failed query keeps the transport's previous answer (which starts at "interactive"). A missing
- * endpoint therefore costs the saving, never the hooks.
+ * A failed query must not substitute Dock's shared last-good cache for this reply.
  */
-bool layout_panel_refresh_and_check() {
+enum class LayoutPanelState { Drawable, Hidden, Unavailable };
+
+LayoutPanelState query_layout_panel() {
 #if defined(HYPERCEILER_DOCK_NATIVE_MOTION)
-    (void) refresh_dock_screen_state();
-    return dock_motion_screen_active();
+    bool drawable;
+    if (!refresh_dock_screen_state(drawable)) return LayoutPanelState::Unavailable;
+    return drawable ? LayoutPanelState::Drawable : LayoutPanelState::Hidden;
 #else
-    return true;
+    return LayoutPanelState::Drawable;
 #endif
 }
 
@@ -5677,7 +5677,11 @@ void *worker(void *) {
      */
     uint64_t last_panel_query = 0;
     uint64_t last_generation_check = 0;
+    bool last_panel_was_hidden = false;
+    bool defer_panel_probe = false;
     for (;;) {
+        // The fallback pass already slept for kPassIntervalMs. Wait out the rest outside its lease.
+        if (defer_panel_probe) delay_ms(kDozingIterationMs - kPassIntervalMs);
         const uint64_t now = monotonic_ms();
         /*
          * Drawable-desktop gate, the same one the dock maintenance worker uses. While the panel
@@ -5688,13 +5692,19 @@ void *worker(void *) {
          * dock measured that exact pattern as essentially the entire cost of the launcher process
          * while the screen was off.
          *
-         * Only a *fresh* answer skips a pass, so a stale "dozing" cannot stop maintenance: the loop
-         * is asleep for kDozingIterationMs, which is also what makes the query itself one call per
-         * that interval while dozing.
+         * Only a fresh hidden reply skips a pass. If the last confirmed state was hidden, a
+         * failed probe allows maintenance without resetting the slower probe cadence.
          */
-        if (interval_due(last_panel_query, now, kPanelQueryIntervalMs)) {
+        if (defer_panel_probe || interval_due(last_panel_query, now, kPanelQueryIntervalMs)) {
             last_panel_query = now;
-            if (!layout_panel_refresh_and_check()) {
+            defer_panel_probe = false;
+            const auto panel = query_layout_panel();
+            if (panel != LayoutPanelState::Unavailable) {
+                last_panel_was_hidden = panel == LayoutPanelState::Hidden;
+            } else {
+                defer_panel_probe = last_panel_was_hidden;
+            }
+            if (panel == LayoutPanelState::Hidden) {
                 /*
                  * A shorter doze pause than the dock's 30 s. The dock maintains a hook chain that
                  * only matters while a gesture is running, while this one owns on-screen geometry: a
@@ -5854,6 +5864,7 @@ void *worker(void *) {
                 }
                 const bool cell_changed = latest.cell_x != config.cell_x
                     || latest.cell_y != config.cell_y || latest.grid_enabled != config.grid_enabled;
+                const bool phone_grid_tweaks_changed = cell_changed && (latest.grid_enabled || config.grid_enabled);
                 const bool knobs_changed = latest.knobs != config.knobs;
                 const bool recent_changed = latest.recent != config.recent;
                 const bool tweaks_changed = latest.tweaks != config.tweaks;
@@ -5877,8 +5888,9 @@ void *worker(void *) {
                 }
                 if (tweaks_changed || recent_changed) {
                     publish_animation_rate(config.tweaks);
+                }
+                if (tweaks_changed || recent_changed || phone_grid_tweaks_changed) {
                     push_tweaks(config);
-
                 }
                 (void) sync_widget_move(config.widget_allow_move);
                 (void) sync_folder_auto_close(config.folder_auto_close);

@@ -14,7 +14,8 @@ public class HyosEndpointTest {
  static void check(boolean b){if(!b)throw new AssertionError();}static void eq(Object a,Object b){if(!Objects.equals(a,b))throw new AssertionError(a+" != "+b);}
  static void set(String name,Object value){try{var f=HomeLayoutNativeEndpointOS4.class.getDeclaredField(name);f.setAccessible(true);f.set(null,value);}catch(Exception e){throw new AssertionError(e);}}
  static Object get(String name){try{var f=HomeLayoutNativeEndpointOS4.class.getDeclaredField(name);f.setAccessible(true);return f.get(null);}catch(Exception e){throw new AssertionError(e);}}
- static void reset(){set("cachedValues",null);set("cachedFrameworkReason",null);set("cachedFrameworkFingerprint",null);BaseLoad.resetFrameworkForTest();set("hyosSnapshotLive",false);set("hyosSnapshotAtNanos",0L);set("paused",false);set("refreshEpoch",0L);set("refresher",new Thread());BaseHook.resetTestState();Binder.setCallingIdentityForTest(10100,42);PackageManager.packages=new String[]{"com.miui.home"};PackageManager.fail=false;ContentResolver.values=Map.of();ContentResolver.failure="";ContentResolver.afterSnapshot=()->{};ContentResolver.queries.set(0);ContentResolver.reads.set(0);}
+ static final AtomicLong now=new AtomicLong();
+ static void reset(){set("cachedValues",null);set("combinedPublished",null);BaseLoad.resetFrameworkForTest();set("paused",false);set("refreshEpoch",0L);set("refresher",new Thread());BaseHook.resetTestState();Binder.setCallingIdentityForTest(10100,42);PackageManager.packages=new String[]{"com.miui.home"};PackageManager.fail=false;ContentResolver.values=Map.of();ContentResolver.failure="";ContentResolver.afterSnapshot=()->{};ContentResolver.queries.set(0);ContentResolver.reads.set(0);now.set(10_000_000_000L);android.os.SystemClock.source=now::get;}
  static void run(String name,Runnable r){reset();try{r.run();passes++;System.out.println("PASS "+name);}catch(Throwable e){failures++;System.out.println("FAIL "+name+" "+e);}}
  static HomeLayoutNativeEndpointOS4 endpoint(){return new HomeLayoutNativeEndpointOS4((uid,pid)->uid==10100&&pid==42,()->{throw new AssertionError("legacy layout reader must not provide Hyos flags");});}
  static int receive(){return endpoint().receiveHyosFlags(new Parcel(DESCRIPTOR),0);}
@@ -48,7 +49,16 @@ public class HyosEndpointTest {
  run("soft glass requires active dock",()->{publish(prefs("allow_hook",true,"home_dock_add_blur","1"));eq(receive(),1);publish(prefs("allow_hook",true,"home_dock_bg_custom_enable",true,"home_dock_add_blur","1"));eq(receive(),25);});
  run("all supported features produce exactly63",()->{publish(prefs("allow_hook",true,"home_other_high_models",true,"home_other_disable_prestart",true,"home_dock_bg_custom_enable",true,"home_dock_add_blur","1","home_title_hide_report_text",true));eq(receive(),63);});
  run("unknown blur choice does not set soft glass",()->{publish(prefs("allow_hook",true,"home_dock_bg_custom_enable",true,"home_dock_add_blur","99"));eq(receive(),17);});
- run("fresh snapshot accepted and older than5 seconds rejected",()->{publish(prefs("allow_hook",true));set("hyosSnapshotAtNanos",System.nanoTime()-1_000_000_000L);eq(receive(),1);set("hyosSnapshotAtNanos",System.nanoTime()-6_000_000_000L);eq(receive(),-1);});
+ run("slow HCY1 query expires at the same suspend-inclusive deadline as HCS1",()->{
+  ContentResolver.afterSnapshot=()->now.addAndGet(2_000_000_000L);publish(prefs("allow_hook",true));
+  eq(HomeLayoutNativeEndpointOS4.readCombinedSnapshot().deadline(),15_000_000_000L);
+  now.set(14_999_999_999L);eq(receive(),1);now.incrementAndGet();eq(receive(),-1);
+ });
+ run("superseded HCY1 authorization is not returned",()->{
+  publish(prefs("allow_hook",true));AtomicInteger calls=new AtomicInteger();
+  android.os.SystemClock.source=()->{if(calls.incrementAndGet()==2)publish(prefs("allow_hook",false));return now.get();};
+  eq(receive(),-1);eq(receive(),0);
+ });
  run("hot reload restored map never resurrects live authorization",()->{BaseHook.putHotReloadRuntimeState("OS4.HomeLayout.ProviderSnapshot.v1",Map.of("allow_hook",1,"home_title_hide_report_text",1));eq(receive(),-1);check(get("cachedValues")!=null);publish(prefs("allow_hook",true));eq(receive(),1);});
  run("fresh success then unavailable retires native authorization but preserves layout cache",()->{publish(prefs("allow_hook",true));Object cache=get("cachedValues");ContentResolver.failure="query";check(!HomeLayoutNativeEndpointOS4.refreshFromProvider());eq(receive(),-1);check(get("cachedValues")==cache);ContentResolver.failure="";publish(prefs("allow_hook",true,"home_title_hide_report_text",true));eq(receive(),33);});
  run("explicit settings clear resets enabled flags",()->{publish(prefs("allow_hook",true,"home_title_hide_report_text",true));eq(receive(),33);publish(Map.of());eq(receive(),0);});

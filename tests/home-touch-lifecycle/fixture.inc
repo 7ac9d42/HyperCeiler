@@ -11,8 +11,10 @@ std::atomic<uint64_t> dock_edit_packed{0};
 void* hc_workspace_scene_original=nullptr;
 uint32_t hc_workspace_double_enabled=0,hc_workspace_double_selected=0,hc_workspace_swipe_enabled=0;
 std::vector<int> emitted;
+#ifndef TEST_ACTION_WORKER
 void emit(int action,uint64_t){if(action)emitted.push_back(action);}
 bool start_worker_locked(){return true;}
+#endif
 struct Event {int masked=0,full=0,count=1;int64_t time=1000;float x=500,y=1000;int id=7;};
 bool stock_active=false;std::vector<int> forwarded;
 void stock(void*,void* input){auto& e=*static_cast<Event*>(input);forwarded.push_back(e.masked);if(e.masked==0)stock_active=true;if(e.masked==1||e.masked==3)stock_active=false;}

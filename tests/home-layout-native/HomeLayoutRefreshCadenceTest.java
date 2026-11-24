@@ -52,20 +52,34 @@ public final class HomeLayoutRefreshCadenceTest {
             for (int pulse = 0; pulse < 20; ++pulse) {
                 now.addAndGet(1_000_000_000L);
                 check(delta() == 30, "steady layout request lost cache");
-                HomeLayoutNativeEndpointOS4.requestRecentsBarPreference(false, null);
+                HomeLayoutNativeEndpointOS4.readRecentsBarObservation();
             }
             ContentResolver.signalChange(PREF + "/integer/prefs_key_unrelated_setting");
             check(delta() == 30 && ContentResolver.queryCount() == 1, "idle heartbeat or unrelated write queried provider");
+
+            ContentResolver.putRow(TOP, 75); // Deliberately omit the notification.
+            for (int pulse = 0; pulse < 40; ++pulse) {
+                now.addAndGet(1_000_000_000L);
+                check(delta() == 30, "observed layout heartbeat bypassed the cache");
+                HomeLayoutNativeEndpointOS4.requestRecentsBarRefresh(false, null);
+            }
+            Thread.sleep(200);
+            check(worker.getState() == Thread.State.WAITING && ContentResolver.queryCount() == 1,
+                "layout or scene heartbeat queried an observed provider in steady state");
+            HomeLayoutNativeEndpointOS4.requestRecentsBarRefresh(true, null);
+            await(() -> delta() == 45, "visible Overview did not recover from a lost notification");
+            await(() -> worker.getState() == Thread.State.WAITING, "worker did not settle after revalidation");
+            check(ContentResolver.queryCount() == 2, "lost notification repeated the query");
 
             ContentResolver.putRow(TOP, 90);
             for (int index = 0; index < 20; ++index) ContentResolver.signalChange(PREF + "/integer/" + TOP);
             now.addAndGet(1_000_000_000_000L); // Elapsed time across simulated suspend.
             Thread.sleep(200);
-            check(worker.getState() == Thread.State.WAITING && ContentResolver.queryCount() == 1,
+            check(worker.getState() == Thread.State.WAITING && ContentResolver.queryCount() == 2,
                 "configuration write without a client queried provider");
             await(() -> delta() == 60, "dirty snapshot did not refresh on the next request");
             await(() -> worker.getState() == Thread.State.WAITING, "worker did not settle after update");
-            check(ContentResolver.queryCount() == 2, "write burst did not coalesce");
+            check(ContentResolver.queryCount() == 3, "write burst did not coalesce");
 
             ContentResolver.failAt(0, "query");
             ContentResolver.signalChange(PREF + "/integer/" + TOP);
@@ -80,7 +94,7 @@ public final class HomeLayoutRefreshCadenceTest {
                 "failure burst did not enter cooldown");
             for (int index = 0; index < 100; ++index) {
                 check(delta() == 60, "failure lost last-good layout");
-                HomeLayoutNativeEndpointOS4.requestRecentsBarPreference(false, null);
+                HomeLayoutNativeEndpointOS4.readRecentsBarObservation();
             }
             check(ContentResolver.queryCount() == 3, "repeated requests bypassed cooldown");
         } finally {

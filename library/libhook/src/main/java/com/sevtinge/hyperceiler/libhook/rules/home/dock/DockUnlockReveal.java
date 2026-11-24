@@ -508,6 +508,8 @@ public final class DockUnlockReveal {
      * material and its container cannot drift even when either process skips frames.
      */
     public static final class ContainerPose {
+        private static final ContainerPose IDENTITY = new ContainerPose(1f, 1f, 1f, 1f, 1f, false);
+
         public final float scaleX;
         public final float scaleY;
         public final float cropWidth;
@@ -526,7 +528,7 @@ public final class DockUnlockReveal {
         }
 
         public static ContainerPose identity() {
-            return new ContainerPose(1f, 1f, 1f, 1f, 1f, false);
+            return IDENTITY;
         }
 
         /**

@@ -26,14 +26,14 @@ public final class HomeQuickSwitchOS4 {
     static boolean synchronous(int flags) { return (flags & android.os.IBinder.FLAG_ONEWAY) == 0; }
 
     private static void diagnostic(String text) {
-        if (android.os.SystemProperties.getBoolean("debug.hyperceiler.gesture_probe", false))
-            com.sevtinge.hyperceiler.common.log.ModuleLog.i("HyperCeiler.HomeGesture", text);
+        com.sevtinge.hyperceiler.common.log.ModuleLog.i("HyperCeiler.HomeGesture", text);
     }
 
     public static synchronized void receive(Parcel data, Parcel reply, int flags) {
         boolean result = false;
         int uid = Binder.getCallingUid(), pid = Binder.getCallingPid();
         try {
+            boolean probe = android.os.SystemProperties.getBoolean("debug.hyperceiler.gesture_probe", false);
             data.enforceInterface("android.view.IWindowManager");
             int event = data.readInt(); long time = data.readLong();
             int expected = event == 7 ? data.readInt() : -1;
@@ -41,24 +41,24 @@ public final class HomeQuickSwitchOS4 {
             long now = SystemClock.uptimeMillis();
             if (!synchronous(flags) || data.dataAvail() != 0 || event < 1 || event > 12 || time > now
                 || now - time > 750 || ((event == 6 || event == 7) && now - lastSwitch < 350)) {
-                diagnostic("reject protocol event="+event+" flags="+flags+" remaining="+data.dataAvail()+" age="+(now-time));
+                if (probe) diagnostic("reject protocol event="+event+" flags="+flags+" remaining="+data.dataAvail()+" age="+(now-time));
                 reply.writeInt(ACK); reply.writeInt(0); return;
             }
             if(context==null || (event >= 7 ? (event == 7 && expected < 0) || !isSystemUI(context,uid,pid) : !isLauncher(context,uid,pid))) {
-                diagnostic("reject caller uid="+uid+" pid="+pid+" context="+(context!=null));
+                if (probe) diagnostic("reject caller uid="+uid+" pid="+pid+" context="+(context!=null));
                 reply.writeInt(ACK); reply.writeInt(0); return;
             }
             long token = Binder.clearCallingIdentity();
             try {
                 android.app.KeyguardManager keyguard = (android.app.KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
                 android.os.PowerManager power = (android.os.PowerManager) context.getSystemService(Context.POWER_SERVICE);
-                diagnostic("dispatch event="+event+" interactive="+power.isInteractive()+" locked="+keyguard.isKeyguardLocked());
+                if (probe) diagnostic("dispatch event="+event+" interactive="+power.isInteractive()+" locked="+keyguard.isKeyguardLocked());
                 if (power.isInteractive() && !keyguard.isKeyguardLocked()) {
                     if ((event == 6 || event == 7) && enabled(context)) {
                         result = switchPrevious(context, expected);
                         if (result) lastSwitch = now;
                     } else if (event < 6 || event >= 8) result = performGesture(context,event);
-                    else diagnostic("reject quick preference");
+                    else if (probe) diagnostic("reject quick preference");
                 }
             } finally { Binder.restoreCallingIdentity(token); }
         } catch (Exception error) {

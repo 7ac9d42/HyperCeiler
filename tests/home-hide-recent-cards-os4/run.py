@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Run the actual Provider, runtime group filter and SystemUI hook against observable boundaries."""
 from pathlib import Path
-import os,subprocess,tempfile
+import os,subprocess,tempfile,zipfile
 R=Path(__file__).resolve().parents[2];H=Path(__file__).resolve().parent
 sources={
-'android/os/IBinder.java':'package android.os;public interface IBinder{}',
-'android/os/IInterface.java':'package android.os;public interface IInterface{}',
-'android/os/Binder.java':'package android.os;public class Binder implements IBinder{public static int uid=10139;public static int getCallingUid(){return uid;}}',
+'android/os/IBinder.java':'package android.os;public interface IBinder{boolean isBinderAlive();}',
+'android/os/IInterface.java':'package android.os;public interface IInterface{IBinder asBinder();}',
+'android/os/Binder.java':'package android.os;public class Binder implements IBinder{public static int uid=10139;public boolean alive=true;public static int getCallingUid(){return uid;}public boolean isBinderAlive(){return alive;}}',
 'android/os/SystemClock.java':'package android.os;public class SystemClock{public static long now=10000;public static long elapsedRealtime(){return now;}}',
 'android/content/ComponentName.java':'package android.content;public class ComponentName{final String p;public ComponentName(String p){this.p=p;}public String getPackageName(){return p;}}',
 'android/content/Intent.java':'package android.content;public class Intent{public ComponentName c;public String p;public ComponentName getComponent(){return c;}public String getPackage(){return p;}}',
@@ -38,7 +38,7 @@ public static Object invoke(Object o,String name,Class<?>[] types,Object... args
 ''',
 'com/android/wm/shell/recents/IRecentTasks.java':'''package com.android.wm.shell.recents;
 public interface IRecentTasks extends android.os.IInterface{
-public abstract static class Stub extends android.os.Binder implements IRecentTasks{public abstract Group[] getRecentTasks(int max,int flags,int user);public abstract void registerRecentTasksListener(Listener listener);public abstract void unregisterRecentTasksListener(Listener listener);}
+public abstract static class Stub extends android.os.Binder implements IRecentTasks{public android.os.IBinder asBinder(){return this;}public abstract Group[] getRecentTasks(int max,int flags,int user);public abstract void registerRecentTasksListener(Listener listener);public abstract void unregisterRecentTasksListener(Listener listener);}
 public interface Listener extends android.os.IInterface{}
 public static class Group{public java.util.List<android.app.TaskInfo> tasks;public boolean broken;public Group(android.app.TaskInfo... t){tasks=java.util.Arrays.asList(t);}public java.util.List<android.app.TaskInfo> getTaskInfoList(){if(broken)throw new IllegalStateException("OEM getter failed");return tasks;}}}
 '''
@@ -52,10 +52,17 @@ with tempfile.TemporaryDirectory(prefix='hc-hide-recents-')as tmp:
  lib=R/'library/libhook/src/main/java/com/sevtinge/hyperceiler/libhook'
  files += [lib/'base/OriginalArgumentsHook.java',lib/'provider/HomeLayoutPrefsSnapshot.java',lib/'rules/home/recent/HomeRecentCardsFilter.java',lib/'rules/home/recent/HomeHideRecentCardsOS4.java',H/'Test.java']
  jdk=Path(os.environ.get('JAVA_HOME','/opt/homebrew/opt/openjdk@25/libexec/openjdk.jdk/Contents/Home'))/'bin'
- cache=Path.home()/'.gradle/caches/modules-2/files-2.1'
+ cache=Path(os.environ.get('GRADLE_USER_HOME',str(Path.home()/'.gradle')))/'caches/modules-2/files-2.1'
  jars=[]
  for artifact,version in [('io.github.lingqiqi5211.ezhooktool/hook-xposed-102','1.3.0'),('io.github.libxposed/api','102.0.0'),('org.jetbrains.kotlin/kotlin-stdlib','2.4.10')]:
-  jars.append(next((cache/artifact/version).rglob('*.jar')))
+  location=cache/artifact/version
+  jar=next(location.glob('*/*.jar'),None)
+  if jar is None:
+   aar=next(location.glob('*/*.aar'),None)
+   if aar is None: raise SystemExit(f'Missing cached dependency {artifact} {version}')
+   jar=out/(aar.stem+'-classes.jar')
+   with zipfile.ZipFile(aar) as archive: jar.write_bytes(archive.read('classes.jar'))
+  jars.append(jar)
  cp=os.pathsep.join(map(str,jars))
  subprocess.run([str(jdk/'javac'),'-cp',cp,'--release','21','-encoding','UTF-8','-d',str(out),*map(str,files)],check=True)
  subprocess.run([str(jdk/'java'),'-ea','-cp',str(out)+os.pathsep+cp,'Test'],check=True)

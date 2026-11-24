@@ -7,6 +7,7 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.IBinder;
 import android.os.IInterface;
 import android.os.SystemClock;
 import com.sevtinge.hyperceiler.common.log.ModuleLog;
@@ -36,9 +37,27 @@ public final class HomeHideRecentCardsOS4 extends BaseHook {
     private final Object publication = new Object();
     private final Object contextGate = new Object();
     private final Set<Class<?>> bound = new HashSet<>();
-    private record Listener(int uid, Object target, Method changed) { }
+    private static final class Listener {
+        final int appId;
+        final IInterface target;
+        final IBinder binder;
+        final Method changed;
+        Set<String> packages;
+
+        Listener(int appId, IInterface target, Method changed, Set<String> packages) {
+            this.appId = appId;
+            this.target = target;
+            this.binder = target.asBinder();
+            this.changed = changed;
+            this.packages = packages;
+        }
+
+        boolean alive() { return binder != null && binder.isBinderAlive(); }
+    }
     private final ConcurrentHashMap<Object, Listener> listeners = new ConcurrentHashMap<>();
-    private final AtomicBoolean queued = new AtomicBoolean(), appliedReported = new AtomicBoolean();
+    private final AtomicBoolean appliedReported = new AtomicBoolean();
+    private final Set<Integer> requestedAppIds = new HashSet<>();
+    private boolean queued;
     private final ThreadLocal<ArrayDeque<Selection>> calls = ThreadLocal.withInitial(ArrayDeque::new);
     private static final Selection STOCK = new Selection(Set.of(), -1);
     private volatile Selection selection;
@@ -46,6 +65,7 @@ public final class HomeHideRecentCardsOS4 extends BaseHook {
     private volatile boolean closed;
     private volatile long retryAt;
     private long revision;
+    private int knownLauncherAppId = -1;
     private Set<String> lastPackages = Set.of();
     private String lastFailure = "";
     private ContentObserver observer;
@@ -98,15 +118,19 @@ public final class HomeHideRecentCardsOS4 extends BaseHook {
             observeMethod(implementation, new IMethodHook() {
                 @Override public void before(HookParam p) {
                     Selection current = selection;
-                    if (!closed && current == null && SystemClock.elapsedRealtime() >= retryAt) requestRefresh();
                     calls.get().push(!closed && current != null && current.owns(Binder.getCallingUid()) ? current : STOCK);
                 }
                 @Override public void after(HookParam p) {
                     var stack = calls.get();
                     Selection captured = stack.isEmpty() ? STOCK : stack.pop();
                     if (stack.isEmpty()) calls.remove();
-                    if (closed || captured == STOCK || captured != selection || captured.packages().isEmpty()
-                        || p.getThrowable() != null) return;
+                    if (closed || p.getThrowable() != null) return;
+                    Selection current = selection;
+                    if (current == null && SystemClock.elapsedRealtime() >= retryAt) {
+                        int appId = Binder.getCallingUid() % 100000;
+                        if (appId >= 10000) requestRefresh(appId);
+                    }
+                    if (captured == STOCK || captured != current || captured.packages().isEmpty()) return;
                     try {
                         Object original = p.getResult(), filtered = plan.filter(original, captured.packages());
                         if (selection != captured || closed || filtered == original) return;
@@ -148,8 +172,10 @@ public final class HomeHideRecentCardsOS4 extends BaseHook {
         hookMethod(selected, new IMethodHook() {
             @Override public void after(HookParam p) {
                 if (closed || p.getThrowable() != null) return;
-                Object listener = p.getArgs()[0];
-                if (register && listener != null && listeners.size() < 8) {
+                Object owner = p.getThisObject();
+                if (register && p.getArgs()[0] instanceof IInterface listener) {
+                    int appId = Binder.getCallingUid() % 100000;
+                    if (appId < 10000) { listeners.remove(owner); return; }
                     try {
                         // The listener interface can be optimized too. Resolve
                         // its actual local Stub OR remote Proxy, not a Stub-only Method.
@@ -157,72 +183,135 @@ public final class HomeHideRecentCardsOS4 extends BaseHook {
                         if (callback.getReturnType() != void.class || Modifier.isStatic(callback.getModifiers()))
                             throw new NoSuchMethodException("listener callback");
                         callback.setAccessible(true);
-                        listeners.put(p.getThisObject(), new Listener(Binder.getCallingUid(), listener, callback));
-                    } catch (ReflectiveOperationException e) { failure("listener callback unavailable", e); }
-                } else listeners.remove(p.getThisObject());
+                        synchronized (publication) {
+                            if (closed) return;
+                            listeners.entrySet().removeIf(entry -> !entry.getValue().alive());
+                            if (!listeners.containsKey(owner) && listeners.size() >= 8) return;
+                            listeners.put(owner, new Listener(appId, listener, callback,
+                                selection == null ? null : selection.packages()));
+                        }
+                        requestRefresh(0);
+                    } catch (ReflectiveOperationException | RuntimeException e) {
+                        listeners.remove(owner);
+                        failure("listener callback unavailable", e);
+                    }
+                } else listeners.remove(owner);
             }
         });
     }
     private void attach(Context app) {
         synchronized (contextGate) {
             if (closed || context != null || !"com.android.systemui".equals(app.getPackageName())) return;
-            Context application = app.getApplicationContext(); context = application == null ? app : application;
+            Context application = app.getApplicationContext();
+            Context source = application == null ? app : application;
             observer = new ContentObserver(null) {
                 @Override public void onChange(boolean self, Uri uri) {
                     String key = uri == null ? "" : uri.getLastPathSegment();
                     if (key == null || key.isEmpty() || key.equals("home_layout")
                         || key.endsWith(HomeLayoutPrefsSnapshot.RECENT_CARDS_KEY)
                         || key.endsWith("allow_hook")) {
-                        synchronized (publication) { ++revision; selection = null; retryAt = 0; }
-                        requestRefresh();
+                        synchronized (publication) {
+                            if (closed) return;
+                            ++revision; selection = null; knownLauncherAppId = -1;
+                        }
+                        requestRefresh(0);
                     }
                 }
             };
             try {
-                context.getContentResolver().registerContentObserver(ROOT, true, observer);
-                requestRefresh();
+                source.getContentResolver().registerContentObserver(ROOT, true, observer);
+                context = source;
             } catch (Exception e) {
-                try { context.getContentResolver().unregisterContentObserver(observer); } catch (RuntimeException ignored) { }
-                context = null; failure("preference observer", e);
+                try { source.getContentResolver().unregisterContentObserver(observer); } catch (RuntimeException ignored) { }
+                failure("preference observer", e);
             }
         }
+        requestRefresh(0);
     }
-    private void requestRefresh() {
-        if (closed || context == null || !queued.compareAndSet(false, true)) return;
+    private boolean hasLiveListener() {
+        for (Listener listener : listeners.values()) if (listener.alive()) return true;
+        return false;
+    }
+    private void requestRefresh(int appId) {
+        synchronized (publication) {
+            if (closed || context == null || selection != null || SystemClock.elapsedRealtime() < retryAt) return;
+            if (appId >= 10000) {
+                if (knownLauncherAppId >= 0 && knownLauncherAppId != appId) return;
+                requestedAppIds.add(appId);
+            }
+            if (queued || (requestedAppIds.isEmpty() && !hasLiveListener())) return;
+            queued = true;
+        }
         try { ThreadPoolManager.execute(this::refresh); }
-        catch (RuntimeException rejected) { queued.set(false); retryAt = SystemClock.elapsedRealtime() + 2000; }
+        catch (RuntimeException rejected) {
+            synchronized (publication) { postponeRefresh(); queued = false; }
+        }
+    }
+    private void postponeRefresh() {
+        retryAt = SystemClock.elapsedRealtime() + 2000;
+        requestedAppIds.clear();
     }
     private void refresh() {
-        long completed = -1;
         try {
-            for (int attempt = 0; attempt < 4 && !closed; ++attempt) {
-                long ticket; synchronized (publication) { ticket = revision; }
-                Selection next = readSelection();
+            long identityRevision;
+            synchronized (publication) {
+                if (closed || (requestedAppIds.isEmpty() && !hasLiveListener())) return;
+                identityRevision = revision;
+            }
+            int appId = context.getPackageManager().getApplicationInfo("com.miui.home", 0).uid % 100000;
+            if (appId < 10000) {
+                synchronized (publication) { postponeRefresh(); }
+                return;
+            }
+            for (int attempt = 0; attempt < 4; ++attempt) {
+                long ticket;
+                synchronized (publication) {
+                    if (closed) return;
+                    if (revision == identityRevision) knownLauncherAppId = appId;
+                    listeners.entrySet().removeIf(entry -> entry.getValue().appId != appId);
+                    boolean requested = requestedAppIds.contains(appId);
+                    requestedAppIds.clear();
+                    if (!requested && !hasLiveListener()) return;
+                    ticket = revision;
+                }
+                Selection next = readSelection(appId);
                 boolean changed;
                 synchronized (publication) {
                     if (closed) return;
+                    if (next == null) { postponeRefresh(); return; }
                     if (revision != ticket) continue;
-                    selection = next; completed = ticket;
-                    retryAt = next == null ? SystemClock.elapsedRealtime() + 2000 : 0;
-                    changed = next != null && !lastPackages.equals(next.packages());
-                    if (next != null) lastPackages = next.packages();
+                    requestedAppIds.clear();
+                    selection = next;
+                    retryAt = 0;
+                    changed = !lastPackages.equals(next.packages());
+                    lastPackages = next.packages();
                 }
                 if (changed) {
                     appliedReported.set(false);
                     ModuleLog.i(TAG, "physical selection published count=" + next.packages().size());
-                    for (Listener listener : listeners.values()) try {
-                        if (!closed && selection == next && next.owns(listener.uid()))
-                            listener.changed().invoke(listener.target());
-                    } catch (Exception e) { failure("listener invalidation", e); }
                 }
+                listeners.forEach((owner, listener) -> notifyListener(owner, listener, next, changed));
                 return;
             }
+            synchronized (publication) { postponeRefresh(); }
+        } catch (Exception | LinkageError e) {
+            synchronized (publication) { postponeRefresh(); }
+            failure("launcher identity unavailable", e);
         } finally {
-            queued.set(false);
-            synchronized (publication) { if (!closed && revision != completed) requestRefresh(); }
+            synchronized (publication) { queued = false; }
+            requestRefresh(0);
         }
     }
-    private Selection readSelection() {
+    private void notifyListener(Object owner, Listener listener, Selection next, boolean changed) {
+        if (closed || selection != next || listener.appId != next.launcherAppId()
+            || listeners.get(owner) != listener || !listener.alive()) return;
+        Set<String> previous = listener.packages;
+        listener.packages = next.packages();
+        if (previous == null ? !changed && next.packages().isEmpty() : previous.equals(next.packages())) return;
+        try { listener.changed.invoke(listener.target); }
+        catch (Exception e) { failure("listener invalidation", e); }
+    }
+    private Selection readSelection(int appId) {
         try (Cursor cursor = context.getContentResolver().query(Uri.withAppendedPath(ROOT, "home_layout"), null, null, null, null)) {
             if (cursor == null || !cursor.moveToFirst() || !"schema".equals(cursor.getColumnName(0))
                 || cursor.getInt(0) != HomeLayoutPrefsSnapshot.SCHEMA) return null;
@@ -234,8 +323,7 @@ public final class HomeHideRecentCardsOS4 extends BaseHook {
                 int at = cursor.getColumnIndex(key);
                 if (at >= 0 && !cursor.isNull(at) && cursor.getInt(at) != 1) packages = Set.of();
             }
-            int uid = context.getPackageManager().getApplicationInfo("com.miui.home", 0).uid;
-            return new Selection(packages, uid % 100000);
+            return new Selection(packages, appId);
         } catch (Exception | LinkageError e) { failure("physical preferences unavailable", e); return null; }
     }
     private synchronized void failure(String stage, Throwable error) {
@@ -244,12 +332,15 @@ public final class HomeHideRecentCardsOS4 extends BaseHook {
         lastFailure = value; ModuleLog.w(TAG, value + ", original behavior retained");
     }
     private void close() {
-        synchronized (publication) { closed = true; ++revision; selection = null; }
+        synchronized (publication) {
+            closed = true; ++revision; selection = null;
+            requestedAppIds.clear(); listeners.clear();
+        }
         synchronized (contextGate) {
             Context current = context;
             if (current != null && observer != null) try { current.getContentResolver().unregisterContentObserver(observer); }
             catch (RuntimeException ignored) { }
         }
-        listeners.clear(); synchronized (bound) { bound.clear(); }
+        synchronized (bound) { bound.clear(); }
     }
 }

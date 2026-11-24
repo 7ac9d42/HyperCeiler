@@ -24,13 +24,23 @@ internal class HomeRecentsStatusBarOS4(private val record: (String) -> Unit) {
     }
     private val state = HomeRecentsBarState()
     private val queued = AtomicBoolean(false)
+    private val demandCheckQueued = AtomicBoolean(false)
     @Volatile private var stopped = false
     @Volatile private var ready = false
     @Volatile private var window: Any? = null
-    @Volatile private var preference = HomeLayoutNativeEndpointOS4.RecentsBarPreference(false, false, 0)
+    @Volatile private var preference = HomeLayoutNativeEndpointOS4.NO_RECENTS_BAR_PREFERENCE
     private var service: Any? = null
-    private var handler: Handler? = null
-    private var lock: Any? = null
+    @Volatile private var handler: Handler? = null
+    @Volatile private var lock: Any? = null
+    private inner class Demand(val deadline: Long, val probe: Boolean) : java.util.function.BooleanSupplier {
+        override fun getAsBoolean(): Boolean =
+            !stopped && ready && System.nanoTime() < deadline && latestDemand === this
+    }
+    // Binder must not wait for WMS. Never take the WMS lock while holding this lock.
+    private val sceneLock = Any()
+    @Volatile private var latestDemand: Demand? = null
+    private var demandPending = false
+    private val publicationChanged = Runnable { if (ready && !stopped) schedule() }
     private lateinit var display: Method
     private lateinit var visible: Method
     private lateinit var keyguard: Method
@@ -39,6 +49,7 @@ internal class HomeRecentsStatusBarOS4(private val record: (String) -> Unit) {
     private lateinit var focus: Field
     private var applied = false
     private var appliedDisplay: Any? = null
+    private var retryPolicyNotification = false
     private var reportedFailure = false
     private val expiry = Runnable { schedule() }
 
@@ -89,13 +100,19 @@ internal class HomeRecentsStatusBarOS4(private val record: (String) -> Unit) {
                 method(policy, "getStatusControlTarget", controlTarget, type, Boolean::class.javaPrimitiveType!!, IntArray::class.java),
                 method(policy, "updateBarControlTarget", Void.TYPE, type))
             observeAfter(method(type, "getRequestedVisibleTypes", Int::class.javaPrimitiveType!!)) { param ->
-                if (param.thisObject === window && shouldHide()) param.result = (param.result as Int) and STATUS.inv()
+                if (param.thisObject !== window) return@observeAfter
+                val requested = param.result
+                if (requested is Int && (requested and STATUS) == 0) return@observeAfter
+                if (shouldHide()) param.result = (requested as Int) and STATUS.inv()
             }
             observeAfter(method(type, "isRequestedVisible", Boolean::class.javaPrimitiveType!!, Int::class.javaPrimitiveType!!)) { param ->
-                if (param.thisObject === window && param.args[0] == STATUS && shouldHide()) param.result = false
+                if (param.thisObject !== window || param.args[0] != STATUS) return@observeAfter
+                if ((param.result as? Boolean) == false) return@observeAfter
+                if (shouldHide()) param.result = false
             }
             observeAfter(forciblyHidden) { param ->
-                if (param.args[0] == STATUS && shouldHide() && runCatching {
+                if (param.args[0] != STATUS || (param.result as? Boolean) == true) return@observeAfter
+                if (shouldHide() && runCatching {
                         val target = window ?: return@runCatching false
                         val dc = display.invoke(target) ?: return@runCatching false
                         insetsPolicy.invoke(dc) === param.thisObject
@@ -112,6 +129,7 @@ internal class HomeRecentsStatusBarOS4(private val record: (String) -> Unit) {
             val deoptimized = controlCallers.count { BaseHook.deoptimize(it) }
             record("recents status bar control callers deoptimized=$deoptimized/${controlCallers.size}")
             ready = true
+            HomeLayoutNativeEndpointOS4.setRecentsPublicationListener(publicationChanged)
             record("recents status bar window policy installed, native execution and visible effect require separate evidence")
         } catch (error: Throwable) { fail(error) }
     }
@@ -127,7 +145,13 @@ internal class HomeRecentsStatusBarOS4(private val record: (String) -> Unit) {
     fun bind(target: Any, wm: Any) {
         if (!ready || stopped) return
         try {
-            if (window === target) return
+            if (window === target) {
+                val pending = synchronized(sceneLock) {
+                    demandPending && latestDemand?.let { System.nanoTime() < it.deadline } == true
+                }
+                if (pending && isFocusedHomeWindow(target)) schedule(checkDemand = true)
+                return
+            }
             val dc = display.invoke(target) ?: return
             val id = method(dc.javaClass, "getDisplayId", Int::class.javaPrimitiveType!!).invoke(dc) as Int
             if (id != 0) return
@@ -135,54 +159,74 @@ internal class HomeRecentsStatusBarOS4(private val record: (String) -> Unit) {
             val uid = field(session.javaClass, "mUid").getInt(session)
             val pid = field(session.javaClass, "mPid").getInt(session)
             if (uid < 10000 || pid <= 0) return
-            service = wm
-            handler = field(wm.javaClass, "mH").get(wm) as Handler
-            lock = field(wm.javaClass, "mGlobalLock").get(wm)
-            state.bind(uid, pid)
-            window = target
+            val wmLock = field(wm.javaClass, "mGlobalLock").get(wm) ?: return
+            val wmHandler = field(wm.javaClass, "mH").get(wm) as Handler
+            synchronized(sceneLock) {
+                if (stopped || window === target) return
+                service = wm
+                lock = wmLock
+                handler = wmHandler
+                state.bind(uid, pid)
+                window = target
+                latestDemand = null
+                demandPending = false
+            }
             schedule()
         } catch (error: Throwable) { fail(error) }
     }
     fun removed(target: Any) {
-        if (window !== target) return
-        window = null
-        state.clear()
+        synchronized(sceneLock) {
+            if (window !== target) return
+            window = null
+            state.clear()
+            latestDemand = null
+            demandPending = false
+        }
         schedule()
     }
     private fun shouldHide(): Boolean {
         val pref = preference
-        return !stopped && ready && pref.available() && pref.enabled()
-            && SystemClock.elapsedRealtimeNanos() < pref.deadline() && state.overview(System.nanoTime())
-            && isVisibleOverviewWindow()
+        val target = window
+        return !stopped && ready && pref.enabled()
+            && HomeLayoutNativeEndpointOS4.isCurrentRecentsBarPreference(pref)
+            && state.overview(System.nanoTime()) && isFocusedHomeWindow(target) && isVisibleHomeWindow(target)
     }
-    private fun isVisibleOverviewWindow(): Boolean {
-        val target = window ?: return false
-        return runCatching {
-            val dc = display.invoke(target)
-            dc != null && focus.get(dc) === target && visible.invoke(target) == true
-                && keyguard.invoke(service) == false
-        }.getOrDefault(false)
-    }
+    private fun isFocusedHomeWindow(target: Any?): Boolean = target != null && runCatching {
+        display.invoke(target)?.let { focus.get(it) === target } == true
+    }.getOrDefault(false)
+
+    private fun isVisibleHomeWindow(target: Any?): Boolean = runCatching {
+        visible.invoke(target) == true && keyguard.invoke(service) == false
+    }.getOrDefault(false)
     fun receive(data: Parcel, reply: Parcel, flags: Int) {
         var observation = -1
         try {
             data.enforceInterface("android.view.IWindowManager")
-            if (!stopped && ready && flags and IBinder.FLAG_ONEWAY == 0 && data.dataAvail() == 40
-                && state.identity(Binder.getCallingUid(), Binder.getCallingPid())) {
+            if (!stopped && ready && flags and IBinder.FLAG_ONEWAY == 0 && data.dataAvail() == 40) {
+                val uid = Binder.getCallingUid()
+                val pid = Binder.getCallingPid()
                 val sequence = data.readLong()
                 val timestamp = data.readLong()
                 val mask = data.readLong()
                 val revision = data.readLong()
                 val confirm = data.readLong()
-                val now = System.nanoTime()
-                val probe = sequence > 0 && timestamp > 0 && timestamp <= now
-                    && now - timestamp < HomeRecentsBarState.MAX_AGE_NS && mask == 0L && revision == 0L && confirm == 0L
-                if (probe || state.accept(Binder.getCallingUid(), Binder.getCallingPid(), sequence,
-                        timestamp, mask, revision, confirm, now)) {
-                    val overview = !probe && state.overview(now) && isVisibleOverviewWindow()
-                    observation = HomeLayoutNativeEndpointOS4.requestRecentsBarPreference(
-                        overview, if (overview) Runnable { schedule() } else null)
-                    schedule()
+                val accepted = synchronized(sceneLock) {
+                    val now = System.nanoTime()
+                    val probe = sequence > 0 && timestamp > 0 && timestamp <= now
+                        && now - timestamp < HomeRecentsBarState.MAX_AGE_NS
+                        && timestamp <= Long.MAX_VALUE - HomeRecentsBarState.MAX_AGE_NS
+                        && mask == 0L && revision == 0L && confirm == 0L
+                    val valid = !stopped && ready && if (probe) state.identity(uid, pid)
+                        else state.accept(uid, pid, sequence, timestamp, mask, revision, confirm, now)
+                    if (valid) {
+                        latestDemand = Demand(timestamp + HomeRecentsBarState.MAX_AGE_NS, probe)
+                        demandPending = true
+                    }
+                    valid
+                }
+                if (accepted) {
+                    schedule(checkDemand = true)
+                    observation = HomeLayoutNativeEndpointOS4.readRecentsBarObservation()
                 }
             }
         } catch (_: Throwable) { /* Fail closed, preserve the original request. */ }
@@ -190,16 +234,53 @@ internal class HomeRecentsStatusBarOS4(private val record: (String) -> Unit) {
         reply.writeInt(if (observation >= 0) 1 else 0)
         reply.writeInt(if (observation == 1) 1 else 0)
     }
-    private fun schedule() {
+    private fun schedule(checkDemand: Boolean = false) {
         val h = handler ?: return
+        if (checkDemand) demandCheckQueued.set(true)
         if (queued.compareAndSet(false, true) && !h.post {
                 queued.set(false)
                 val wmLock = lock ?: return@post
-                preference = runCatching { HomeLayoutNativeEndpointOS4.recentsBarPreference() }
-                    .getOrElse { HomeLayoutNativeEndpointOS4.RecentsBarPreference(false, false, 0) }
-                synchronized(wmLock) { refresh() }
+                val pref = runCatching { HomeLayoutNativeEndpointOS4.recentsBarPreference() }
+                    .getOrDefault(HomeLayoutNativeEndpointOS4.NO_RECENTS_BAR_PREFERENCE)
+                synchronized(wmLock) {
+                    preference = pref
+                    refresh()
+                }
+                if (demandCheckQueued.getAndSet(false)) {
+                    val demand = synchronized(sceneLock) { if (demandPending) latestDemand else null }
+                    if (demand != null) refreshDemand(h, demand, allowRetry = true)
+                }
             }) queued.set(false)
     }
+
+    private fun refreshDemand(h: Handler, demand: Demand, allowRetry: Boolean) {
+        val wmLock = lock ?: return
+        val overview = synchronized(wmLock) {
+            val target = window
+            val focused = isFocusedHomeWindow(target)
+            val foreground = focused && isVisibleHomeWindow(target)
+            synchronized(sceneLock) {
+                val now = System.nanoTime()
+                if (stopped || !ready || window !== target || latestDemand !== demand
+                    || (allowRetry && !demandPending)) return
+                val active = now < demand.deadline
+                val inOverview = active && !demand.probe && state.overview(now)
+                if (allowRetry && (focused || !inOverview)) demandPending = false
+                if (!active || !foreground) return
+                inOverview
+            }
+        }
+        // A probe can bootstrap a foreground Home, but never renews an Overview lease.
+        if (!allowRetry && !overview) return
+        val retry = if (overview && allowRetry) java.util.function.LongConsumer { delay ->
+            if (delay > 0 && delay < demand.deadline - System.nanoTime()) {
+                h.postDelayed({ refreshDemand(h, demand, allowRetry = false) }, delay / 1_000_000 + 1)
+            }
+        } else null
+        val delay = HomeLayoutNativeEndpointOS4.requestRecentsBarRefresh(overview, retry, demand)
+        retry?.accept(delay)
+    }
+
     private fun notifyPolicy(dc: Any, target: Any) {
         val policy = insetsPolicy.invoke(dc) ?: return
         if (requestedChanged.parameterCount == 1) requestedChanged.invoke(policy, target)
@@ -218,9 +299,18 @@ internal class HomeRecentsStatusBarOS4(private val record: (String) -> Unit) {
                 // recompute using its own current focus, never overwrite any window attrs.
                 focus.get(oldDc)?.let { notifyPolicy(oldDc, it) }
             }
-            if (dc != null && target != null && (hidden != applied || oldDc !== dc)) {
-                focus.get(dc)?.let { notifyPolicy(dc, it) }
-                if (hidden != applied) record("recents status bar policy applied hidden=$hidden, Insets consumer notified")
+            if (dc != null && (hidden != applied || oldDc !== dc || retryPolicyNotification)) {
+                val focused = focus.get(dc)
+                if (focused != null) {
+                    notifyPolicy(dc, focused)
+                    // Insets reads the hooks again during notification; a replaced lease
+                    // may have made those reads fail closed despite hidden being true here.
+                    retryPolicyNotification = hidden && !HomeLayoutNativeEndpointOS4.isCurrentRecentsBarPreference(preference)
+                    if (retryPolicyNotification) schedule()
+                    else if (hidden != applied) record("recents status bar policy applied hidden=$hidden, Insets consumer notified")
+                } else {
+                    retryPolicyNotification = true
+                }
             }
             applied = hidden
             appliedDisplay = dc
@@ -233,12 +323,17 @@ internal class HomeRecentsStatusBarOS4(private val record: (String) -> Unit) {
     }
     private fun fail(error: Throwable) {
         ready = false
-        preference = HomeLayoutNativeEndpointOS4.RecentsBarPreference(false, false, 0)
+        preference = HomeLayoutNativeEndpointOS4.NO_RECENTS_BAR_PREFERENCE
         if (!reportedFailure) { reportedFailure = true; schedule(); record("recents status bar policy unavailable=${error.javaClass.simpleName}, stock requests retained") }
     }
     fun close() {
         stopped = true
-        state.clear()
+        synchronized(sceneLock) {
+            state.clear()
+            latestDemand = null
+            demandPending = false
+        }
+        HomeLayoutNativeEndpointOS4.clearRecentsPublicationListener(publicationChanged)
         schedule() // Recompute the original requests on the WM handler under the WM lock.
     }
 }

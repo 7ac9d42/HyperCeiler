@@ -23,9 +23,9 @@ public final class CombinedSnapshotTest {
  static void set(String n,Object v){try{var f=HomeLayoutNativeEndpointOS4.class.getDeclaredField(n);f.setAccessible(true);f.set(null,v);}catch(Exception e){throw new AssertionError(e);}}
  static Object get(String n){try{var f=HomeLayoutNativeEndpointOS4.class.getDeclaredField(n);f.setAccessible(true);return f.get(null);}catch(Exception e){throw new AssertionError(e);}}
  static void reset(){
-  for(String s:new String[]{"cachedValues","cachedFrameworkReason","cachedFrameworkFingerprint","combinedPublished"})set(s,null);
-  for(String s:new String[]{"refreshEpoch","refreshTicket","notificationVersion","combinedEpoch","combinedRevision","hyosSnapshotAtNanos"})set(s,0L);
-  set("paused",false);set("hyosSnapshotLive",false);set("refresher",new Thread());
+  for(String s:new String[]{"cachedValues","combinedPublished"})set(s,null);
+  for(String s:new String[]{"refreshEpoch","refreshTicket","notificationVersion","combinedEpoch","combinedRevision"})set(s,0L);
+  set("paused",false);set("refresher",new Thread());
   BaseHook.resetTestState();BaseLoad.resetFrameworkForTest();Binder.setCallingIdentityForTest(10100,42);
   PackageManager.packages=new String[]{"com.miui.home"};PackageManager.fail=false;
   ContentResolver.values=Map.of();ContentResolver.failure="";ContentResolver.afterSnapshot=()->{};

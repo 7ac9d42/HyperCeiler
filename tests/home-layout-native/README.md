@@ -30,7 +30,18 @@ Failures are reported per feature and make the command exit nonzero. A failed
 optional or device-inapplicable family does not imply every native function is
 broken; the individual lines identify what was actually checked.
 
-The fixture runner finishes by clearing and reloading the production symbol
+`python3 tests/home-layout-native/run_phone_grid_refresh.py` checks the production
+phone-grid refresh branch, patch planner, and rollback against prevalidated
+synthetic sites in ordinary host memory. It requires Linux/WSL and no ROM files.
+It confirms dimension changes, exact restoration on disable, and re-enable;
+it does not validate ROM site discovery or execute any patched instructions.
+
+`python3 tests/home-layout-native/run_panel_gate.py` runs the layout worker's
+production panel gate with a fake clock and transport, with and without Dock.
+It checks that a failed IPC after a hidden reply permits maintenance without
+speeding up the 10-second probe cadence. It does not exercise real Binder.
+
+The real-image fixture runner finishes by clearing and reloading the production symbol
 index, verifying that the same targets remain available after launcher child
 preparation. `run_symbol_reset.sh` isolates the complementary cached-failure
 case: repeated calls in one process must remain cached, while a child reset must

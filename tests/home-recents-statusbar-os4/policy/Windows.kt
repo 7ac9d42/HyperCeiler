@@ -9,7 +9,8 @@ class WindowManagerService {
  @JvmField val mH=Handler()
  @JvmField val mGlobalLock=Any()
  var locked=false
- fun isKeyguardLocked()=locked
+ var keyguardRead:()->Unit={}
+ fun isKeyguardLocked():Boolean { keyguardRead();return locked }
 }
 class DisplayContent {
  @JvmField var mCurrentFocus:WindowState?=null

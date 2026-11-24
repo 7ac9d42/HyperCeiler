@@ -225,8 +225,13 @@ private:
 } // namespace
 
 bool prepare_dock_motion() {
-    dock_motion_event = eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK);
-    if (dock_motion_event < 0) return false;
+    // Startup is serialized, but native callbacks can already hold the published FD.
+    // Keep it for the process lifetime, including retries after a failed health start.
+    if (dock_motion_event < 0) {
+        const int event = eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK);
+        if (event < 0) return false;
+        dock_motion_event = event;
+    }
     // The established recents bank is installed transactionally. AUTO_AIM is
     // an independent optional fourth hook and cannot take that channel down.
     dock_motion_subscribed.store(0, std::memory_order_release);
@@ -284,8 +289,8 @@ bool dock_motion_screen_active() {
     return dock_motion_screen_interactive.load(std::memory_order_acquire);
 }
 
-/* Refresh the cached desktop visibility. False means the query failed and the cache is unchanged. */
-bool refresh_dock_screen_state() {
+/* Return this reply as well as refreshing the shared cache; failure leaves both unchanged. */
+bool refresh_dock_screen_state(bool &drawable) {
     using GetService = AIBinder *(*)(const char *);
     const auto get_service = reinterpret_cast<GetService>(
         dlsym(RTLD_DEFAULT, "AServiceManager_getService"));
@@ -324,8 +329,14 @@ bool refresh_dock_screen_state() {
         && (interactive == 0 || interactive == 1);
     if (output != nullptr) AParcel_delete(output);
     if (!replied) return false;
-    dock_motion_screen_interactive.store(interactive != 0, std::memory_order_release);
+    drawable = interactive != 0;
+    dock_motion_screen_interactive.store(drawable, std::memory_order_release);
     return true;
+}
+
+bool refresh_dock_screen_state() {
+    bool drawable;
+    return refresh_dock_screen_state(drawable);
 }
 
 uint64_t active_dock_motion_callbacks() {

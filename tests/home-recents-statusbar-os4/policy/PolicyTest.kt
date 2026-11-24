@@ -12,18 +12,56 @@ fun main(){
   setOf("getStatusControlTargetInner","getStatusControlTarget","updateBarControlTarget"))
  Binder.setCallingIdentityForTest(10123,20)
  var seq=0L;var rev=0L
- fun send(mask:Long,revision:Long=++rev,flags:Int=0,descriptor:String="android.view.IWindowManager",trailing:Boolean=false):Int {
+ HomeLayoutNativeEndpointOS4.wmLock=wm.mGlobalLock
+ fun send(mask:Long,revision:Long=++rev,flags:Int=0,descriptor:String="android.view.IWindowManager",trailing:Boolean=false,drain:Boolean=true):Int {
   val values=mutableListOf(++seq,System.nanoTime(),mask,revision,revision);if(trailing)values.add(123)
   val input=Parcel(descriptor,*values.toLongArray());val out=Parcel("")
-  p.receive(input,out,flags);wm.mH.drain();out.setDataPosition(0);c(out.readInt()==HomeRecentsStatusBarOS4.ACK);val available=out.readInt();val enabled=out.readInt();c(enabled==0||available==1);c(out.dataAvail()==0);return enabled
+  val before=HomeLayoutNativeEndpointOS4.requests
+  var reads=0
+  wm.keyguardRead={reads++}
+  p.receive(input,out,flags)
+  c(reads==0 && HomeLayoutNativeEndpointOS4.requests==before)
+  wm.keyguardRead={c(Thread.holdsLock(wm.mGlobalLock))}
+  if(drain)wm.mH.drain()
+  wm.keyguardRead={}
+  out.setDataPosition(0);c(out.readInt()==HomeRecentsStatusBarOS4.ACK);val available=out.readInt();val enabled=out.readInt();c(enabled==0||available==1);c(out.dataAvail()==0);return enabled
  }
- c(send(9)==1);c(home.getRequestedVisibleTypes()==14);c(!home.isRequestedVisible(1));c(home.isRequestedVisible(2));c(home.types==15);c(dc.policy.appliedTypes==14)
+ val cold=HomeLayoutNativeEndpointOS4.requests
+ dc.mCurrentFocus=app
+ c(send(0,0)==1);c(HomeLayoutNativeEndpointOS4.requests==cold)
+ dc.mCurrentFocus=home
+ val probeResult=java.util.concurrent.atomic.AtomicInteger(-1)
+ synchronized(wm.mGlobalLock) {
+  val binder=Thread { Binder.setCallingIdentityForTest(10123,20);probeResult.set(send(0,0,drain=false)) }
+  binder.start();binder.join(2000)
+  c(!binder.isAlive && probeResult.get()==1)
+ }
+ wm.mH.drain();c(HomeLayoutNativeEndpointOS4.requests==cold+1);c(HomeLayoutNativeEndpointOS4.renewals==0)
+ c(send(9,drain=false)==1);dc.mCurrentFocus=app;wm.mH.drain()
+ c(HomeLayoutNativeEndpointOS4.requests==cold+1);c(home.getRequestedVisibleTypes()==15)
+ dc.mCurrentFocus=home
+ HomeLayoutNativeEndpointOS4.listener.run();wm.mH.drain()
+ c(HomeLayoutNativeEndpointOS4.requests==cold+1)
+ p.bind(home,wm);wm.mH.drain()
+ c(HomeLayoutNativeEndpointOS4.requests==cold+2);c(HomeLayoutNativeEndpointOS4.renewals==1)
+ c(send(9,drain=false)==1);wm.locked=true;wm.mH.drain()
+ c(HomeLayoutNativeEndpointOS4.requests==cold+2);wm.locked=false
+ c(send(9,drain=false)==1);c(send(0)==1);c(HomeLayoutNativeEndpointOS4.renewals==1)
+ c(send(9)==1);c(HomeLayoutNativeEndpointOS4.renewals==2);c(home.getRequestedVisibleTypes()==14);c(!home.isRequestedVisible(1));c(home.isRequestedVisible(2));c(home.types==15);c(dc.policy.appliedTypes==14)
  c(dc.policy.statusOwner=="platform-hiding");c(!dc.policy.statusSurfaceVisible);c(dc.policy.forcedTypes==0)
  c(!dc.policy.areTypesForciblyHidden(2));c(!dc.policy.areTypesForciblyHidden(3))
  val other=DisplayContent();c(!other.policy.areTypesForciblyHidden(1))
  c(send(8)==1);c(home.getRequestedVisibleTypes()==15);c(dc.policy.appliedTypes==15)
  c(dc.policy.statusOwner=="client");c(dc.policy.statusSurfaceVisible)
- c(send(10)==1);c(home.getRequestedVisibleTypes()==14)
+ c(send(10,drain=false)==1)
+ wm.keyguardRead={
+  wm.keyguardRead={}
+  HomeLayoutNativeEndpointOS4.pref=HomeLayoutNativeEndpointOS4.RecentsBarPreference(true,true,Long.MAX_VALUE,100)
+  HomeLayoutNativeEndpointOS4.listener.run()
+ }
+ wm.mH.drain()
+ c(home.getRequestedVisibleTypes()==14);c(dc.policy.appliedTypes==14)
+ c(dc.policy.statusOwner=="platform-hiding");c(!dc.policy.statusSurfaceVisible)
  dc.mCurrentFocus=app;c(home.getRequestedVisibleTypes()==15);c(app.getRequestedVisibleTypes()==15)
  c(!dc.policy.areTypesForciblyHidden(1))
  dc.mCurrentFocus=home;wm.locked=true;c(home.getRequestedVisibleTypes()==15);wm.locked=false;c(home.getRequestedVisibleTypes()==14)
@@ -33,19 +71,47 @@ fun main(){
  c(send(8,descriptor="wrong")==0);c(home.getRequestedVisibleTypes()==14)
  c(send(8,trailing=true)==0);c(home.getRequestedVisibleTypes()==14)
  Binder.setCallingIdentityForTest(10124,20);c(send(8)==0);c(home.getRequestedVisibleTypes()==14);Binder.setCallingIdentityForTest(10123,20)
- HomeLayoutNativeEndpointOS4.pref=HomeLayoutNativeEndpointOS4.RecentsBarPreference(true,false,Long.MAX_VALUE)
- c(send(9)==0);c(home.getRequestedVisibleTypes()==15);c(dc.policy.appliedTypes==15)
+ HomeLayoutNativeEndpointOS4.pref=HomeLayoutNativeEndpointOS4.RecentsBarPreference(true,false,Long.MAX_VALUE,2)
+ c(home.getRequestedVisibleTypes()==15) // A copied lease may not outlive its publication.
+ val beforeRevocation=HomeLayoutNativeEndpointOS4.requests
+ HomeLayoutNativeEndpointOS4.listener.run();wm.mH.drain()
+ c(HomeLayoutNativeEndpointOS4.requests==beforeRevocation);c(dc.policy.appliedTypes==15)
  c(dc.policy.statusOwner=="client");c(dc.policy.statusSurfaceVisible)
- HomeLayoutNativeEndpointOS4.pref=HomeLayoutNativeEndpointOS4.RecentsBarPreference(true,true,SystemClock.elapsedRealtimeNanos()+100_000_000)
+ val prefDeadline=SystemClock.elapsedRealtimeNanos()+100_000_000L
+ SystemClock.source=java.util.function.LongSupplier{prefDeadline-100_000_000L}
+ HomeLayoutNativeEndpointOS4.pref=HomeLayoutNativeEndpointOS4.RecentsBarPreference(true,true,prefDeadline,3)
  c(send(12)==1);c(home.getRequestedVisibleTypes()==14)
- val prefDeadline=HomeLayoutNativeEndpointOS4.pref.deadline();SystemClock.source=java.util.function.LongSupplier{prefDeadline}
+ SystemClock.source=java.util.function.LongSupplier{prefDeadline}
  wm.mH.expire();c(home.getRequestedVisibleTypes()==15);c(dc.policy.appliedTypes==15);SystemClock.source=java.util.function.LongSupplier{System.nanoTime()}
- HomeLayoutNativeEndpointOS4.pref=HomeLayoutNativeEndpointOS4.RecentsBarPreference(false,false,0)
+ HomeLayoutNativeEndpointOS4.pref=HomeLayoutNativeEndpointOS4.NO_RECENTS_BAR_PREFERENCE
  HomeLayoutNativeEndpointOS4.observation=1
- c(send(8)==1);c(HomeLayoutNativeEndpointOS4.renewal==null);c(home.getRequestedVisibleTypes()==15)
+ c(send(8)==1);c(HomeLayoutNativeEndpointOS4.superseded==null);c(home.getRequestedVisibleTypes()==15)
+ HomeLayoutNativeEndpointOS4.cooldown=250_000_000L
  c(send(9)==1);c(home.getRequestedVisibleTypes()==15)
- HomeLayoutNativeEndpointOS4.pref=HomeLayoutNativeEndpointOS4.RecentsBarPreference(true,true,Long.MAX_VALUE)
- HomeLayoutNativeEndpointOS4.renewal.run();wm.mH.drain();c(home.getRequestedVisibleTypes()==14)
+ val beforeDeferred=HomeLayoutNativeEndpointOS4.renewals
+ wm.mH.expire();wm.mH.expire();c(HomeLayoutNativeEndpointOS4.renewals==beforeDeferred+1)
+ c(send(9)==1);val beforeExit=HomeLayoutNativeEndpointOS4.renewals
+ c(send(0)==1);wm.mH.expire();c(HomeLayoutNativeEndpointOS4.renewals==beforeExit)
+ HomeLayoutNativeEndpointOS4.cooldown=0
+ c(send(9)==1);val superseded=HomeLayoutNativeEndpointOS4.superseded
+ dc.mCurrentFocus=app;superseded.accept(150_000_000L);wm.mH.expire();c(HomeLayoutNativeEndpointOS4.renewals==beforeExit+1)
+ dc.mCurrentFocus=home
+ HomeLayoutNativeEndpointOS4.pref=HomeLayoutNativeEndpointOS4.RecentsBarPreference(true,true,Long.MAX_VALUE,4)
+ HomeLayoutNativeEndpointOS4.listener.run();wm.mH.drain();c(home.getRequestedVisibleTypes()==14)
+ // Revoke the demand exactly after both policy locks are released, but before admission.
+ val beforeRemoved=HomeLayoutNativeEndpointOS4.requests
+ var removedAtAdmission=false
+ HomeLayoutNativeEndpointOS4.beforeAdmission=Runnable{removedAtAdmission=true;p.removed(home)}
+ c(send(9)==1)
+ check(removedAtAdmission&&HomeLayoutNativeEndpointOS4.requests==beforeRemoved){"removed demand reached refresh admission"};checks++
+ c(home.getRequestedVisibleTypes()==15)
+ p.bind(home,wm);wm.mH.drain()
+ val beforeSuperseded=HomeLayoutNativeEndpointOS4.renewals
+ HomeLayoutNativeEndpointOS4.beforeAdmission=Runnable{c(send(8,drain=false)==1)}
+ c(send(9)==1)
+ check(HomeLayoutNativeEndpointOS4.renewals==beforeSuperseded){"superseded Overview demand renewed"};checks++
+ c(home.getRequestedVisibleTypes()==15)
+ c(send(9)==1);c(HomeLayoutNativeEndpointOS4.renewals==beforeSuperseded+1&&home.getRequestedVisibleTypes()==14)
  HomeLayoutNativeEndpointOS4.observation=null
  val replacement=WindowState(dc,Session(10123,21));dc.mCurrentFocus=replacement;p.bind(replacement,wm);wm.mH.drain()
  c(home.getRequestedVisibleTypes()==15);c(replacement.getRequestedVisibleTypes()==15)

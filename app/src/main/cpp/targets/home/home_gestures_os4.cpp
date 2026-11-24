@@ -49,6 +49,8 @@ struct Request {int event=0;int64_t time=0;uint64_t revision=0;};
 std::array<Request,8> requests{};
 size_t head=0,count=0;
 int wake=-1;
+bool worker_failed=false;
+bool action_ready_locked(){return wake>=0&&!worker_failed;}
 bool workspace_ready=false;
 bool scene_ready=false;
 home_workspace_gesture::ScopeContract scope_contract;
@@ -56,9 +58,9 @@ home_workspace_gesture::SwipeRecognizer workspace_state;
 home_workspace_gesture::StatusPolicy status_policy;
 int64_t workspace_start=0,stock_block_start=0,stock_block_end=0;
 void publish_workspace_locked(){
-    __atomic_store_n(&hc_workspace_double_enabled,uint32_t(workspace_ready&&wake>=0&&(settings.mask&1u)),__ATOMIC_RELEASE);
+    __atomic_store_n(&hc_workspace_double_enabled,uint32_t(workspace_ready&&action_ready_locked()&&(settings.mask&1u)),__ATOMIC_RELEASE);
     __atomic_store_n(&hc_workspace_swipe_enabled,uint32_t(workspace_ready&&scene_ready
-        &&scope_contract.down_return&&wake>=0&&(settings.mask&30u)),__ATOMIC_RELEASE);
+        &&scope_contract.down_return&&action_ready_locked()&&(settings.mask&30u)),__ATOMIC_RELEASE);
 }
 void *on_create(void*) {return nullptr;}
 void on_destroy(void*) {}
@@ -96,7 +98,19 @@ void send(Request request) {
 void *action_worker(void*) {
     for(;;) {
         uint64_t signals=0;
-        if(read(wake,&signals,sizeof(signals))!=sizeof(signals)) {if(errno==EINTR)continue;return nullptr;}
+        const ssize_t bytes=read(wake,&signals,sizeof(signals));
+        if(bytes!=static_cast<ssize_t>(sizeof(signals))) {
+            if(bytes<0&&errno==EINTR)continue;
+            {
+                std::lock_guard guard(lock);
+                worker_failed=true;
+                head=count=0;
+                publish_workspace_locked();
+            }
+            // A producer may still be between unlocking and writing wake. Do not close or reuse it.
+            if(window){AIBinder_decStrong(window);window=nullptr;}
+            return nullptr;
+        }
         for(;;) {
             Request r;bool valid=false;
             {
@@ -114,6 +128,7 @@ void *action_worker(void*) {
     }
 }
 bool start_worker_locked() {
+    if(worker_failed)return false;
     if(wake>=0)return true;
     wake=eventfd(0,EFD_CLOEXEC);if(wake<0)return false;
     pthread_t thread{};
@@ -126,7 +141,7 @@ void emit(int event,uint64_t revision) {
     int fd=-1;
     {
         std::lock_guard guard(lock);
-        if(wake<0||count==requests.size()||revision!=settings.revision)return;
+        if(!action_ready_locked()||count==requests.size()||revision!=settings.revision)return;
         requests[(head+count)%requests.size()]={event,int64_t(now.tv_sec)*1000+now.tv_nsec/1000000,revision};
         ++count;fd=wake;
     }
@@ -134,7 +149,7 @@ void emit(int event,uint64_t revision) {
 }
 home_gestures::Decision observe(void *owner,void *event,bool back) {
     std::lock_guard guard(lock);
-    if(!api.masked||(!settings.mask&&!settings.quick))return {};
+    if(!action_ready_locked()||!api.masked||(!settings.mask&&!settings.quick))return {};
     if(!back) {
 #if defined(HYPERCEILER_DOCK_NATIVE_MOTION)
         if(dock_edit_packed.load(std::memory_order_acquire)&1u) {home_state.reset();return {};}
@@ -241,7 +256,7 @@ void hc_workspace_gestures_ready(bool ready) {
 }
 extern "C" void hc_workspace_double_emit() {
     uint64_t revision=0;
-    {std::lock_guard guard(lock);if(!workspace_ready||!(settings.mask&1u))return;revision=settings.revision;}
+    {std::lock_guard guard(lock);if(!action_ready_locked()||!workspace_ready||!(settings.mask&1u))return;revision=settings.revision;}
     if(probe.load(std::memory_order_relaxed))__android_log_print(ANDROID_LOG_INFO,"HyperCeiler.HomeGesture","workspace original double accepted rv=%llu",static_cast<unsigned long long>(revision));
     emit(home_gestures::DoubleTap,revision);
 }
@@ -286,7 +301,7 @@ extern "C" void hc_workspace_scene(void* owner,void* event) {
     home_gestures::Decision decision;
     {
         std::lock_guard guard(lock);
-        const bool can_claim=workspace_ready&&scene_ready&&scope_contract.down_return
+        const bool can_claim=action_ready_locked()&&workspace_ready&&scene_ready&&scope_contract.down_return
             &&(settings.mask&30u);
         // Readiness controls NEW claims, not delivery of lifecycle events to
         // an existing recognizer. Otherwise a Down forwarded while unready can

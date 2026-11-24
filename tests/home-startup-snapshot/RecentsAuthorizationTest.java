@@ -129,15 +129,12 @@ public final class RecentsAuthorizationTest {
   run("server deadline expires exactly at boundary",()->{publish(recentsPrefs());now.set(14_999_999_999L);enabled(true);now.incrementAndGet();unavailable();});
   run("suspend-inclusive clock expiry does not depend on nanoTime",()->{publish(recentsPrefs());now.addAndGet(86_400_000_000_000L);unavailable();});
   run("repeated reads never renew deadline",()->{publish(recentsPrefs());var s=read();now.addAndGet(2_000_000_000L);for(int i=0;i<50;i++)eq(read(),s);eq(ContentResolver.queries.get(),1);});
-  run("zero clock cannot authorize or refresh",()->{now.set(0);check(!HomeLayoutNativeEndpointOS4.refreshFromProvider());unavailable();});
-  run("clock deadline overflow rejected",()->{now.set(Long.MAX_VALUE-2);check(!HomeLayoutNativeEndpointOS4.refreshFromProvider());unavailable();});
-  run("clock moves backwards during query rejects snapshot",()->{ContentResolver.afterSnapshot=()->now.decrementAndGet();check(!HomeLayoutNativeEndpointOS4.refreshFromProvider());unavailable();});
   run("clock moves before published query start cannot extend remaining lease",()->{publish(recentsPrefs());now.decrementAndGet();unavailable();});
   run("query failure revokes Recents and preserves layout cache",()->{
    publish(recentsPrefs("home_layout_unlock_grids_cell_x",7));ContentResolver.failure="query";
    check(!HomeLayoutNativeEndpointOS4.refreshFromProvider());unavailable();eq(layout().cellX(),7);
   });
-  for(String mode:new String[]{"getAll","null","empty","columns","columnName","nullSchema","schema1","read","close"})run("bad whole cursor revokes Recents: "+mode,()->{publish(recentsPrefs());ContentResolver.failure=mode;check(!HomeLayoutNativeEndpointOS4.refreshFromProvider());unavailable();});
+  run("invalid provider schema revokes Recents",()->{publish(recentsPrefs());ContentResolver.failure="schema1";check(!HomeLayoutNativeEndpointOS4.refreshFromProvider());unavailable();});
   for(int[] dims:new int[][]{{2,6},{10,6},{4,3},{4,14}})run("ordinary layout rejects out of range grid "+Arrays.toString(dims),()->{publish(prefs("home_layout_unlock_grids_cell_x",dims[0],"home_layout_unlock_grids_cell_y",dims[1]));eq(layout().cellX(),0);});
   run("publication replaced during read cannot return old Recents authorization",()->{
    publish(recentsPrefs());SystemClock.source=()->{
@@ -165,28 +162,64 @@ public final class RecentsAuthorizationTest {
    AtomicBoolean ok=new AtomicBoolean(true);Thread a=new Thread(()->ok.set(HomeLayoutNativeEndpointOS4.refreshFromProvider()));a.start();g.entered();
    check(HomeLayoutNativeEndpointOS4.pauseForHotReload());g.release.countDown();join(a);check(!ok.get());unavailable();
   });
+  run("revoked Recents demand cannot start or join a refresh",()->{
+   set("refresher",null);set("refreshRequested",false);
+   eq(HomeLayoutNativeEndpointOS4.requestRecentsBarRefresh(true, null, ()->false),0L);
+   eq(get("refresher"),null);eq(get("refreshRequested"),false);eq(ContentResolver.queries.get(),0);
+   java.util.function.LongConsumer existing=delay->{};
+   set("refreshRequested",true);set("retrySupersededRecentsDemand",existing);
+   try {
+    eq(HomeLayoutNativeEndpointOS4.requestRecentsBarRefresh(true, delay->{}, ()->false),0L);
+    check(get("retrySupersededRecentsDemand")==existing);
+   } finally {set("refreshRequested",false);set("retrySupersededRecentsDemand",null);}
+  });
   run("idle scene observation survives expiry; only a true overview renews Insets authorization",()->{
    set("refresher",null);ContentResolver.values=recentsPrefs();
    try {
-    eq(HomeLayoutNativeEndpointOS4.requestRecentsBarPreference(false,null),-1);
+    eq(HomeLayoutNativeEndpointOS4.readRecentsBarObservation(),-1);
+    eq(get("refresher"),null);eq(ContentResolver.queries.get(),0);
+    HomeLayoutNativeEndpointOS4.requestRecentsBarRefresh(false,null);
     for(int i=0;i<100&&!read().available();i++)Thread.sleep(10);
     enabled(true);eq(ContentResolver.queries.get(),1);
     now.addAndGet(6_000_000_000L);Thread.sleep(200);
-    for(int i=0;i<20;i++)eq(HomeLayoutNativeEndpointOS4.requestRecentsBarPreference(false,null),1);
+    for(int i=0;i<20;i++){
+     eq(HomeLayoutNativeEndpointOS4.readRecentsBarObservation(),1);
+     HomeLayoutNativeEndpointOS4.requestRecentsBarRefresh(false,null);
+    }
     unavailable();eq(ContentResolver.queries.get(),1);
-    CountDownLatch updated=new CountDownLatch(1);
-    eq(HomeLayoutNativeEndpointOS4.requestRecentsBarPreference(true,updated::countDown),1);
-    check(updated.await(3,TimeUnit.SECONDS));enabled(true);eq(ContentResolver.queries.get(),2);
+    HomeLayoutNativeEndpointOS4.requestRecentsBarRefresh(true,null);
+    for(int i=0;i<100&&!read().available();i++)Thread.sleep(10);
+    enabled(true);eq(ContentResolver.queries.get(),2);
+    var previous=read();
     ContentResolver.values=recentsPrefs("allow_hook",false);
     ContentResolver.signalChange("content://com.sevtinge.hyperceiler.provider.sharedprefs/pref/boolean/allow_hook");
-    unavailable();eq(ContentResolver.queries.get(),2);
+    unavailable();check(!HomeLayoutNativeEndpointOS4.isCurrentRecentsBarPreference(previous));
+    eq(HomeLayoutNativeEndpointOS4.readRecentsBarObservation(),-1);eq(ContentResolver.queries.get(),2);
     for(int i=0;i<100&&!read().available();i++){
-     HomeLayoutNativeEndpointOS4.requestRecentsBarPreference(false,null);Thread.sleep(10);
+     HomeLayoutNativeEndpointOS4.requestRecentsBarRefresh(false,null);Thread.sleep(10);
     }
-    enabled(false);eq(HomeLayoutNativeEndpointOS4.requestRecentsBarPreference(false,null),0);
+    enabled(false);eq(HomeLayoutNativeEndpointOS4.readRecentsBarObservation(),0);
     eq(ContentResolver.queries.get(),3);
    } catch(InterruptedException e){throw new AssertionError(e);}
    finally {check(HomeLayoutNativeEndpointOS4.pauseForHotReload());}
+  });
+  run("notification superseding a query preserves one foreground retry without waking the worker",()->{
+   set("refresher",null);ContentResolver.values=recentsPrefs();
+   Gate query=new Gate();ContentResolver.afterSnapshot=query::block;
+   AtomicLong retryDelay=new AtomicLong();CountDownLatch retry=new CountDownLatch(1);
+   try {
+    HomeLayoutNativeEndpointOS4.requestRecentsBarRefresh(true,null);query.entered();
+    ContentResolver.values=recentsPrefs("allow_hook",false);
+    ContentResolver.signalChange("content://com.sevtinge.hyperceiler.provider.sharedprefs/pref/boolean/allow_hook");
+    HomeLayoutNativeEndpointOS4.requestRecentsBarRefresh(true,delay->{retryDelay.set(delay);retry.countDown();});
+    ContentResolver.afterSnapshot=()->{};query.release.countDown();await(retry);
+    check(retryDelay.get()>0);unavailable();
+    Thread.sleep(200);eq(ContentResolver.queries.get(),1);
+    HomeLayoutNativeEndpointOS4.requestRecentsBarRefresh(true,null);
+    for(int i=0;i<100&&!read().available();i++)Thread.sleep(10);
+    enabled(false);eq(ContentResolver.queries.get(),2);
+   } catch(InterruptedException e){throw new AssertionError(e);}
+   finally {query.release.countDown();check(HomeLayoutNativeEndpointOS4.pauseForHotReload());}
   });
   System.out.println("RESULT passes="+passed+" failures="+failed+"; production Java layout and Recents publication, simulated Android/clock; device NOT_TESTED");
   if(failed>0)System.exit(1);

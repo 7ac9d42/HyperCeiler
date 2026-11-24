@@ -86,6 +86,9 @@ unchanged. Five fresh processes cover both channels, scroll-only, close-only,
 both off and an old HCV1 server. They assert operation 1/count 1 for one scroll
 crossing, operation 2/count 1 for close, operation 0/count 0 only for queries,
 and no extra event during 120 stationary updates. The full run.py includes this.
+On Linux/WSL, the runner also injects `EIO` after a successful pipe read. It
+checks for zero new writes after worker exit, closure of both descriptors, and
+one new scroll and close delivery after disabling and re-enabling the profile.
 
 This test reproduced the actual regression before the fix: the former reserved
 queue field remained 0 on scroll requests, but now meant query, so WMS rejected

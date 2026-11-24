@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import java.util.ArrayList;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 import android.os.Handler;
 import android.os.Looper;
@@ -28,6 +29,7 @@ public final class BackGestureWidthOS4 extends BaseHook {
     private volatile boolean closed;
     private Context context;
     private final AtomicLong request = new AtomicLong();
+    private boolean providerQueued;
     private static final Uri ROOT = Uri.parse("content://com.sevtinge.hyperceiler.provider.sharedprefs");
     private static final Uri WIDTH = Uri.withAppendedPath(ROOT, "integer/prefs_key_home_navigation_back_area_width/100");
     private final Handler main = new Handler(Looper.getMainLooper());
@@ -82,12 +84,23 @@ public final class BackGestureWidthOS4 extends BaseHook {
     }
     // Provider is the page's committed truth; LSPosed's startup snapshot may be stale.
     // Query only on attach/pref events, off UI thread, never on MotionEvent.
-    private void requestProvider() {
+    private synchronized void requestProvider() {
         if (closed) return;
         Context c = context;
         if (c == null) { percent = readPercent(); refreshAll(); return; }
-        long version = request.incrementAndGet();
-        AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> {
+        request.incrementAndGet();
+        scheduleProvider(c);
+    }
+    private void scheduleProvider(Context c) {
+        if (closed || providerQueued) return;
+        providerQueued = true;
+        try { AsyncTask.THREAD_POOL_EXECUTOR.execute(() -> readProvider(c)); }
+        catch (RejectedExecutionException rejected) { providerQueued = false; }
+    }
+    private void readProvider(Context c) {
+        long version = request.get();
+        try {
+            if (closed) return;
             int value;
             try (Cursor cursor = c.getContentResolver().query(WIDTH, null, null, null, null)) {
                 if (cursor == null || !cursor.moveToFirst()) return;
@@ -97,7 +110,12 @@ public final class BackGestureWidthOS4 extends BaseHook {
                 if (closed || request.get() != version) return;
                 percent = value; refreshAll();
             });
-        });
+        } finally {
+            synchronized (this) {
+                providerQueued = false;
+                if (request.get() != version) scheduleProvider(c);
+            }
+        }
     }
     private int readPercent() {
         try { return BackGestureWidthState.normalize(PrefsBridge.getInt("home_navigation_back_area_width", 100)); }

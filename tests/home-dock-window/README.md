@@ -56,6 +56,13 @@ and system hook. Opening settings persists that migration; the hook also
 handles it without requiring a settings visit. Older OS versions keep their
 existing options. The solid color picker is hidden only on OS4.
 
+## Native health startup (Linux/WSL)
+
+Run `python3 tests/home-dock-window/run_health_start.py` with a local C++20 compiler.
+It fault-injects Dock thread startup while using real Linux eventfd descriptors,
+and checks that a producer holding the original descriptor still wakes the
+transport after a retry. It does not run Android Binder or load launcher hooks.
+
 ## Host test (JDK 25)
 
 From the repository root:

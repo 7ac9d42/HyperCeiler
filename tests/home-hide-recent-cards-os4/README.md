@@ -16,9 +16,9 @@
 
 Provider 从现有单次 getAll 快照追加可选 cursor extras，版本 hc_recent_cards_version 为 1，home_recent_hide_card 使用已有长度编码格式。固定 schema 4 和原列，native Binder 回复，combined 长度，缓存格式与 system_server 接口均不变。旧 Provider 或非法可选选择只使本功能不可用，不删除其他配置。
 
-系统界面注册已有设置 Provider 的 ContentObserver，使用项目共享 ThreadPoolManager 后台读取，没有新增常驻线程或定时轮询。读取结果以不可变集合发布，修订号阻止并发变更时旧读覆盖新值，设置变化先使旧选择失效。卡片查询只使用内存快照，在原调用前后确认同一选择。已知有效配置的 10000 次查询不触发额外 Provider 读取，排队任务或重复日志。首次不可用的读取只在后续卡片请求中限频触发后台恢复，不阻塞查询。
+系统界面注册已有设置 Provider 的 ContentObserver，使用项目共享 ThreadPoolManager 后台读取，没有新增常驻线程或定时轮询。设置变化先使快照失效；没有桌面请求或存活订阅时不查询 Provider。没有快照时，首次桌面卡片请求返回原结果，原查询成功后才提交异步加载；已有快照的卡片查询仍在原调用前后确认同一选择。后台在读取前核对桌面 appId 和需求，发布时检查修订号。失败或连续失效耗尽本批读取次数后，退避 2 秒，之后由新的需求触发，不定时自重试。
 
-选择变化通过桌面实际注册的 IRecentTasksListener 通知其刷新列表。监听器按真实调用 UID 隔离，注销和 ExternalInterfaceBinder.invalidate 时清理，桌面重连不重装同类方法 Hook。热重载清理会撤销设置观察者并停止本代处理，观察者注册和清理并发时也不会留下迟到注册。Hook 的实际撤销仍由项目 BaseHook 的生命周期负责。
+选择变化通过桌面实际注册的 IRecentTasksListener 通知其刷新列表。监听器按真实调用 UID 隔离，注销和 ExternalInterfaceBinder.invalidate 时清理，Binder 已失效的监听器不触发刷新。桌面重连不重装同类方法 Hook。热重载撤销观察者并停止本代发布；已在途的 Provider IPC 不强制取消。Hook 的实际撤销仍由项目 BaseHook 的生命周期负责。
 
 日志标签 HyperCeiler.RecentsCards，进入内置日志的既有模块 Logcat 导入路径。成功筛选只报告首次，失败按状态限频，不把这条 SystemUI 日志伪装成桌面 native 采集证据。
 
@@ -32,7 +32,9 @@ python3 tests/hook-diagnostics/run.py
 
 主回归编译实际 Provider，筛选器和 SystemUI Hook，Android 与 Hook 安装边界用可观察夹具替代，回调执行使用实际 EzHookTool 1.3.0 与 libxposed API 102 类库。覆盖厂商标记接口优化，动态改名实现，实际 Proxy 回调形状，普通及分屏组合，旧双 getter，空及全选，未知任务，原始数组身份，其他 UID，其他用户的桌面 UID，权限异常保持，设置更新与原方法并发，旧读取失效，Provider 不可用恢复，监听器注销和重连，数据预算及观察者注册与清理并发。
 
-主回归 10046 检查通过，其中包含 10000 次热查询无额外 I/O 或日志刷屏。关联布局原生 4661 场景和 Provider/JVM 52 检查通过，诊断回归通过。关联布局 runner 修正了重复包含 ModuleLog 类的夹具收集问题，生产日志实现保持不变。
+按需刷新改动后，主回归 10062 项通过。其中冷启动、单次设置通知和合并的 20 次通知在无客户端时均不查询 Provider；另覆盖首次请求、订阅恢复、注销或死亡后的排队任务、连续失效预算，以及 10000 次热查询无额外 I/O 或日志刷屏。夹具使用本地 JDK 和 Gradle 缓存，依赖仅有 AAR 时从中临时提取 `classes.jar`。
+
+此前关联布局原生 4661 场景和 Provider/JVM 52 检查通过，诊断回归通过。关联布局 runner 修正了重复包含 ModuleLog 类的夹具收集问题，生产日志实现保持不变。下文为按需刷新改动前的设备记录。
 
 真实手机验证已完成基础隐藏与恢复，使用 HyperCeiler 自身作为所选应用，默认可见，选中后最近任务画面移除该卡片，取消选择后卡片恢复。系统界面日志确认选择计数 1 再到 0 以及实际筛选执行。隐藏期间系统任务 6389 和应用进程 28734 保留，桌面 6278，zygote 1929 与 system_server 3695 均保持。最终系统界面进程 4020 自加载修复后保持稳定，指纹解锁和应用选择，进入最近任务期间无新增 crash buffer 记录。
 

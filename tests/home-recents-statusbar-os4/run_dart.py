@@ -8,7 +8,10 @@ p=argparse.ArgumentParser();p.add_argument('--adb',action='store_true');p.add_ar
 def run(args):subprocess.run(list(map(str,args)),check=True)
 with tempfile.TemporaryDirectory(prefix='hc-recent-dart-')as tmp:
  out=Path(tmp);binary=out/'scene'
- run(['c++','-std=c++20','-O1','-g','-fsanitize=address,undefined','-I'+str(R/'app/src/main/cpp'),H/'dart_scene_test.cpp','-o',binary]);run([binary,*a.images])
+ flags=['c++','-std=c++20','-O1','-g','-fsanitize=address,undefined','-I'+str(R/'app/src/main/cpp')]
+ run([*flags,H/'dart_scene_test.cpp','-o',binary]);run([binary,*a.images])
+ repair=out/'scene-repair'
+ run([*flags,'-pthread',H/'scene_repair_test.cpp','-o',repair]);run([repair])
  if a.adb:
   source=(R/'app/src/main/cpp/targets/home/home_layout_dart_arm64.S').read_text()
   def macro(name):

@@ -19,7 +19,11 @@ public class Test {
   public void unregisterRecentTasksListener(IRecentTasks.Listener l){}
   public void invalidate(){}
  }
- public static class Receiver implements IRecentTasks.Listener {int changed;public void onRecentTasksChanged(){changed++;}}
+ public static class Receiver implements IRecentTasks.Listener {
+  int changed;final Binder binder=new Binder();
+  public Binder asBinder(){return binder;}
+  public void onRecentTasksChanged(){changed++;}
+ }
  public static class LegacyGroup {TaskInfo a,b;LegacyGroup(TaskInfo a,TaskInfo b){this.a=a;this.b=b;}public TaskInfo getTaskInfo1(){return a;}public TaskInfo getTaskInfo2(){return b;}}
  static final Class<?>[] QUERY={int.class,int.class,int.class};
  static TaskInfo task(String name){var t=new TaskInfo();t.realActivity=name==null?null:new ComponentName(name);return t;}
@@ -71,10 +75,35 @@ public class Test {
 
   var loader=new HomeHideRecentCardsOS4();loader.init();var service=new VendorRenamedService();service.tasks=original;
   BaseHook.constructed(service);BaseHook.constructed(service);
-  var receiver=new Receiver();BaseHook.invoke(service,"registerRecentTasksListener",new Class<?>[]{IRecentTasks.Listener.class},receiver);ThreadPoolManager.drain();
+  var resolverAtStart=ContextUtils.app.resolver;
+  ThreadPoolManager.drain();int startupQueries=resolverAtStart.queries;
+  choose(Set.of("app.hide"));int idleNotificationQueries=resolverAtStart.queries-startupQueries;
+  for(int i=0;i<20;i++)resolverAtStart.change();ThreadPoolManager.drain();
+  int idleBurstQueries=resolverAtStart.queries-startupQueries-idleNotificationQueries;
+  ok(startupQueries==0&&idleNotificationQueries==0&&idleBurstQueries==0,
+   "no launcher demand: startup="+startupQueries+", setting change="+idleNotificationQueries+", notification burst="+idleBurstQueries);
+  var receiver=new Receiver();
+  Binder.uid=10140;
+  BaseHook.invoke(service,"registerRecentTasksListener",new Class<?>[]{IRecentTasks.Listener.class},receiver);
+  ok(query(service)==original,"cold non-launcher reply stays stock");ThreadPoolManager.drain();
+  ok(resolverAtStart.queries==0&&receiver.changed==0,"non-launcher query and listener never reach the Provider");
+  ok(query(service)==original&&ThreadPoolManager.queue.isEmpty(),"known unrelated caller does not schedule a second lookup");
+  Binder.uid=10139;
+  service.failure=new SecurityException("not allowed");
+  try{query(service);ok(false,"cold query denied");}catch(SecurityException denied){ok(denied==service.failure,"cold permission denial unchanged");}
+  service.failure=null;ThreadPoolManager.drain();
+  ok(resolverAtStart.queries==0,"denied launcher request does not reach the Provider");
+  ok(query(service)==original&&resolverAtStart.queries==0,"first successful launcher query returns stock without blocking");
+  ThreadPoolManager.drain();
+  ok(resolverAtStart.queries==1&&((Group[])query(service)).length==3,"first launcher query alone loads latest settings asynchronously");
+  choose(Set.of());
+  ok(resolverAtStart.queries==1,"a past launcher query does not keep the observer active");
+  BaseHook.invoke(service,"registerRecentTasksListener",new Class<?>[]{IRecentTasks.Listener.class},receiver);ThreadPoolManager.drain();
+  ok(resolverAtStart.queries==2,"launcher listener alone triggers first refresh after invalidation");
   ok(BaseHook.hooks.size()==5,"actual concrete class hooked once, constructor repeat stays bounded");
   ok(query(service)==original,"default selection empty");
-  choose(Set.of("app.hide"));ok(receiver.changed==1,"configuration update notifies actual recent listener");
+  int beforeUpdate=receiver.changed;
+  choose(Set.of("app.hide"));ok(receiver.changed==beforeUpdate+1,"configuration update notifies actual recent listener");
   ok(((Group[])query(service)).length==3,"shipping wrapper filters selected groups");
   int reads=ContextUtils.app.resolver.reads,queries=ContextUtils.app.resolver.queries,logs=com.sevtinge.hyperceiler.common.log.ModuleLog.logs;
   for(int i=0;i<10000;i++)ok(((Group[])query(service)).length==3,"warm reply");
@@ -96,8 +125,13 @@ public class Test {
   ok(query(service)==original&&ThreadPoolManager.queue.isEmpty(),"provider failure is stock with bounded retry");
   ContextUtils.app.resolver.unavailable=false;android.os.SystemClock.now+=2001;query(service);ThreadPoolManager.drain();
   ok(((Group[])query(service)).length==3,"unavailable provider recovers asynchronously on a later query");
-  BaseHook.invoke(service,"unregisterRecentTasksListener",new Class<?>[]{IRecentTasks.Listener.class},receiver);int notified=receiver.changed;
-  choose(Set.of());ok(receiver.changed==notified&&query(service)==original,"unregister and empty selection restore normal cards");
+  var listenerTypes=new Class<?>[]{IRecentTasks.Listener.class};
+  resolverAtStart.change();queries=resolverAtStart.queries;
+  BaseHook.invoke(service,"unregisterRecentTasksListener",listenerTypes,receiver);int notified=receiver.changed;
+  choose(Set.of());
+  ok(resolverAtStart.queries==queries&&receiver.changed==notified,"unregister cancels queued and subsequent notification work");
+  ok(query(service)==original,"expired cache returns stock while empty selection loads");ThreadPoolManager.drain();
+  ok(resolverAtStart.queries==queries+1&&query(service)==original,"cleared selection loaded on demand and stays stock");
   // Optional extension remains from one physical getAll revision and leaves schema/columns unchanged.
   var values=new HashMap<String,Object>();values.put("prefs_key_home_recent_hide_card",Set.of("app.hide"));int[] snapshots={0};
   try(var c=HomeLayoutPrefsSnapshot.cursor(()->{snapshots[0]++;return values;})){
@@ -107,15 +141,34 @@ public class Test {
   values.put("prefs_key_home_recent_hide_card",42);try(var c=HomeLayoutPrefsSnapshot.cursor(()->values)){
    ok(c!=null&&c.getExtras().getInt(HomeLayoutPrefsSnapshot.RECENT_CARDS_VERSION,0)==0,"malformed optional selection cannot break unrelated layout");
   }
-  BaseHook.invoke(service,"registerRecentTasksListener",new Class<?>[]{IRecentTasks.Listener.class},receiver);
-  BaseHook.invoke(service,"invalidate",new Class<?>[]{});notified=receiver.changed;
-  choose(Set.of("app.hide"));ok(receiver.changed==notified,"retired Shell binder does not retain a stale launcher listener");
+  BaseHook.invoke(service,"registerRecentTasksListener",listenerTypes,receiver);
+  BaseHook.invoke(service,"invalidate",new Class<?>[]{});notified=receiver.changed;queries=resolverAtStart.queries;
+  choose(Set.of("app.hide"));ok(resolverAtStart.queries==queries&&receiver.changed==notified,"retired Shell binder does not keep the Provider active");
   var replacement=new VendorRenamedService();replacement.tasks=original;BaseHook.constructed(replacement);
-  BaseHook.invoke(replacement,"registerRecentTasksListener",new Class<?>[]{IRecentTasks.Listener.class},receiver);
-  choose(Set.of("app.keep"));ok(receiver.changed==notified+1,"launcher reconnect reuses validated method hook and registers fresh listener");
+  var reconnected=new Receiver();
+  BaseHook.invoke(replacement,"registerRecentTasksListener",listenerTypes,reconnected);ThreadPoolManager.drain();
+  ok(reconnected.changed==1&&receiver.changed==notified&&resolverAtStart.queries==queries+1,"reconnected listener alone receives the latest choice");
+  choose(Set.of("app.keep"));ok(reconnected.changed==2,"live listener still receives setting changes");
   service.tasks=new Group[4097];ok(query(service)==service.tasks,"oversized task reply retains original without unbounded filtering");service.tasks=original;
-  choose(Set.of("app.hide"));for(var cleanup:BaseHook.cleanup)cleanup.run();
-  ok(ContextUtils.app.resolver.observer==null&&query(service)==original,"cleanup unregisters observer, late callbacks preserve original");
+  resolverAtStart.change();queries=resolverAtStart.queries;
+  reconnected.binder.alive=false;choose(Set.of("app.hide"));
+  ok(resolverAtStart.queries==queries&&reconnected.changed==2,"dead listener cannot start a queued or future notification refresh");
+  var live=new Receiver();BaseHook.invoke(replacement,"registerRecentTasksListener",listenerTypes,live);ThreadPoolManager.drain();
+  resolverAtStart.duringQuery=()->{
+   try{BaseHook.invoke(replacement,"unregisterRecentTasksListener",listenerTypes,live);}catch(Throwable e){throw new AssertionError(e);}
+   resolverAtStart.change();
+  };
+  queries=resolverAtStart.queries;notified=live.changed;choose(Set.of("app.keep"));
+  ok(resolverAtStart.queries==queries+1&&live.changed==notified&&ThreadPoolManager.queue.isEmpty(),"in-flight invalidation does not requery after last listener leaves");
+  BaseHook.invoke(replacement,"registerRecentTasksListener",listenerTypes,live);ThreadPoolManager.drain();
+  Runnable storm=new Runnable(){public void run(){resolverAtStart.duringQuery=this;resolverAtStart.change();}};
+  resolverAtStart.duringQuery=storm;queries=resolverAtStart.queries;resolverAtStart.change();ThreadPoolManager.drain();
+  ok(resolverAtStart.queries==queries+4&&ThreadPoolManager.queue.isEmpty(),"continuous invalidations cannot reschedule beyond the refresh budget");
+  resolverAtStart.duringQuery=null;android.os.SystemClock.now+=2001;choose(Set.of("app.hide"));
+  queries=resolverAtStart.queries;resolverAtStart.change();
+  var lateObserver=resolverAtStart.observer;for(var cleanup:BaseHook.cleanup)cleanup.run();
+  lateObserver.onChange(false,null);ThreadPoolManager.drain();
+  ok(resolverAtStart.observer==null&&query(service)==original&&resolverAtStart.queries==queries,"cleanup unregisters observer and fences queued or late work");
   BaseHook.hooks.clear();BaseHook.cleanup.clear();ThreadPoolManager.queue.clear();ContextUtils.app=new android.app.Application();
   var resolver=ContextUtils.app.resolver;resolver.registerEntered=new java.util.concurrent.CountDownLatch(1);resolver.registerRelease=new java.util.concurrent.CountDownLatch(1);
   var racing=new HomeHideRecentCardsOS4();Thread starting=new Thread(racing::init);starting.start();

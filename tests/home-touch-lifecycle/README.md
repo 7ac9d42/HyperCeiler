@@ -41,6 +41,12 @@ cancelled streams, settings/editing changes, two fingers, full action/index
 restoration, unavailable ABI, ordinary paging, scope rejection, long gaps and
 normal one-shot custom-gesture dispatch.
 
+The same runner also compiles the production action queue, worker and
+recognition gates with host I/O stubs. It injects `EINTR`, a successful queue
+read, and then `EIO` with pending work. It checks that the failed worker clears
+its queue, an already-cancelled swipe drains without dispatch, and new swipes,
+double taps and back gestures are not intercepted by the retired channel.
+
 Additional existing checks exercise extra-navigation receiver ownership, region
 selection and SystemUI quick-switch cleanup. Release compilation/signing must
 also pass. No phone operation or install is performed by this suite. Device

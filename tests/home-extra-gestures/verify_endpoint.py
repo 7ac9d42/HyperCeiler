@@ -1,8 +1,10 @@
 """Production snapshot + receive/perform bodies; Binder identity/services/actions are controlled stubs."""
 from pathlib import Path
-import sys,subprocess,json
-W=Path(__file__).resolve().parents[2];R=Path(sys.argv[1]).resolve() if len(sys.argv)>1 else W
-J=R/'library/libhook/src/main/java/com/sevtinge/hyperceiler/libhook';D=W/'handover/gesture-extra-os4-20261017'/('endpoint-'+R.name);D.mkdir(parents=True,exist_ok=True)
+import argparse,subprocess,json,sys
+W=Path(__file__).resolve().parents[2]
+p=argparse.ArgumentParser();p.add_argument('source',nargs='?',type=Path,default=W);p.add_argument('--output',type=Path)
+a=p.parse_args();R=a.source.resolve()
+J=R/'library/libhook/src/main/java/com/sevtinge/hyperceiler/libhook';D=a.output or W/'handover/gesture-extra-os4-20261017'/('endpoint-'+R.name);D.mkdir(parents=True,exist_ok=True)
 s=(J/'rules/home/gesture/HomeQuickSwitchOS4.java').read_text()
 if 'static int actionIndex' not in s:print('EXTRA_ENDPOINT=missing wire mapping; failed=1');sys.exit(1)
 def body(start):
@@ -24,11 +26,12 @@ stubs={
 'android/content/Intent.java':'package android.content;public class Intent {public static String ACTION_MAIN="MAIN",CATEGORY_HOME="HOME";public Intent(String a){}public Intent addCategory(String c){return this;}}',
 'android/content/pm/PackageManager.java':'''package android.content.pm;public class PackageManager {public static int MATCH_DEFAULT_ONLY=1;public static class Info {public String packageName="resolved.home",name="DynamicActivity",targetActivity;}public static class Resolve {public Info activityInfo=new Info();}public Resolve resolveActivity(android.content.Intent i,int f){return new Resolve();}}''',
 'android/app/ActivityManager.java':'''package android.app;import java.util.*;public class ActivityManager {public static boolean home=true;public static class Task {public android.content.ComponentName topActivity=new android.content.ComponentName(home?"resolved.home":"app",home?"DynamicActivity":"Other");}public List<Task> getRunningTasks(int n){return List.of(new Task());}}''',
-'android/app/KeyguardManager.java':'package android.app;public class KeyguardManager {public static boolean locked;public boolean isKeyguardLocked(){return locked;}}',
-'android/os/PowerManager.java':'package android.os;public class PowerManager {public static boolean interactive=true;public boolean isInteractive(){return interactive;}}',
+'android/app/KeyguardManager.java':'package android.app;public class KeyguardManager {public static boolean locked;public static int reads;public boolean isKeyguardLocked(){reads++;return locked;}}',
+'android/os/PowerManager.java':'package android.os;public class PowerManager {public static boolean interactive=true;public static int reads;public boolean isInteractive(){reads++;return interactive;}}',
 'android/os/IBinder.java':'package android.os;public interface IBinder {int FLAG_ONEWAY=1;}',
 'android/os/SystemClock.java':'package android.os;public class SystemClock {public static long now=10000;public static long uptimeMillis(){return now;}}',
-'android/os/SystemProperties.java':'package android.os;public class SystemProperties {public static boolean getBoolean(String n,boolean b){return false;}}',
+'android/os/SystemProperties.java':'package android.os;public class SystemProperties {public static boolean probe;public static boolean getBoolean(String n,boolean b){return probe;}}',
+'com/sevtinge/hyperceiler/common/log/ModuleLog.java':'package com.sevtinge.hyperceiler.common.log;public class ModuleLog {public static int diagnostics;public static void i(String tag,String message){diagnostics++;}public static void w(String tag,String message,Throwable error){throw new AssertionError(error);}}',
 'android/os/Binder.java':'package android.os;public class Binder {public static int uid=1000,pid=222;public static int getCallingUid(){return uid;}public static int getCallingPid(){return pid;}public static long clearCallingIdentity(){return 1;}public static void restoreCallingIdentity(long t){}}',
 'android/os/Parcel.java':'''package android.os;import java.util.*;public class Parcel {public List<Number> data=new ArrayList<>();int index;public Parcel(Number... n){data.addAll(Arrays.asList(n));}public void enforceInterface(String s){if(!s.equals("android.view.IWindowManager"))throw new IllegalArgumentException();}public int readInt(){return data.get(index++).intValue();}public long readLong(){return data.get(index++).longValue();}public int dataAvail(){return (data.size()-index)*4;}public void writeInt(int i){data.add(i);}}''',
 'android/content/Context.java':'''package android.content;import java.util.*;import android.database.*;public class Context {
@@ -73,6 +76,12 @@ public static void main(String[]args) {
  Context.prefs.put("prefs_key_home_gesture_enable",false);ok(!call(11,1000,222,0,0,false),"master off");ok(call(7,1000,222,0,0,false),"quick independent");Context.prefs.put("prefs_key_home_gesture_enable",true);
  Context.prefs.put("prefs_key_home_gesture_line_double_click_action",0);ok(!call(12,1000,222,0,0,false),"action off");ok(call(11,1000,222,0,0,false),"other action unaffected");
  Context.prefs.put("prefs_key_home_gesture_line_long_press_action",13);ok(call(11,1000,222,0,0,false)&&com.sevtinge.hyperceiler.common.utils.PrefsBridge.cache.get("home_gesture_line_long_press_action").equals(13),"fresh payload reload");
+ PowerManager.reads=0;android.app.KeyguardManager.reads=0;
+ ok(call(9,1000,222,0,0,false)&&PowerManager.reads==1&&android.app.KeyguardManager.reads==1,"disabled probe only reads authorization state");
+ PowerManager.reads=0;android.app.KeyguardManager.reads=0;PowerManager.interactive=false;
+ ok(!call(9,1000,222,0,0,false)&&PowerManager.reads==1&&android.app.KeyguardManager.reads==0,"disabled probe does not read keyguard when screen is off");PowerManager.interactive=true;
+ SystemProperties.probe=true;
+ ok(call(9,1000,222,0,0,false)&&com.sevtinge.hyperceiler.common.log.ModuleLog.diagnostics==1,"enabled probe still logs dispatch");
  System.out.println("EXTRA_ENDPOINT_CHECKS="+checks+" FAILED="+failed+"; production snapshot/receive/perform, caller identity/Binder/actions mocked");if(failed>0)System.exit(1);
 }}
 '''

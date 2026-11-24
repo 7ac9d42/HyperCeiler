@@ -55,22 +55,19 @@ public final class HomeLayoutNativeEndpointOS4 {
     private static final long CHANGE_MIN_INTERVAL_NS = 150_000_000L;
     // Recents heartbeats are two seconds apart; leave another heartbeat to consume a renewal.
     private static final long LEASE_RENEWAL_NS = 3_500_000_000L;
-    private static final long UNOBSERVED_REFRESH_NS = 30_000_000_000L;
+    // A registered observer may miss a change; revalidate only on a later client request.
+    private static final long DEMAND_REVALIDATE_NS = 30_000_000_000L;
     private static final long[] FAILURE_DELAY_NS = {250_000_000L, 1_000_000_000L, 30_000_000_000L};
     private static final String TAG = "HyperCeiler.HomeLayoutEndpoint";
     private static volatile java.util.Map<String, Object> cachedValues;
-    // Published with the same provider revision, never restored as live authorization.
-    private static String cachedFrameworkReason;
-    private static FrameworkHookGate.Fingerprint cachedFrameworkFingerprint;
-    private static boolean hyosSnapshotLive;
-    private static long hyosSnapshotAtNanos;
     private static final long HYOS_MAX_SNAPSHOT_AGE_NANOS = 5_000_000_000L;
     private static volatile String lastDenied;
     private static volatile String lastAccepted;
     private static Thread refresher;
     private static boolean observingChanges;
     private static boolean refreshRequested;
-    private static Runnable recentsRefreshCallback;
+    private static java.util.function.LongConsumer retrySupersededRecentsDemand;
+    private static volatile Runnable recentsPublicationListener;
     private static long nextQueryAtNanos;
     private static int failedQueries;
     private static volatile boolean paused;
@@ -116,7 +113,6 @@ public final class HomeLayoutNativeEndpointOS4 {
 
     /** Caller holds refresherLock. Revocation advances the same publication sequence. */
     private static void invalidateCombinedLocked() {
-        hyosSnapshotLive = false;
         if (combinedEpoch == 0) { combinedPublished = null; return; }
         combinedPublished = new PublishedSnapshot(null, null, null, null, combinedEpoch,
             ++combinedRevision, 0);
@@ -161,30 +157,34 @@ public final class HomeLayoutNativeEndpointOS4 {
         }
     }
 
-    private static void requestRefresh(boolean renewLease) {
-        requestRefresh(renewLease, null);
+    private enum Demand { LAYOUT, AUTHORIZATION, FOREGROUND_HOME, OVERVIEW }
+
+    /** A positive result is the remaining throttle; the worker never schedules a retry. */
+    private static long requestRefresh(Demand demand, boolean renewLease, java.util.function.LongConsumer onSuperseded) {
+        return requestRefresh(demand, renewLease, onSuperseded, null);
     }
 
-    private static void requestRefresh(boolean renewLease, Runnable onRefresh) {
+    private static long requestRefresh(Demand demand, boolean renewLease, java.util.function.LongConsumer onSuperseded,
+            java.util.function.BooleanSupplier current) {
         synchronized (refresherLock) {
-            if (paused) return;
+            if (paused || (current != null && !current.getAsBoolean())) return 0;
             if (refreshRequested) {
-                if (onRefresh != null) recentsRefreshCallback = onRefresh;
-                return;
+                if (onSuperseded != null) retrySupersededRecentsDemand = onSuperseded;
+                return 0;
             }
             final PublishedSnapshot value = combinedPublished;
             if (value != null && value.values() != null) {
-                if (observingChanges && !renewLease) return;
                 final long remaining = value.deadline() - SystemClock.elapsedRealtimeNanos();
                 final boolean leaseDue = renewLease && remaining <= LEASE_RENEWAL_NS;
-                final boolean unobservedUpdateDue = !observingChanges
-                    && remaining <= HYOS_MAX_SNAPSHOT_AGE_NANOS - UNOBSERVED_REFRESH_NS;
-                if (!leaseDue && !unobservedUpdateDue) return;
+                // Legacy layout packets include an idle heartbeat, not just UI demand.
+                final boolean revalidationDue = (demand == Demand.OVERVIEW || (demand == Demand.LAYOUT && !observingChanges))
+                    && remaining <= HYOS_MAX_SNAPSHOT_AGE_NANOS - DEMAND_REVALIDATE_NS;
+                if (!leaseDue && !revalidationDue) return 0;
             }
-            // A new call, not a timer or a notification, must spend each retry slot.
-            if (nextQueryAtNanos != 0 && System.nanoTime() - nextQueryAtNanos < 0) return;
+            final long delay = nextQueryAtNanos == 0 ? 0 : nextQueryAtNanos - System.nanoTime();
+            if (delay > 0) return delay;
             refreshRequested = true;
-            recentsRefreshCallback = onRefresh;
+            retrySupersededRecentsDemand = onSuperseded;
             if (refresher == null) {
                 final long epoch = refreshEpoch;
                 refresher = new Thread(() -> runRefresher(epoch), "hc-layout-prefs");
@@ -193,6 +193,7 @@ public final class HomeLayoutNativeEndpointOS4 {
             } else {
                 refresherLock.notifyAll();
             }
+            return 0;
         }
     }
 
@@ -213,7 +214,7 @@ public final class HomeLayoutNativeEndpointOS4 {
                         resolver = context == null ? null : context.getContentResolver();
                         if (resolver != null) observer = registerObserver(resolver, epoch);
                     } catch (RuntimeException | Error unavailable) {
-                        // If observation fails, later demand can recheck the provider at a lower rate.
+                        // A later client request can still revalidate the cache.
                     }
                 }
                 final long beforeQuery;
@@ -223,25 +224,24 @@ public final class HomeLayoutNativeEndpointOS4 {
                     beforeQuery = notificationVersion;
                 }
                 final boolean success = refreshFromProvider(epoch);
-                final Runnable callback;
+                final java.util.function.LongConsumer callback;
                 synchronized (refresherLock) {
                     if (paused || refreshEpoch != epoch) return;
+                    final boolean superseded = notificationVersion != beforeQuery
+                        && (combinedPublished == null || combinedPublished.values() == null);
                     long delay = CHANGE_MIN_INTERVAL_NS;
                     if (success) {
                         failedQueries = 0;
-                    } else if (notificationVersion == beforeQuery) {
+                    } else if (!superseded) {
                         delay = FAILURE_DELAY_NS[failedQueries];
                         failedQueries = Math.min(failedQueries + 1, FAILURE_DELAY_NS.length - 1);
                     }
                     nextQueryAtNanos = System.nanoTime() + delay;
                     refreshRequested = false;
-                    callback = recentsRefreshCallback;
-                    recentsRefreshCallback = null;
+                    callback = superseded ? retrySupersededRecentsDemand : null;
+                    retrySupersededRecentsDemand = null;
                 }
-                if (callback != null) {
-                    try { callback.run(); }
-                    catch (RuntimeException unavailable) { /* The next scene packet can update the policy. */ }
-                }
+                if (callback != null) runRecentsCallback(() -> callback.accept(CHANGE_MIN_INTERVAL_NS));
             }
         } catch (InterruptedException cancelled) {
             Thread.currentThread().interrupt();
@@ -254,7 +254,7 @@ public final class HomeLayoutNativeEndpointOS4 {
                 if (refresher == Thread.currentThread()) {
                     observingChanges = false;
                     refreshRequested = false;
-                    recentsRefreshCallback = null;
+                    retrySupersededRecentsDemand = null;
                     refresher = null;
                 }
             }
@@ -270,6 +270,7 @@ public final class HomeLayoutNativeEndpointOS4 {
                     ++notificationVersion;
                     invalidateCombinedLocked();
                 }
+                runRecentsCallback(recentsPublicationListener);
             }
         };
         resolver.registerContentObserver(Uri.parse(PREFS_CHANGES_URI), true, observer);
@@ -283,15 +284,16 @@ public final class HomeLayoutNativeEndpointOS4 {
             paused = true;
             ++refreshEpoch; // A query already in flight must not publish after retirement.
             refreshRequested = false;
-            recentsRefreshCallback = null;
+            retrySupersededRecentsDemand = null;
             nextQueryAtNanos = 0;
             failedQueries = 0;
             invalidateCombinedLocked();
             worker = refresher;
-            if (worker == null) return true;
-            worker.interrupt();
+            if (worker != null) worker.interrupt();
             refresherLock.notifyAll();
         }
+        runRecentsCallback(recentsPublicationListener);
+        if (worker == null) return true;
         try { worker.join(500); }
         catch (InterruptedException interrupted) { Thread.currentThread().interrupt(); return false; }
         synchronized (refresherLock) {
@@ -308,7 +310,7 @@ public final class HomeLayoutNativeEndpointOS4 {
     /** A missing provider revision is NOT an authoritative zero/default native configuration. */
     static Snapshot readReadyPreferences() {
         restoreProviderSnapshot();
-        requestRefresh(false);
+        requestRefresh(Demand.LAYOUT, false, null);
         final java.util.Map<String, Object> values = cachedValues;
         return values == null ? null : decodeLayout(values);
     }
@@ -333,12 +335,14 @@ public final class HomeLayoutNativeEndpointOS4 {
         boolean success;
         try { success = tryRefreshFromProvider(epoch, ticket, notificationAtQuery, started); }
         catch (RuntimeException | Error unavailable) { success = false; }
+        boolean changed = success;
         synchronized (refresherLock) {
             if (!success && refreshEpoch == epoch && refreshTicket == ticket) {
-                hyosSnapshotLive = false;
+                changed = combinedPublished != null && combinedPublished.values() != null;
                 invalidateCombinedLocked();
             }
         }
+        if (changed) runRecentsCallback(recentsPublicationListener);
         return success;
     }
 
@@ -357,12 +361,8 @@ public final class HomeLayoutNativeEndpointOS4 {
             // Boot-classloader Map/String/Integer only; no endpoint, callback or Thread crosses reload.
             BaseHook.putHotReloadRuntimeState(RELOAD_CACHE_KEY, complete);
             cachedValues = complete;
-            cachedFrameworkReason = source.reason();
-            cachedFrameworkFingerprint = source.framework();
-            hyosSnapshotAtNanos = System.nanoTime();
-            hyosSnapshotLive = true;
-            combinedPublished = new PublishedSnapshot(complete, cachedFrameworkReason,
-                cachedFrameworkFingerprint, layout, combinedEpoch, ++combinedRevision, deadline);
+            combinedPublished = new PublishedSnapshot(complete, source.reason(),
+                source.framework(), layout, combinedEpoch, ++combinedRevision, deadline);
         }
         return true;
     }
@@ -620,25 +620,16 @@ public final class HomeLayoutNativeEndpointOS4 {
         if (uid < 10000 || pid <= 0 || !verifier.isLauncher(uid, pid)) return -1;
         restoreProviderSnapshot();
         final int result = readHyosFlags();
-        requestRefresh(true);
+        requestRefresh(Demand.AUTHORIZATION, true, null);
         return result;
     }
 
     static int readHyosFlags() {
-        final java.util.Map<String, Object> values;
-        final String frameworkReason;
-        final FrameworkHookGate.Fingerprint checkedFramework;
-        synchronized (refresherLock) {
-            if (!hyosSnapshotLive || paused
-                || System.nanoTime() - hyosSnapshotAtNanos > HYOS_MAX_SNAPSHOT_AGE_NANOS) return -1;
-            values = cachedValues;
-            frameworkReason = cachedFrameworkReason;
-            checkedFramework = cachedFrameworkFingerprint;
-        }
-        // No JNI/remote-preference fallback in a Rust child. Activation requires
-        // the module application's authoritative snapshot and normal hook gates.
-        if (values == null) return -1;
-        return deriveHyosFlags(values, frameworkReason, checkedFramework);
+        final PublishedSnapshot value = combinedPublished;
+        final long now = SystemClock.elapsedRealtimeNanos();
+        if (!isCombinedLeaseLive(value, now)) return -1;
+        final int flags = deriveHyosFlags(value.values(), value.reason(), value.framework());
+        return isCurrentLease(value, now) ? flags : -1;
     }
 
     private static int deriveHyosFlags(java.util.Map<String, Object> values, String frameworkReason,
@@ -673,7 +664,7 @@ public final class HomeLayoutNativeEndpointOS4 {
             return unavailableCombined(null);
         restoreProviderSnapshot();
         final CombinedSnapshot result = readCombinedSnapshot();
-        requestRefresh(true);
+        requestRefresh(Demand.AUTHORIZATION, true, null);
         return result;
     }
 
@@ -696,42 +687,83 @@ public final class HomeLayoutNativeEndpointOS4 {
         final int flags = deriveHyosFlags(value.values(), value.reason(), value.framework());
         final long finished = SystemClock.elapsedRealtimeNanos();
         if (combinedPublished != value || paused) return null;
-        if (finished < now || finished >= value.deadline()) return unavailableCombined(value);
+        if (finished < now || !isCombinedLeaseLive(value, finished)) return unavailableCombined(value);
         if (flags == 0) return new CombinedSnapshot(1, 0, value.epoch(), value.revision(), 0, null);
         if (!validCombinedLayout(value.layout())) return unavailableCombined(value);
         return new CombinedSnapshot(1, flags, value.epoch(), value.revision(),
             value.deadline(), value.layout());
     }
 
-    /** Scene observation is not authorization to change Insets; the WMS policy still needs a live lease. */
-    static int requestRecentsBarPreference(boolean overview, Runnable onRefresh) {
+    /** Scene observation is not authorization to change Insets and never requests a query. */
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
+    static int readRecentsBarObservation() {
         final PublishedSnapshot value = combinedPublished;
-        int observation = -1;
-        if (!paused && value != null && value.values() != null
-            && value.values().containsKey(HomeLayoutPrefsSnapshot.RECENTS_BAR_KEY)) {
-            final int flags = deriveHyosFlags(value.values(), value.reason(), value.framework());
-            if (!paused && combinedPublished == value) {
-                observation = (flags & HYOS_ALLOWED) != 0
-                    && readBoolean(value.values(), HomeLayoutPrefsSnapshot.RECENTS_BAR_KEY, false) ? 1 : 0;
-            }
-        }
-        requestRefresh(overview && observation == 1, onRefresh);
-        return observation;
+        if (paused || value == null || value.values() == null
+            || !value.values().containsKey(HomeLayoutPrefsSnapshot.RECENTS_BAR_KEY)) return -1;
+        final boolean enabled = recentsEnabled(value);
+        return !paused && combinedPublished == value ? (enabled ? 1 : 0) : -1;
     }
 
-    /** Same immutable physical-file publication and authorization as combined layout. */
-    public record RecentsBarPreference(boolean available, boolean enabled, long deadline) { }
+    static long requestRecentsBarRefresh(boolean overview, java.util.function.LongConsumer onSuperseded) {
+        return requestRecentsBarRefresh(overview, onSuperseded, null);
+    }
+
+    /** Called outside the WMS lock; the demand guard must not take any lock. */
+    static long requestRecentsBarRefresh(boolean overview, java.util.function.LongConsumer onSuperseded,
+            java.util.function.BooleanSupplier current) {
+        return requestRefresh(overview ? Demand.OVERVIEW : Demand.FOREGROUND_HOME,
+            overview && readRecentsBarObservation() == 1, onSuperseded, current);
+    }
+
+    static void setRecentsPublicationListener(Runnable listener) {
+        synchronized (refresherLock) {
+            recentsPublicationListener = listener;
+        }
+    }
+
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
+    static void clearRecentsPublicationListener(Runnable listener) {
+        synchronized (refresherLock) {
+            if (recentsPublicationListener == listener) recentsPublicationListener = null;
+        }
+    }
+
+    private static void runRecentsCallback(Runnable callback) {
+        if (callback == null) return;
+        try { callback.run(); }
+        catch (RuntimeException unavailable) { /* The next scene packet can update the policy. */ }
+    }
+
+    public record RecentsBarPreference(boolean available, boolean enabled, long deadline, long revision) { }
+    static final RecentsBarPreference NO_RECENTS_BAR_PREFERENCE = new RecentsBarPreference(false, false, 0, 0);
+
     public static RecentsBarPreference recentsBarPreference() {
         final PublishedSnapshot value = combinedPublished;
         final long now = SystemClock.elapsedRealtimeNanos();
         if (!isCombinedLeaseLive(value, now)
             || !value.values().containsKey(HomeLayoutPrefsSnapshot.RECENTS_BAR_KEY))
-            return new RecentsBarPreference(false, false, 0);
-        final int flags = deriveHyosFlags(value.values(), value.reason(), value.framework());
-        if (combinedPublished != value || !isCombinedLeaseLive(value, SystemClock.elapsedRealtimeNanos()))
-            return new RecentsBarPreference(false, false, 0);
-        return new RecentsBarPreference(true, (flags & HYOS_ALLOWED) != 0
-            && readBoolean(value.values(), HomeLayoutPrefsSnapshot.RECENTS_BAR_KEY, false), value.deadline());
+            return NO_RECENTS_BAR_PREFERENCE;
+        final boolean enabled = recentsEnabled(value);
+        if (!isCurrentLease(value, now)) return NO_RECENTS_BAR_PREFERENCE;
+        return new RecentsBarPreference(true, enabled, value.deadline(), value.revision());
+    }
+
+    static boolean isCurrentRecentsBarPreference(RecentsBarPreference preference) {
+        final long now = SystemClock.elapsedRealtimeNanos();
+        final PublishedSnapshot value = combinedPublished;
+        return preference.available() && isCombinedLeaseLive(value, now)
+            && value.revision() == preference.revision();
+    }
+
+    private static boolean recentsEnabled(PublishedSnapshot value) {
+        return (deriveHyosFlags(value.values(), value.reason(), value.framework()) & HYOS_ALLOWED) != 0
+            && readBoolean(value.values(), HomeLayoutPrefsSnapshot.RECENTS_BAR_KEY, false);
+    }
+
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
+    private static boolean isCurrentLease(PublishedSnapshot value, long startedReading) {
+        final long finished = SystemClock.elapsedRealtimeNanos();
+        return combinedPublished == value && finished >= startedReading && isCombinedLeaseLive(value, finished);
     }
 
     private static boolean isCombinedLeaseLive(PublishedSnapshot value, long now) {

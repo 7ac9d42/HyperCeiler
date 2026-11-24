@@ -95,7 +95,7 @@ public final class HomeExtraGesturesOS4 extends BaseHook {
                 tick.run();
             }catch(Exception ex){log("platform contract declined",ex);}
         });
-        worker.post(this::refresh);worker.post(pollHome);
+        worker.post(this::refresh);
     }
     private void refresh() {
         int next=0;StringBuilder stamp=new StringBuilder();
@@ -110,27 +110,36 @@ public final class HomeExtraGesturesOS4 extends BaseHook {
             }
         }catch(Exception ex){stamp.setLength(0);log("configuration declined",ex);}
         int value=next;String identity=stamp.toString();
-        main.post(()->{if(closed||fingerprint.equals(identity))return;fingerprint=identity;mask=value;revision++;
+        main.post(()->{if(closed||fingerprint.equals(identity))return;fingerprint=identity;
+            boolean wasShakeEnabled=(mask&1)!=0;
+            mask=value;revision++;
+            if((value&1)==0)homeForeground=false;
             if(touch!=null)touch.reset();shake.reset();main.removeCallbacks(longPress);main.removeCallbacks(tick);if(touch!=null)tick.run();
+            if(!wasShakeEnabled&&(value&1)!=0)worker.post(pollHome);
+            else if(wasShakeEnabled&&(value&1)==0)worker.removeCallbacks(pollHome);
             log("config mask="+mask+" revision="+revision,null);});
     }
     private final Runnable pollHome=new Runnable(){@Override public void run(){
-        if(closed)return;
-        boolean foreground=false;
+        if(closed||((mask&1)==0))return;
+        boolean foreground=false,interactive=false,unlocked=false;
         try {
-            if((mask&1)!=0) {
-            var home=context.getPackageManager().resolveActivity(new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME),PackageManager.MATCH_DEFAULT_ONLY);
-            var tasks=context.getSystemService(ActivityManager.class).getRunningTasks(1);
-            if(home!=null&&home.activityInfo!=null&&!tasks.isEmpty()) {
-                var top=tasks.get(0).topActivity;
-                foreground=top!=null&&top.getPackageName().equals(home.activityInfo.packageName)
-                    &&top.getClassName().equals(home.activityInfo.targetActivity!=null?home.activityInfo.targetActivity:home.activityInfo.name);
-            }
+            PowerManager power=context.getSystemService(PowerManager.class);
+            KeyguardManager keyguard=context.getSystemService(KeyguardManager.class);
+            interactive=power!=null&&power.isInteractive();
+            unlocked=keyguard==null||!keyguard.isKeyguardLocked();
+            if(interactive&&unlocked) {
+                var home=context.getPackageManager().resolveActivity(new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME),PackageManager.MATCH_DEFAULT_ONLY);
+                var tasks=context.getSystemService(ActivityManager.class).getRunningTasks(1);
+                if(home!=null&&home.activityInfo!=null&&!tasks.isEmpty()) {
+                    var top=tasks.get(0).topActivity;
+                    foreground=top!=null&&top.getPackageName().equals(home.activityInfo.packageName)
+                        &&top.getClassName().equals(home.activityInfo.targetActivity!=null?home.activityInfo.targetActivity:home.activityInfo.name);
+                }
             }
         }catch(Exception ignored){}
         boolean current=foreground;
-        main.post(()->{if(closed)return;homeForeground=current;reconcile();});
-        worker.postDelayed(this,500);
+        main.post(()->{if(closed||homeForeground==current)return;homeForeground=current;reconcile();});
+        if((mask&1)!=0)worker.postDelayed(this,interactive&&unlocked?500:2000);
     }};
     private final Runnable tick=new Runnable(){@Override public void run(){
         if(closed)return;

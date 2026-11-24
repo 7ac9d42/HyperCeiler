@@ -170,7 +170,6 @@ internal class DockGlassClient(private val rendererBroker: DockGlassRendererBrok
     private class Journal(private val worker: () -> Handler) {
         private val events = ArrayDeque<String>() // IPC worker only; no frame-by-frame history.
         fun record(event: String) {
-            if (isSampledFrameNoise(event)) return
             val message = "wall=${System.currentTimeMillis()} up=${SystemClock.uptimeMillis()} $event".take(512)
             // Deliberately independent of the release build's error-only Xposed log filter.
             Log.i("HyperCeiler.DockGlass", message)
@@ -178,32 +177,6 @@ internal class DockGlassClient(private val rendererBroker: DockGlassRendererBrok
                 if (events.size >= 96) events.removeFirst()
                 events.addLast(message)
             }
-        }
-
-
-        /**
-         * Per-frame diagnostic kinds, sampled instead of recorded verbatim.
-         *
-         * <p>At 120 Hz the reveal/motion debug records arrive about four times per frame: that
-         * flooded the ring (which is how §37 was misdiagnosed) and cost a logd write each. Sampling
-         * keeps the progression readable at ~7 Hz; a full-rate diagnostic is a one-line revert.
-         */
-        private val noisyPrefixes = listOf(
-            "reveal dbg frame", "reveal dbg pose", "reveal dbg layout", "motion position",
-            // "native motion scene" belongs here as much as the four above: it is emitted from
-            // the frame loop, so an OS4 build that keeps re-publishing one scene/scale pair
-            // writes it every frame - measured at 68 records/second on device, which is what
-            // made this endpoint look like it had no useful log at all.
-            "native motion scene")
-        private val frameNoiseSampleMs = 150L
-        @Volatile private var lastNoisyAtMs = 0L
-
-        private fun isSampledFrameNoise(event: String): Boolean {
-            if (noisyPrefixes.none { event.startsWith(it) }) return false
-            val now = SystemClock.uptimeMillis()
-            if (now - lastNoisyAtMs < frameNoiseSampleMs) return true
-            lastNoisyAtMs = now
-            return false
         }
 
         fun finish() {
@@ -254,7 +227,20 @@ internal class DockGlassClient(private val rendererBroker: DockGlassRendererBrok
         }
     }
 
-    fun record(event: String) { if (!closed) journal.record(event) }
+    fun record(event: String) { if (!closed) writeJournal(event) }
+
+    @Volatile private var lastFrameAtMs = 0L
+
+    // All frame diagnostics share one sampling window to keep the journal readable.
+    internal inline fun recordFrame(event: () -> String) {
+        if (closed) return
+        val now = SystemClock.uptimeMillis()
+        if (now - lastFrameAtMs < 150L) return
+        lastFrameAtMs = now
+        writeJournal(event())
+    }
+
+    private fun writeJournal(event: String) = journal.record(event)
 
     /** Physical notifications must work even when LSPosed's remote snapshot/listener is stale. */
     private fun watchGeometry(context: Context) {

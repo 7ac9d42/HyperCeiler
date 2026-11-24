@@ -286,6 +286,8 @@ class HomeDockWindow : BaseHook() {
     @Volatile private var stopped = false
     @Volatile private var settings = Settings.read()
     @Volatile private var service: Any? = null
+    private val traversalRequestLock = Any()
+    private var traversalQueued = false
     private var blurAvailable = true
     private var revealScalingAvailable = true
     private var revealCropAvailable = true
@@ -349,7 +351,8 @@ class HomeDockWindow : BaseHook() {
     private val scheduledFrameStartedNs = AtomicLong(0)
     private val urgentFrameRecoveryScheduled = AtomicBoolean(false)
     private val directRecoveryScheduled = AtomicBoolean(false)
-    private val nativeBindSweepScheduled = AtomicBoolean(false)
+    // Guarded by layers, together with the last-layer removal.
+    private var pendingNativeBindSweep: NativeBindSweep? = null
     @Volatile private var animationAvailable = true
     @Volatile private var directMotionAvailable = true
     // Owned and used only on WMS's handler thread, and driven by a plain Handler post rather
@@ -467,7 +470,6 @@ class HomeDockWindow : BaseHook() {
                 runCatching { motionTransaction?.callMethod("close") }
                 motionTransaction = null
                 directRecoveryScheduled.set(false)
-                nativeBindSweepScheduled.set(false)
             }
         }
         WindowHooks(loadClass("com.android.server.wm.WindowState")).install()
@@ -711,13 +713,13 @@ class HomeDockWindow : BaseHook() {
                         reply.writeInt(android.os.Process.myPid())
                         reply.writeInt(HomeLayoutNativeEndpointOS4.DOCK_TITLE_MAGIC)
                         reply.writeInt(if (result?.dockShowTitle() == true) 1 else 0)
-                        HomeLayoutNativeEndpointOS4.writeRecent(reply,
-                            result?.recent() ?: HomeLayoutNativeEndpointOS4.recentDefaults())
+                        val recent = result?.recent() ?: HomeLayoutNativeEndpointOS4.recentDefaults()
+                        HomeLayoutNativeEndpointOS4.writeRecent(reply, recent)
                         HomeLayoutNativeEndpointOS4.writeDrawer(reply, result?.drawerHideSearch() ?: false)
                         HomeLayoutNativeEndpointOS4.writePolicies(reply, result?.policies() ?: 0L)
                         HomeLayoutNativeEndpointOS4.writeDockHorizontal(reply, result?.dockHorizontalDelta() ?: 0)
                         HomeLayoutNativeEndpointOS4.writeInfiniteScroll(reply, result?.infiniteScroll() ?: false)
-                        HomeLayoutNativeEndpointOS4.writeRecentHeader(reply, result?.recent() ?: HomeLayoutNativeEndpointOS4.recentDefaults())
+                        HomeLayoutNativeEndpointOS4.writeRecentHeader(reply, recent)
                     } else {
                         val acknowledgment = nativeMotionReply.get() ?: DockNativeMotionEndpoint.ACK
                         nativeMotionReply.remove()
@@ -803,6 +805,9 @@ class HomeDockWindow : BaseHook() {
             captureOnly: Boolean = false) {
             if (stopped || !settings.enabled) return
             val wm = service ?: return
+            val command = param.args[1] as? String
+            val isMotionCommand = command == DockRecentsMotion.WALLPAPER_ACTION
+            if (captureOnly && !isMotionCommand) return
             // Session callbacks may run after WMS releases its lock. Preserve WM -> layer lock order.
             synchronized(wm.getObjectFieldAs<Any>(WM_LOCK)) {
                 synchronized(layers) {
@@ -816,14 +821,11 @@ class HomeDockWindow : BaseHook() {
                     val attrs = attrsField.get(window) as WindowManager.LayoutParams
                     if (!isLauncher(window, attrs)) return
                     val extras = param.args[5] as? Bundle
-                    if (!captureOnly) recordCommand(param.args[1], extras)
-                    val action = param.args[1] as? String
-                    if (action != DockRecentsMotion.WALLPAPER_ACTION) return
-                    if (extras == null) return
+                    if (!captureOnly) recordCommand(command, extras)
+                    if (!isMotionCommand || extras == null) return
                     @Suppress("DEPRECATION")
                     val scale = (extras.get("scale_to") as? Number)?.toDouble() ?: return
                     val sceneAction = extras.getString("action")
-                    val command = param.args[1] as String
                     val isSetTo = sceneAction == "setTo"
                     val overview = DockRecentsMotion.overviewTarget(command, sceneAction, scale) ?: return
                     if (captureOnly) {
@@ -1114,9 +1116,13 @@ class HomeDockWindow : BaseHook() {
                 layer.y = y
                 // TODO(twitch-diag): trace traversal writes right after an unlock.
                 if (revealDebugActive()) {
-                    glassClient.record("reveal dbg layout yOff=${y - layer.baseY} " +
-                        "rise=${layer.reveal.risePx(layer.density, now)} " +
-                        "revealScale=${layer.revealScaleX}x${layer.revealScaleY}")
+                    // Sampling the rise can advance the animation past its end.
+                    val rise = layer.reveal.risePx(layer.density, now)
+                    glassClient.recordFrame {
+                        "reveal dbg layout yOff=${y - layer.baseY} " +
+                            "rise=$rise " +
+                            "revealScale=${layer.revealScaleX}x${layer.revealScaleY}"
+                    }
                 }
                 recordMotion(layer, y, now, visible, "layout")
             }
@@ -1221,7 +1227,9 @@ class HomeDockWindow : BaseHook() {
             // rebuilding the glass while the keyguard and home wallpapers are swapping is the
             // "samples two different wallpapers" flash. One rebuild happens after the window.
             val settledDark = if (materialSettleActive() && layer.glass != null) layer.glass!!.dark else dark
-            val glassKey = "${bounds.width()}/${bounds.height()}/${bounds.radius()}/$settledDark"
+            val glassKey = if (config.glass) {
+                "${bounds.width()}/${bounds.height()}/${bounds.radius()}/$settledDark"
+            } else null
             // A rotation no longer forces a rebuild: the launcher frame stays portrait through the
             // whole transition, so the host, its bounds and its material token are unchanged, and
             // the vendor's stale blur geometry is covered by the host's geometryValid gate (the
@@ -1249,7 +1257,7 @@ class HomeDockWindow : BaseHook() {
             }
             // Cold starts and invalid sources still use the guarded warmup path. A paused,
             // ready host survives rotation and supplies glass from the first returning frame.
-            if (config.glass && visible && layer.glass == null) {
+            if (glassKey != null && visible && layer.glass == null) {
                 val context = service!!.getObjectFieldAs<Context>("mContext")
                 layer.glass = glassClient.create(context, glassKey, bounds, settledDark)
                 layer.glassRotationEpoch = rotation.getEpoch()
@@ -1442,6 +1450,12 @@ class HomeDockWindow : BaseHook() {
     private fun removeLayer(window: Any) {
         val layer = layers.remove(window) ?: return
         resetSweepCadence()
+        if (layers.isEmpty()) {
+            pendingNativeBindSweep?.let { sweep ->
+                pendingNativeBindSweep = null
+                sweep.handler.removeCallbacks(sweep)
+            }
+        }
         layer.glass?.let { glassClient.release(it) }
         // Only release surfaces created by this hook. Never release the host's parent handle.
         runCatching { Surfaces.destroySurface(layer.tint) }
@@ -1830,8 +1844,9 @@ class HomeDockWindow : BaseHook() {
         }
         rememberContainer(layer, pose, applied)
         layer.revealAlpha = alpha
-        // TODO(twitch-diag): called by prime and by applyAppearance (visibility flips) - rare.
-        glassClient.record("reveal dbg pose alpha=$alpha risePx=${layer.reveal.risePx(layer.density, now)}")
+        // Sampling the rise can advance the animation past its end even when this log is skipped.
+        val rise = layer.reveal.risePx(layer.density, now)
+        glassClient.recordFrame { "reveal dbg pose alpha=$alpha risePx=$rise" }
     }
 
     /**
@@ -1900,14 +1915,22 @@ class HomeDockWindow : BaseHook() {
     }
 
     private fun requestTraversal() {
-        val wm = service ?: return
-        val handler = wm.getObjectFieldAs<Handler>(WM_HANDLER)
-        handler.post {
-            if (!stopped) runCatching {
-                synchronized(wm.getObjectFieldAs<Any>(WM_LOCK)) {
-                    wm.getObjectFieldAs<Any>("mWindowPlacerLocked").callMethod("requestTraversal")
-                }
-            }.onFailure { notePrepareFailure(it) }
+        synchronized(traversalRequestLock) {
+            if (stopped || traversalQueued) return
+            val wm = service ?: return
+            val handler = wm.getObjectFieldAs<Handler>(WM_HANDLER)
+            traversalQueued = handler.post {
+                // Only merge queued work; updates during this callback may need another pass.
+                synchronized(traversalRequestLock) { traversalQueued = false }
+                if (stopped) return@post
+                runCatching {
+                    synchronized(wm.getObjectFieldAs<Any>(WM_LOCK)) {
+                        if (!stopped) {
+                            wm.getObjectFieldAs<Any>("mWindowPlacerLocked").callMethod("requestTraversal")
+                        }
+                    }
+                }.onFailure { notePrepareFailure(it) }
+            }
         }
     }
 
@@ -1917,7 +1940,10 @@ class HomeDockWindow : BaseHook() {
             progress > 0.001f && kotlin.math.abs(progress - 1f) > 0.001f
         } else layer.motion.isRunning(now)
         if (layer.motionEndPending && (layer.motionSamples < 6 || !running)) {
-            glassClient.record("motion position offsetY=${y - layer.baseY} running=$running visible=$visible source=${if (layer.nativeApplied) "native-$source" else source}")
+            glassClient.recordFrame {
+                "motion position offsetY=${y - layer.baseY} running=$running visible=$visible " +
+                    "source=${if (layer.nativeApplied) "native-$source" else source}"
+            }
             layer.motionSamples++
             if (!running) layer.motionEndPending = false
         }
@@ -1990,8 +2016,10 @@ class HomeDockWindow : BaseHook() {
                             if (revealDebugActive() && (alpha != layer.revealAlpha ||
                                 SystemClock.uptimeMillis() - lastFrameDbgUptime > 40L)) {
                                 lastFrameDbgUptime = SystemClock.uptimeMillis()
-                                glassClient.record("reveal dbg frame yOff=${y - layer.baseY} " +
-                                    "slide=$slide alpha=$alpha nativeApplied=${layer.nativeApplied}")
+                                glassClient.recordFrame {
+                                    "reveal dbg frame yOff=${y - layer.baseY} " +
+                                        "slide=$slide alpha=$alpha nativeApplied=${layer.nativeApplied}"
+                                }
                             }
                         }
                         transaction.callMethod("setAnimationTransaction")
@@ -2096,18 +2124,27 @@ class HomeDockWindow : BaseHook() {
      *
      * The same tick also bounds how stale the dock preferences can be, and applies them directly.
      * Neither a change callback nor a WMS traversal is guaranteed: the framework can drop the
-     * remote update push, and WMS has no reason to traverse an idle launcher window at all. Since
-     * the loop already exists and only runs while a dock layer is on screen, re-reading here turns
-     * "edited the height, nothing happened until the window was recreated" into at worst one
-     * second of delay.
+     * remote update push, and WMS has no reason to traverse an idle launcher window at all.
+     * Keep the slower visibility check while a layer exists: the launcher can become drawable
+     * again without a new traversal reaching the hook.
      */
     private fun scheduleNativeBindSweep() {
-        val wm = service ?: return
-        if (stopped || !nativeBindSweepScheduled.compareAndSet(false, true)) return
-        val handler = wm.getObjectFieldAs<Handler>(WM_HANDLER)
-        handler.postDelayed({
-            nativeBindSweepScheduled.set(false)
-            if (stopped) return@postDelayed
+        synchronized(layers) {
+            if (stopped || layers.isEmpty() || pendingNativeBindSweep != null) return
+            val wm = service ?: return
+            val handler = wm.getObjectFieldAs<Handler>(WM_HANDLER)
+            val sweep = NativeBindSweep(wm, handler)
+            if (handler.postDelayed(sweep, sweepIntervalMs)) pendingNativeBindSweep = sweep
+        }
+    }
+
+    private inner class NativeBindSweep(private val wm: Any, val handler: Handler) : Runnable {
+        override fun run() {
+            synchronized(layers) {
+                // A dequeued callback can race the last layer's removal and replacement.
+                if (pendingNativeBindSweep !== this || stopped) return
+                pendingNativeBindSweep = null
+            }
             var keepGoing = false
             runCatching {
                 // A covered launcher is as idle as a sleeping panel: neither the native identity
@@ -2124,10 +2161,12 @@ class HomeDockWindow : BaseHook() {
                 // process lifetime. It is posted, so its result lands on the next sweep - the
                 // cadence is the knob's own latency, not this tick's.
                 //
-                // This is the backstop, not the fast path: the geometry observers ask for the
-                // same read the moment the settings file changes. This tick is what covers a
-                // build whose provider notification never arrives.
-                glassClient.refreshGeometry()
+                // Serialize admission with last-layer removal. The provider query itself
+                // runs on the glass worker, not under the layer or WMS lock.
+                synchronized(layers) {
+                    if (stopped || layers.isEmpty()) return
+                    glassClient.refreshGeometry()
+                }
                 // The rotation gate has to be polled here: a rotated app hides the launcher window,
                 // WMS stops traversing it, and nothing else observes the display while that lasts.
                 val rotationChanged = layerUpdate.refreshRotationGate()
@@ -2144,8 +2183,8 @@ class HomeDockWindow : BaseHook() {
                 // Preserve the WM -> layer lock order used by the wallpaper command path.
                 synchronized(wm.getObjectFieldAs<Any>(WM_LOCK)) {
                     synchronized(layers) {
-                        if (stopped) return@postDelayed
-                        keepGoing = layers.isNotEmpty()
+                        if (stopped || layers.isEmpty()) return
+                        keepGoing = true
                         layers.entries.toList().forEach { (window, layer) ->
                             bindNativeMotion(window, layer)
                         }
@@ -2168,7 +2207,7 @@ class HomeDockWindow : BaseHook() {
                 }
             }
             if (keepGoing) scheduleNativeBindSweep()
-        }, sweepIntervalMs)
+        }
     }
 
     // Called only under the layer lock. The authenticated Binder receiver publishes an
@@ -2201,10 +2240,8 @@ class HomeDockWindow : BaseHook() {
                 layer.nativeScene = sample.scene()
                 layer.motionSamples = 0
                 layer.motionEndPending = true
-                // Sampled, not verbatim: this is the one diagnostic in the frame loop that is not
-                // already in noisyPrefixes-form, and it still fires on every scene transition.
                 if (SCENE_LOG.sample()) {
-                    glassClient.record("native motion scene=${sample.scene()} scale=${sample.scale()}")
+                    glassClient.recordFrame { "native motion scene=${sample.scene()} scale=${sample.scale()}" }
                 }
             }
             return layer.nativeMotion.relativeOffsetY(layer.density)

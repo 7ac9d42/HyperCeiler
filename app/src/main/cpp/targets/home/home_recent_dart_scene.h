@@ -18,11 +18,13 @@ inline std::optional<std::array<uint32_t,4>> replay_words(const Code& code,const
     Body words;if(!code.prefix(plan.observe,4,words))return {};
     std::array<uint32_t,4> result{};std::copy(words.begin(),words.end(),result.begin());return result;
 }
-enum class ReadResult {Ready,Frame,Memory,Uninitialized,State};
+enum class ReadResult {Ready,Frame,Memory,Uninitialized,State,AwaitingCommit};
+constexpr unsigned kAwaitingCommit=unsigned(ReadResult::AwaitingCommit)*4;
 struct Observation {ReadResult result=ReadResult::Memory;bool active=false;};
 inline const char* read_reason(ReadResult value){switch(value){
     case ReadResult::Ready:return "committed Flutter state read";case ReadResult::Frame:return "Dart frame is not word aligned";
     case ReadResult::Uninitialized:return "overview singleton has not initialized";case ReadResult::State:return "invalid tagged state reference";
+    case ReadResult::AwaitingCommit:return "awaiting a new Flutter commit after scene repair";
     default:return "committed state memory unavailable";
 }}
 // The observer runs synchronously after the original store/write barrier. Reads

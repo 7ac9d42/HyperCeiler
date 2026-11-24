@@ -192,7 +192,7 @@ public final class HomeQuickSwitchSystemUIOS4 extends BaseHook {
             @Override public void after(HookParam p){install((Context)p.getArgs()[0]);}
         });
         Context current=ContextUtils.getContextNoError(ContextUtils.FLAG_CURRENT_APP);if(current!=null)install(current);
-        registerHotReloadCleanup(()->{closed=true;enabled=false;synchronized(guard){receivers.clear();trackers.clear();}});
+        registerHotReloadCleanup(this::retire);
         log("platform receiver / typed trackers / dynamic original cleanup bound "+finish,null);
     }
     private HomeQuickSwitchState beforeInput(Object receiver,MotionEvent e) throws Exception {
@@ -222,16 +222,44 @@ public final class HomeQuickSwitchSystemUIOS4 extends BaseHook {
     private synchronized void install(Context app) {
         if(closed||worker!=null||!"com.android.systemui".equals(app.getPackageName()))return;
         context=app;HandlerThread thread=new HandlerThread("HC-QuickSwitch");thread.start();worker=new Handler(thread.getLooper());
-        ContentObserver observer=new ContentObserver(worker){@Override public void onChange(boolean self){refresh();}};
+        ContentObserver observer=new ContentObserver(worker){
+            @Override public void onChange(boolean self){refresh();}
+            @Override public void onChange(boolean self,Uri uri){if(!closed&&affectsQuickBack(uri))refresh();}
+        };
         app.getContentResolver().registerContentObserver(ROOT,true,observer);worker.post(this::refresh);
-        registerHotReloadCleanup(()->{app.getContentResolver().unregisterContentObserver(observer);thread.quitSafely();});
+        registerHotReloadCleanup(()->{
+            retire();
+            try {app.getContentResolver().unregisterContentObserver(observer);}
+            finally {thread.quitSafely();}
+        });
+    }
+    private static boolean affectsQuickBack(Uri uri) {
+        if(uri==null)return true;
+        var path=uri.getPathSegments();
+        int keyIndex=path.size()==2?1:path.size()==3&&"pref".equals(path.get(0))?2:0;
+        // Only known keyed notifications can rule out a whole-snapshot invalidation.
+        if(keyIndex==0)return true;
+        return switch(path.get(keyIndex-1)) {
+            case "boolean", "string", "stringset", "integer" -> {
+                String key=path.get(keyIndex);
+                yield "prefs_key_home_navigation_quick_back".equals(key)||"home_navigation_quick_back".equals(key);
+            }
+            default -> true;
+        };
+    }
+    private void retire() {
+        synchronized(guard){closed=true;enabled=false;receivers.clear();trackers.clear();}
     }
     private void refresh() {
+        if(closed)return;
         boolean value=false;
         try(Cursor c=context.getContentResolver().query(Uri.withAppendedPath(ROOT,"home_gestures"),null,null,null,null)) {
             if(c!=null&&c.moveToFirst()&&c.getInt(0)==1){int i=c.getColumnIndex("home_navigation_quick_back");value=i>=0&&!c.isNull(i)&&c.getInt(i)==1;}
         }catch(Exception ex){log("snapshot declined",ex);}
-        synchronized(guard){revision++;enabled=value;for(HomeQuickSwitchState s:receivers.values())s.retired=true;trackers.clear();receivers.clear();}
+        synchronized(guard){
+            if(closed)return;
+            revision++;enabled=value;for(HomeQuickSwitchState s:receivers.values())s.retired=true;trackers.clear();receivers.clear();
+        }
         log("config quick="+value+" revision="+revision,null);
     }
     private void complete(HomeQuickSwitchState s) {

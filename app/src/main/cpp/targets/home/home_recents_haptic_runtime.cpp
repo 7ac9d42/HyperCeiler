@@ -15,7 +15,7 @@
 #include <time.h>
 #include <unistd.h>
 
-extern "C" uint32_t hc_recents_haptic_gate=0;
+extern "C" { uint32_t hc_recents_haptic_gate=0; }
 namespace {
 std::atomic<uint64_t> config{0};
 std::atomic_bool close_ready{false};
@@ -28,7 +28,7 @@ struct LaneCounters {
 std::array<LaneCounters,4> lanes{};
 std::atomic<uint64_t> close_queued{0},close_delivered{0},close_dropped{0};
 int input=-1,output=-1;
-std::mutex transport;
+std::mutex channel,transport;
 AIBinder* window=nullptr;
 struct Request {
     // Only feedback can enter this queue; operation 0 is reserved for profile queries.
@@ -70,8 +70,14 @@ binder_status_t exchange(int operation,int64_t timestamp,int count,home_layout::
     return status;
 }
 void* worker(void*){
-    worker_alive.store(true,std::memory_order_release);publish();unsigned reports=0;
-    for(;;){Request r;const auto size=read(input,&r,sizeof(r));
+    int fd;
+    {
+        std::lock_guard guard(channel);
+        fd=input;
+        worker_alive.store(true,std::memory_order_release);publish();
+    }
+    unsigned reports=0;
+    for(;;){Request r;const auto size=read(fd,&r,sizeof(r));
         if(size<0&&errno==EINTR)continue;
         if(size!=sizeof(r))break;
         const auto age=now()-r.time;
@@ -87,21 +93,41 @@ void* worker(void*){
             "recents card haptic event=%s delivered=%d cards=%u type=%d strength=%d status=%d; native-only WMS path, no launcher JVM required",
             closing?"close":"scroll",ok,r.count,result.type,result.strength,status);
     }
-    worker_alive.store(false,std::memory_order_release);publish();return nullptr;
+    {
+        std::lock_guard guard(channel);
+        worker_alive.store(false,std::memory_order_release);
+        close(output);close(fd);input=output=-1;
+        publish();
+    }
+    return nullptr;
+}
+bool enqueue(const Request& request){
+    // Render callbacks must not wait for channel teardown or write through a recycled FD.
+    std::unique_lock guard(channel,std::try_to_lock);
+    return guard.owns_lock()&&worker_alive.load(std::memory_order_relaxed)
+        &&request.config==config.load(std::memory_order_relaxed)
+        &&write(output,&request,sizeof(request))==sizeof(request);
 }
 void configure(bool enabled,int type,int strength,bool close_enabled=false,bool extended=false){
     const uint64_t values=(enabled?1u:0u)|(unsigned(type)<<1)|(unsigned(strength)<<4)|(close_enabled?8u:0u)|(extended?0x1000u:0u);
-    const auto old=config.load(std::memory_order_acquire);if((old&0xffff)==values)return;
-    if((enabled||close_enabled)&&output<0){
-        int fds[2];if(pipe2(fds,O_CLOEXEC)!=0)return;
-        const int flags=fcntl(fds[1],F_GETFL);
-        if(flags<0||fcntl(fds[1],F_SETFL,flags|O_NONBLOCK)<0){close(fds[0]);close(fds[1]);return;}
-        input=fds[0];output=fds[1];pthread_t thread{};
-        if(pthread_create(&thread,nullptr,worker,nullptr)!=0){close(input);close(output);input=output=-1;return;}
-        pthread_detach(thread);
+    const auto old=config.load(std::memory_order_acquire);
+    const bool same=(old&0xffff)==values;
+    const bool wanted=enabled||close_enabled;
+    if(same&&(!wanted||worker_alive.load(std::memory_order_acquire)))return;
+    {
+        std::lock_guard guard(channel);
+        if(wanted&&output<0){
+            int fds[2];if(pipe2(fds,O_CLOEXEC)!=0)return;
+            const int flags=fcntl(fds[1],F_GETFL);
+            if(flags<0||fcntl(fds[1],F_SETFL,flags|O_NONBLOCK)<0){close(fds[0]);close(fds[1]);return;}
+            input=fds[0];output=fds[1];pthread_t thread{};
+            if(pthread_create(&thread,nullptr,worker,nullptr)!=0){close(input);close(output);input=output=-1;return;}
+            pthread_detach(thread);
+        }else if(same)return;
+        config.store((((old>>16)+1)<<16)|values,std::memory_order_release);
+        if(!same)changed.store(true,std::memory_order_release);
+        publish();
     }
-    config.store((((old>>16)+1)<<16)|values,std::memory_order_release);
-    changed.store(true,std::memory_order_release);publish();
     __android_log_print(ANDROID_LOG_INFO,"HyperCeiler.HomeLayout","recents card haptic config enabled=%d close=%d type=%d strength=%d source=physical-provider-via-WMS",enabled,close_enabled,type,strength);
 }
 }
@@ -130,11 +156,14 @@ void hc_recents_close_haptic_commit(){
     const auto current=config.load(std::memory_order_acquire);
     if(!(current&8)||!close_ready.load(std::memory_order_acquire)||!worker_alive.load(std::memory_order_acquire))return;
     const Request request{current,now(),1,Request::Operation::Close};
-    if(output>=0&&write(output,&request,sizeof(request))==sizeof(request))close_queued.fetch_add(1,std::memory_order_relaxed);
+    if(enqueue(request))close_queued.fetch_add(1,std::memory_order_relaxed);
     else close_dropped.fetch_add(1,std::memory_order_relaxed);
 }
 bool hc_recents_haptic_changed(){return changed.exchange(false,std::memory_order_acq_rel);}
-void hc_recents_haptic_ready(bool value){ready.store(value,std::memory_order_release);publish();}
+void hc_recents_haptic_ready(bool value){
+    std::lock_guard guard(channel);
+    ready.store(value,std::memory_order_release);publish();
+}
 void hc_recents_haptic_observe(const home_layout::haptic::Observation& observation){
     if(!observation.valid)return;
     const auto current=config.load(std::memory_order_acquire);
@@ -157,7 +186,7 @@ void hc_recents_haptic_observe(const home_layout::haptic::Observation& observati
     if(!count)return;const Request request{current,now(),count};
     // One bounded nonblocking write, no Binder, allocation, waiting or logging
     // on the Flutter isolate. The worker and server discard stale/disabled work.
-    if(output>=0&&write(output,&request,sizeof(request))==sizeof(request))queued.fetch_add(count,std::memory_order_relaxed);
+    if(enqueue(request))queued.fetch_add(count,std::memory_order_relaxed);
     else dropped.fetch_add(count,std::memory_order_relaxed);
 }
 HomeRecentsHapticCounters hc_recents_haptic_counters(){

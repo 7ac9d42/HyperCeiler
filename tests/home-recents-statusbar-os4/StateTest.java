@@ -29,6 +29,14 @@ public class StateTest {
         s.bind(10123,21);c(!s.overview(now)); // process restart never reuses the previous source
         c(s.accept(10123,21,1,now,10,1,1,now));c(s.overview(now));
         s.clear();c(!s.overview(now));c(!s.identity(10123,21));
+
+        s.bind(10123,22);
+        c(s.accept(10123,22,1,now,9,2,2,now));c(s.overview(now));
+        long repaired=now+2_000_000_000L;
+        c(s.accept(10123,22,2,repaired,0,3,3,repaired));c(!s.overview(repaired));
+        long heartbeat=repaired+2_000_000_000L;
+        c(s.accept(10123,22,3,heartbeat,0,3,3,heartbeat));c(!s.overview(heartbeat));
+        c(!s.accept(10123,22,4,heartbeat,9,2,2,heartbeat));c(!s.overview(heartbeat));
         System.out.println("recents bar identity/lease "+checks+" checks passed");
     }
 }

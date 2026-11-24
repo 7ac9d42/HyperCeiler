@@ -4,8 +4,11 @@
 #include "targets/home/home_recents_haptic_runtime.h"
 #include "targets/home/home_recents_haptic_protocol.h"
 #include <android/transport.h>
+#include <atomic>
 #include <cassert>
+#include <cerrno>
 #include <chrono>
+#include <fcntl.h>
 #include <condition_variable>
 #include <cstring>
 #include <iostream>
@@ -19,6 +22,11 @@ std::mutex capture_mutex;std::condition_variable capture_changed;
 struct Packet {int operation;int64_t time;int count;bool extended;};
 std::vector<Packet> packets;
 bool scroll=true,closing=true,v1=false;
+#ifdef HC_TEST_PIPE_FAULTS
+std::atomic_bool fail_next_read{false};
+std::atomic_uint pipe_writes{0};
+std::atomic_int writer_fd{-1},reader_fd{-1};
+#endif
 template<class T> void put(AParcel* p,T value){auto offset=p->bytes.size();p->bytes.resize(offset+sizeof(value));std::memcpy(p->bytes.data()+offset,&value,sizeof(value));}
 template<class T> T get(const AParcel* p){auto* writable=const_cast<AParcel*>(p);assert(writable->position+sizeof(T)<=p->bytes.size());T value;std::memcpy(&value,p->bytes.data()+writable->position,sizeof(T));writable->position+=sizeof(T);return value;}
 void wait_worker(){for(unsigned i=0;i<2000;++i){if(scroll?__atomic_load_n(&hc_recents_haptic_gate,__ATOMIC_ACQUIRE):hc_recents_close_haptic_active())return;std::this_thread::sleep_for(std::chrono::milliseconds(1));}assert(false);}
@@ -50,8 +58,71 @@ binder_status_t AIBinder_transact(AIBinder*,transaction_code_t code,AParcel** in
     put(*out,valid?3:0);put(*out,valid?70:50);put(*out,int(valid));return STATUS_OK;
 }
 }
+#ifdef HC_TEST_PIPE_FAULTS
+extern "C" ssize_t __real_read(int,void*,size_t);
+extern "C" ssize_t __real_write(int,const void*,size_t);
+extern "C" ssize_t __wrap_read(int fd,void* buf,size_t size){
+    const auto result=__real_read(fd,buf,size);
+    if(result>0&&fail_next_read.exchange(false)){
+        reader_fd.store(fd);errno=EIO;return -1;
+    }
+    return result;
+}
+extern "C" ssize_t __wrap_write(int fd,const void* buf,size_t size){
+    writer_fd.store(fd);pipe_writes.fetch_add(1);return __real_write(fd,buf,size);
+}
+namespace {
+bool wait_until(auto predicate){
+    for(unsigned i=0;i<2000;++i){
+        if(predicate())return true;
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+    return false;
+}
+void crossing(){
+    hc_recents_haptic_observe({true,true,0,Event::Update,100});
+    hc_recents_haptic_observe({true,false,0,Event::Start,0});
+    hc_recents_haptic_observe({true,false,0,Event::Update,70});
+}
+void refresh_profile(bool enabled){
+    std::this_thread::sleep_for(std::chrono::milliseconds(1050));
+    scroll=closing=enabled;
+    hc_recents_haptic_refresh();
+}
+int verify_failed_read(){
+    unsigned failures=0;
+    auto check=[&](bool ok,const char* name){std::cout<<name<<": "<<(ok?"PASS":"FAIL")<<'\n';failures+=!ok;};
+    hc_recents_haptic_refresh();hc_recents_haptic_ready(true);hc_recents_close_haptic_ready(true);
+    wait_worker();
+    fail_next_read.store(true);
+    hc_recents_close_haptic_commit();
+    check(wait_until([]{return reader_fd.load()>=0&&!__atomic_load_n(&hc_recents_haptic_gate,__ATOMIC_ACQUIRE)
+        &&!hc_recents_close_haptic_active();}),"fault stops scroll and close admission");
+    const unsigned after_fault=pipe_writes.load();
+    crossing();hc_recents_close_haptic_commit();
+    check(pipe_writes.load()==after_fault,"stopped worker receives no producer writes");
+    const auto closed=[](int fd){return fd>=0&&fcntl(fd,F_GETFD)==-1&&errno==EBADF;};
+    check(closed(reader_fd.load())&&closed(writer_fd.load()),"worker retires both pipe descriptors");
+    refresh_profile(false);
+    crossing();hc_recents_close_haptic_commit();
+    check(!hc_recents_haptic_enabled()&&!hc_recents_close_haptic_active(),"disabled profile stays off");
+    refresh_profile(true);
+    const bool recovered=wait_until([]{return __atomic_load_n(&hc_recents_haptic_gate,__ATOMIC_ACQUIRE)
+        &&hc_recents_close_haptic_active();});
+    check(recovered,"re-enable starts a fresh worker");
+    crossing();hc_recents_close_haptic_commit();
+    check(wait_until([]{const auto c=hc_recents_haptic_counters();return c.delivered==1&&c.close_delivered==1;}),
+        "recovered worker delivers only new scroll and close requests");
+    return failures?1:0;
+}
+}
+#endif
 int main(int argc,char** argv){
-    assert(argc==2);std::string scenario=argv[1];v1=scenario=="v1";scroll=scenario!="close"&&scenario!="off";closing=!v1&&scenario!="scroll"&&scenario!="off";
+    assert(argc==2);std::string scenario=argv[1];
+#ifdef HC_TEST_PIPE_FAULTS
+    if(scenario=="read-failure")return verify_failed_read();
+#endif
+    v1=scenario=="v1";scroll=scenario!="close"&&scenario!="off";closing=!v1&&scenario!="scroll"&&scenario!="off";
     hc_recents_haptic_refresh();hc_recents_haptic_ready(true);hc_recents_close_haptic_ready(true);
     assert(hc_recents_haptic_scroll_enabled()==scroll&&hc_recents_close_haptic_enabled()==closing);
     if(scroll||closing)wait_worker();
