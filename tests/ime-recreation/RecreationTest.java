@@ -35,7 +35,17 @@ public class RecreationTest {
         BaseLoad.loaded.clear(); PrefsBridge.values.clear(); AppsTool.queries=0;
         if (style != null) PrefsBridge.values.put("various_unlock_ime_style", style);
         PrefsBridge.values.put("various_unlock_ime_apps", selected ? Set.of("test.ime") : Set.of());
+        loadRoute();
+    }
+    static void loadRoute() {
+        BaseHook.hooks.clear();
+        PrefsBridge.miuiChecks=0; PrefsBridge.aospChecks=0;
         new VariousThirdApps().onPackageLoaded();
+    }
+    static int duplicateRoutes;
+    static void countRoute(String label) {
+        System.out.println(label + ": MIUI=" + PrefsBridge.miuiChecks + " AOSP=" + PrefsBridge.aospChecks);
+        if (PrefsBridge.miuiChecks != 1 || PrefsBridge.aospChecks != 1) duplicateRoutes++;
     }
     public static void main(String[] args) {
         MiuiImeSupport.install(Manager.class);
@@ -56,28 +66,40 @@ public class RecreationTest {
         BaseHook.cleanups.forEach(Runnable::run);
         check(Manager.sIsImeSupport==-1 && OlderManager.sIsImeSupport==0);
         route("1",true);
-        check(BaseLoad.loaded.contains("UnlockIme") && AppsTool.queries==0);
+        countRoute("selected MIUI");
+        check(BaseLoad.loaded.contains("UnlockIme") && !BaseLoad.loaded.contains("MiAospIme") && AppsTool.queries==0);
+        check(BaseHook.hooks.containsKey("loadDex"));
         route("2",true);
+        countRoute("selected AOSP on next load");
         check(BaseLoad.loaded.contains("MiAospIme") && !BaseLoad.loaded.contains("UnlockIme") && AppsTool.queries==0);
+        check(BaseHook.hooks.containsKey("loadDex"));
         route("0",true);
+        countRoute("disabled");
         check(!BaseLoad.loaded.contains("UnlockIme") && !BaseLoad.loaded.contains("MiAospIme"));
         route("1",false);
-        check(!BaseLoad.loaded.contains("InputMethodClassLoaderDispatcher"));
+        countRoute("unselected");
+        check(!BaseLoad.loaded.contains("InputMethodClassLoaderDispatcher") && AppsTool.queries==1);
         route(null,true);
         PrefsBridge.values.put("various_unlock_ime",true);
-        new VariousThirdApps().onPackageLoaded();
-        check(BaseLoad.loaded.contains("UnlockIme"));
+        loadRoute();
+        countRoute("legacy MIUI");
+        check(BaseLoad.loaded.contains("UnlockIme") && !BaseLoad.loaded.contains("MiAospIme"));
+        BaseLoad.loaded.clear();
+        PrefsBridge.values.put("various_aosp_ime",true);
+        PrefsBridge.values.put("various_aosp_ime_apps", Set.of(BaseLoad.pkg));
+        loadRoute();
+        countRoute("both legacy keys");
+        check(BaseLoad.loaded.contains("UnlockIme") && BaseLoad.loaded.contains("MiAospIme"));
         BaseHook.hooks.clear();
         PrefsBridge.values.clear();
         PrefsBridge.values.put("add_clipboard_clear", true);
-        new InputMethodClassLoaderDispatcher().init();
+        new InputMethodClassLoaderDispatcher(false, false).init();
         check(!BaseHook.hooks.containsKey("loadDex"));
 
         BaseLoad.pkg = "com.baidu.input_mi";
         PrefsBridge.values.put("various_unlock_ime_style", "1");
         PrefsBridge.values.put("various_unlock_ime_apps", Set.of(BaseLoad.pkg));
-        var dispatcher = new InputMethodClassLoaderDispatcher();
-        dispatcher.init();
+        loadRoute();
         check(BaseHook.hooks.containsKey("loadDex"));
         var load = new HookParam();
         load.args = new Object[]{RecreationTest.class.getClassLoader(), "fixture"};
@@ -85,12 +107,13 @@ public class RecreationTest {
         check(!BaseHook.hooks.containsKey("getSupportIme"));
 
         PrefsBridge.values.put("various_unlock_ime_show_all", true);
-        new InputMethodClassLoaderDispatcher().init();
+        loadRoute();
         BaseHook.hooks.get("loadDex").after(load);
         check(BaseHook.hooks.keySet().equals(Set.of("loadDex", "getSupportIme")));
         var result = new HookParam();
         BaseHook.hooks.get("getSupportIme").before(result);
         check(result.result.equals(java.util.List.of("fixture.ime")));
+        check(duplicateRoutes == 0);
         System.out.println("IME recreation: " + checks + " checks passed (service recovery, routing, retired clipboard preference, SDK 37 IME list)");
     }
 }

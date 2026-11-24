@@ -38,6 +38,13 @@ import io.github.lingqiqi5211.ezhooktool.xposed.common.HookParam;
 public class InputMethodClassLoaderDispatcher extends BaseHook {
     private final Map<ClassLoader, Boolean> mLoadedClassLoaders =
         Collections.synchronizedMap(new WeakHashMap<>());
+    private final boolean mNeedMiuiImeUnlock;
+    private final boolean mNeedAospIme;
+
+    public InputMethodClassLoaderDispatcher(boolean needMiuiImeUnlock, boolean needAospIme) {
+        mNeedMiuiImeUnlock = needMiuiImeUnlock;
+        mNeedAospIme = needAospIme;
+    }
 
     @Override
     public void init() {
@@ -83,14 +90,14 @@ public class InputMethodClassLoaderDispatcher extends BaseHook {
             ));
         }
 
-        if (InputMethodConfig.shouldHookMiuiIme(getPackageName())) {
+        if (mNeedMiuiImeUnlock) {
             enabledLoaders.add(InputMethodDexHelper.loader(
                 "UnlockIme",
                 classLoader -> new UnlockIme().initLoader(classLoader)
             ));
         }
 
-        if (InputMethodConfig.shouldHookAospIme(getPackageName())) {
+        if (mNeedAospIme) {
             enabledLoaders.add(InputMethodDexHelper.loader(
                 "MiAospIme",
                 classLoader -> new MiAospIme().initLoader(classLoader)

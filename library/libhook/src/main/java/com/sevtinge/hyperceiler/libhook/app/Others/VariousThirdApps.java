@@ -61,8 +61,9 @@ public class VariousThirdApps extends BaseLoad {
         mPackageName = getPackageName();
         // Selected IMEs must not depend on a one-shot system-list query during
         // cold start: the context/service may not be ready, or the list filtered.
-        boolean selectedInputMethod = InputMethodConfig.shouldHookMiuiIme(mPackageName)
-            || InputMethodConfig.shouldHookAospIme(mPackageName);
+        boolean needMiuiImeUnlock = InputMethodConfig.shouldHookMiuiIme(mPackageName);
+        boolean needAospIme = InputMethodConfig.shouldHookAospIme(mPackageName);
+        boolean selectedInputMethod = needMiuiImeUnlock || needAospIme;
         boolean isInputMethod = selectedInputMethod || isEnabledInputMethodPackage(mPackageName);
 
         if (isInputMethod) {
@@ -70,7 +71,7 @@ public class VariousThirdApps extends BaseLoad {
                 ModuleLog.i("HyperCeiler.ImeBottom", "Installing selected IME hooks package=" + mPackageName
                     + " style=" + InputMethodConfig.getImeStyle());
             }
-            initInputMethodHooks();
+            initInputMethodHooks(needMiuiImeUnlock, needAospIme);
             initClipboardHooks();
             return;
         }
@@ -93,11 +94,8 @@ public class VariousThirdApps extends BaseLoad {
         initMusicHooks();
     }
 
-    private void initInputMethodHooks() {
-        boolean needMiuiImeUnlock = InputMethodConfig.shouldHookMiuiIme(mPackageName);
-        boolean needAospIme = InputMethodConfig.shouldHookAospIme(mPackageName);
-
-        initHook(new InputMethodClassLoaderDispatcher());
+    private void initInputMethodHooks(boolean needMiuiImeUnlock, boolean needAospIme) {
+        initHook(new InputMethodClassLoaderDispatcher(needMiuiImeUnlock, needAospIme));
         initHook(new UnlockIme(), needMiuiImeUnlock);
         initHook(new MiAospIme(), needAospIme);
     }

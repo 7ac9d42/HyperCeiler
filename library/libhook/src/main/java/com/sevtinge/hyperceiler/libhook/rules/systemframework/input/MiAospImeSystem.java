@@ -31,6 +31,7 @@ import com.sevtinge.hyperceiler.libhook.appbase.input.InputMethodConfig;
 import com.sevtinge.hyperceiler.libhook.base.BaseHook;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.github.libxposed.api.XposedInterface;
@@ -87,7 +88,7 @@ public class MiAospImeSystem extends BaseHook {
                             return result;
                         }
 
-                        updateImeNavBarFlag(chain.getArgs().toArray(), fallbackEnabled);
+                        updateImeNavBarFlag(chain.getArgs(), fallbackEnabled);
                         return fallbackEnabled
                             ? navButtonFlags | INPUT_METHOD_NAV_BUTTON_FLAG_IME_DRAWS_IME_NAV_BAR
                             : navButtonFlags & ~INPUT_METHOD_NAV_BUTTON_FLAG_IME_DRAWS_IME_NAV_BAR;
@@ -216,12 +217,15 @@ public class MiAospImeSystem extends BaseHook {
             context.getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD);
     }
 
-    private void updateImeNavBarFlag(Object[] args, boolean enabled) {
-        if (args == null || args.length == 0 || args[0] == null) {
+    private void updateImeNavBarFlag(List<Object> args, boolean enabled) {
+        if (args == null || args.isEmpty()) {
             return;
         }
 
-        updateUserDataImeNavBarFlag(args[0], enabled);
+        Object userData = args.get(0);
+        if (userData != null) {
+            updateUserDataImeNavBarFlag(userData, enabled);
+        }
     }
 
     private void updateUserDataImeNavBarFlag(Object userData, boolean enabled) {

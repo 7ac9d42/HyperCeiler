@@ -9,9 +9,13 @@ This test repeats that lifecycle 100 times with one reused manager class, checks
 the support predicate and an entry that reads the field directly, then checks
 cleanup, older method/field variants, and bounded recovery diagnostics.
 Routing tests simulate an unavailable system context: selected MIUI/AOSP input
-methods still install, while disabled/unselected targets stay disabled. Legacy
-selection remains supported. Actual ART hook interception and process restarts
-require device verification; this fixture does not emulate ART.
+methods still install, while disabled/unselected targets stay disabled. They run
+the production Dex dispatcher during the same package load and count each
+MIUI/AOSP predicate at its style-presence read. Selected MIUI drops from 3/2
+calls and selected AOSP from 3/3 to 1/1 each. A later load can select a different
+style, and both legacy keys can still enable their respective hooks together.
+Actual ART hook interception and process restarts require device verification;
+this fixture does not emulate ART.
 
 On Xiaomi 15 / OS4 Android 17 with WeType 4.0.0, the final Release was checked
 through service recreation in the same process (switch away/back) and three

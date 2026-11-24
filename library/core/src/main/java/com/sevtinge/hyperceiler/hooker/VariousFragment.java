@@ -209,10 +209,10 @@ public class VariousFragment extends DashboardFragment {
             end = InputMethodConfig.NAV_BAR_BUTTON_IME_SWITCHER;
         }
 
-        PrefsBridge.putString(
-            InputMethodConfig.PREF_AOSP_IME_NAV_BAR_LAYOUT_HANDLE,
-            start + "[70AC];" + InputMethodConfig.NAV_BAR_BUTTON_HOME_HANDLE + ";" + end + "[70AC]"
-        );
+        String handle = start + "[70AC];" + InputMethodConfig.NAV_BAR_BUTTON_HOME_HANDLE + ";" + end + "[70AC]";
+        if (!handle.equals(PrefsBridge.getString(InputMethodConfig.PREF_AOSP_IME_NAV_BAR_LAYOUT_HANDLE, ""))) {
+            PrefsBridge.putString(InputMethodConfig.PREF_AOSP_IME_NAV_BAR_LAYOUT_HANDLE, handle);
+        }
     }
 
     private void updateDropDownSummary(DropDownPreference preference, String value) {

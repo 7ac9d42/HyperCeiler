@@ -25,7 +25,26 @@ stubs = {
  public static void e(String t,String m){}public static void d(String t,String m){}public static void w(String t,String m){}
  public static void d(String t,String p,String m){}public static void e(String t,String p,String m,Throwable e){throw new AssertionError(m,e);}
 }''',
-    PKG+'common/utils/PrefsBridge.java': '''package com.sevtinge.hyperceiler.common.utils;public class PrefsBridge {public static final java.util.Map<String,Object> values=new java.util.HashMap<>();public static String getString(String k,String d){return (String)values.getOrDefault(k,d);}public static boolean getBoolean(String k){return getBoolean(k,false);}public static boolean getBoolean(String k,boolean d){return (Boolean)values.getOrDefault(k,d);}@SuppressWarnings("unchecked") public static java.util.Set<String> getStringSet(String k){return (java.util.Set<String>)values.getOrDefault(k,java.util.Set.of());}}''',
+    PKG+'common/utils/PrefsBridge.java': '''package com.sevtinge.hyperceiler.common.utils;
+import java.util.*;
+public class PrefsBridge {
+ public static final Map<String,Object> values=new HashMap<>();
+ public static int miuiChecks,aospChecks;
+ private static final StackWalker walker=StackWalker.getInstance();
+ public static String getString(String k,String d){
+  if(k.equals("various_unlock_ime_style")){
+   // Both production predicates read the style-presence probe once, even for legacy keys.
+   String caller=walker.walk(frames->frames.dropWhile(f->!f.getMethodName().equals("hasImeStylePreference"))
+     .skip(1).findFirst().map(StackWalker.StackFrame::getMethodName).orElse(""));
+   if(caller.equals("shouldHookMiuiIme"))miuiChecks++;
+   if(caller.equals("shouldHookAospIme"))aospChecks++;
+  }
+  return (String)values.getOrDefault(k,d);
+ }
+ public static boolean getBoolean(String k){return getBoolean(k,false);}
+ public static boolean getBoolean(String k,boolean d){return (Boolean)values.getOrDefault(k,d);}
+ @SuppressWarnings("unchecked") public static Set<String> getStringSet(String k){return (Set<String>)values.getOrDefault(k,Set.of());}
+}''',
     'io/github/lingqiqi5211/ezhooktool/xposed/common/HookParam.java': '''package io.github.lingqiqi5211.ezhooktool.xposed.common;public class HookParam {
  public Object result;public Object[] args={};public void setResult(Object value){result=value;}
  public Object[] getArgs(){return args;}public Object getThisObject(){return null;}
@@ -67,7 +86,7 @@ import android.view.*;
 public class MiuiImeInsets {public void clear(){}public void bind(ViewGroup frame,ViewGroup area){}
  public void requestApplyInsets(){}public WindowInsets forInputView(View view,WindowInsets insets){return insets;}}
 ''',
-    PKG+'libhook/base/BaseLoad.java': '''package com.sevtinge.hyperceiler.libhook.base;public class BaseLoad {public static String pkg="test.ime";public static final java.util.List<String> loaded=new java.util.ArrayList<>();public void onPackageLoaded(){}public String getPackageName(){return pkg;}public ClassLoader getClassLoader(){return getClass().getClassLoader();}public void initHook(Object h){loaded.add(h.getClass().getSimpleName());}public void initHook(Object h,boolean enabled){if(enabled)initHook(h);}}''',
+    PKG+'libhook/base/BaseLoad.java': '''package com.sevtinge.hyperceiler.libhook.base;public class BaseLoad {public static String pkg="test.ime";public static final java.util.List<String> loaded=new java.util.ArrayList<>();public void onPackageLoaded(){}public String getPackageName(){return pkg;}public ClassLoader getClassLoader(){return getClass().getClassLoader();}public void initHook(Object h){loaded.add(h.getClass().getSimpleName());if(h instanceof com.sevtinge.hyperceiler.libhook.appbase.input.InputMethodClassLoaderDispatcher dispatcher)dispatcher.init();}public void initHook(Object h,boolean enabled){if(enabled)initHook(h);}}''',
     PKG+'libhook/utils/hookapi/tool/AppsTool.java': '''package com.sevtinge.hyperceiler.libhook.utils.hookapi.tool;public class AppsTool {public static final int FlAG_ONLY_ANDROID=1;public static int queries;public static android.content.Context findContext(int f){queries++;return null;}}''',
 }
 for name in ['rules/various/clipboard/BaiduClipboard', 'rules/various/clipboard/SoGouClipboard',

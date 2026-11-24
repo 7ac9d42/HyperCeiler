@@ -47,6 +47,8 @@ import io.github.libxposed.api.XposedInterface;
 public class MiAospIme extends BaseHook {
     private static final String HOT_RELOAD_INSETS_VIEW_KEY = "MiAospIme.insetsView";
     private static final WeakHashMap<View, int[]> BASE_PADDINGS = new WeakHashMap<>();
+    private static final WeakHashMap<View, Boolean> INSETS_CLEANUPS = new WeakHashMap<>();
+    private volatile Method cachedImeSupportMethod;
 
     @Override
     public void init() {
@@ -93,10 +95,16 @@ public class MiAospIme extends BaseHook {
                                 if (inputMethodServiceStub != null) {
                                     Object inputMethodServiceInjector = callStaticMethod(inputMethodServiceStub, "getInstance");
                                     if (inputMethodServiceInjector != null) {
-                                        Method imeSupportMethod = findImeSupportMethod(inputMethodServiceInjector.getClass());
+                                        Method imeSupportMethod = cachedImeSupportMethod;
+                                        if (imeSupportMethod == null) {
+                                            imeSupportMethod = findImeSupportMethod(inputMethodServiceInjector.getClass());
+                                            if (imeSupportMethod != null) {
+                                                imeSupportMethod.setAccessible(true);
+                                                cachedImeSupportMethod = imeSupportMethod;
+                                            }
+                                        }
                                         boolean shouldForceInternationalBuild = true;
                                         if (imeSupportMethod != null) {
-                                            imeSupportMethod.setAccessible(true);
                                             Object imeSupport = imeSupportMethod.invoke(
                                                 inputMethodServiceInjector,
                                                 inputMethodService.getApplicationContext()
@@ -323,10 +331,17 @@ public class MiAospIme extends BaseHook {
         view.setOnApplyWindowInsetsListener((target, insets) ->
             applyRoundedCornerPadding(target, insets, shadow));
         putHotReloadRuntimeState(HOT_RELOAD_INSETS_VIEW_KEY, view);
-        registerHotReloadCleanup(() -> {
-            view.setOnApplyWindowInsetsListener(null);
-            BASE_PADDINGS.remove(view);
-        });
+        synchronized (INSETS_CLEANUPS) {
+            if (INSETS_CLEANUPS.putIfAbsent(view, Boolean.TRUE) == null) {
+                registerHotReloadCleanup(() -> {
+                    view.setOnApplyWindowInsetsListener(null);
+                    synchronized (INSETS_CLEANUPS) {
+                        INSETS_CLEANUPS.remove(view);
+                        BASE_PADDINGS.remove(view);
+                    }
+                });
+            }
+        }
     }
 
     private int dpToPx(int data, Resources resources) {
