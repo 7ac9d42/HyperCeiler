@@ -477,7 +477,7 @@ public class XposedInitEntry extends XposedModule {
 
     private ModuleMatcher.MatchContext buildMatchContext(String packageName, HashMap<String, DataBase> dataMap) {
         boolean isSystemServer = BaseLoad.SYSTEM_SERVER.equals(packageName);
-        boolean hasExactMatch = dataMap.values().stream()
+        boolean hasExactMatch = !isSystemServer && dataMap.values().stream()
             .anyMatch(data -> packageName.equals(data.targetPackage));
 
         return ModuleMatcher.MatchContext.builder()

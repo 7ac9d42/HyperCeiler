@@ -1018,20 +1018,33 @@ public abstract class BaseHook {
     }
 
     public static Set<XposedInterface.HookHandle> chainAllMethods(Class<?> clazz, String methodName, XposedInterface.Hooker hooker) {
+        return chainAllMethods(clazz, methodName, 0, hooker);
+    }
+
+    private static Set<XposedInterface.HookHandle> chainAllMethods(
+        Class<?> clazz, String methodName, int minParameterCount, XposedInterface.Hooker hooker
+    ) {
         Set<XposedInterface.HookHandle> handles = new LinkedHashSet<>();
         for (Method method : Methods.find(clazz).filterByName(methodName).toList()) {
+            if (minParameterCount > 0 && method.getParameterCount() < minParameterCount) continue;
             handles.add(Hooks.intercept(method, hooker));
         }
         return handles;
     }
 
     public static Set<XposedInterface.HookHandle> chainAllMethods(String className, String methodName, XposedInterface.Hooker hooker) {
+        return chainAllMethods(className, methodName, 0, hooker);
+    }
+
+    public static Set<XposedInterface.HookHandle> chainAllMethods(
+        String className, String methodName, int minParameterCount, XposedInterface.Hooker hooker
+    ) {
         Class<?> clazz = findClassIfExists(className);
         if (clazz == null) {
             XposedLog.w(BaseLoad.getTag(), "chainAllMethods: class not found: " + className);
             return java.util.Collections.emptySet();
         }
-        return chainAllMethods(clazz, methodName, hooker);
+        return chainAllMethods(clazz, methodName, minParameterCount, hooker);
     }
 
     public static Set<XposedInterface.HookHandle> chainAllConstructors(Class<?> clazz, XposedInterface.Hooker hooker) {
@@ -1194,8 +1207,17 @@ public abstract class BaseHook {
      * @return HookHandle 对象列表
      */
     public static List<XposedInterface.HookHandle> hookAllMethods(Class<?> clazz, String methodName, IMethodHook callback) {
+        return hookAllMethods(clazz, methodName, 0, callback);
+    }
+
+    private static List<XposedInterface.HookHandle> hookAllMethods(
+        Class<?> clazz, String methodName, int minParameterCount, IMethodHook callback
+    ) {
         var observation=HookDiagnostics.observation(clazz.getName()+"#"+methodName+"/*");
         var methods=Methods.find(clazz).filterByName(methodName).toList();
+        if (minParameterCount > 0) {
+            methods = methods.stream().filter(method -> method.getParameterCount() >= minParameterCount).toList();
+        }
         if(methods.isEmpty()) HookDiagnostics.event(observation.id,observation.id,"FAILED","METHOD_RESOLUTION","METHOD_NOT_FOUND","No matching methods");
         var result=Hooks.createHooks(methods,HookDiagnostics.observe(observation,callback));
         if(!result.isEmpty())observation.installed(result);
@@ -1211,13 +1233,19 @@ public abstract class BaseHook {
      * @return HookHandle 对象列表
      */
     public static List<XposedInterface.HookHandle> hookAllMethods(String className, String methodName, IMethodHook callback) {
+        return hookAllMethods(className, methodName, 0, callback);
+    }
+
+    public static List<XposedInterface.HookHandle> hookAllMethods(
+        String className, String methodName, int minParameterCount, IMethodHook callback
+    ) {
         Class<?> clazz = findClassIfExists(className);
         if (clazz == null) {
             XposedLog.w(BaseLoad.getTag(), "hookAllMethods: class not found: " + className);
             HookDiagnostics.event(HookDiagnostics.owner()+"/"+className,className,"FAILED","CLASS_RESOLUTION","CLASS_NOT_FOUND","Required Hook target class was not resolved");
             return java.util.Collections.emptyList();
         }
-        return hookAllMethods(clazz, methodName, callback);
+        return hookAllMethods(clazz, methodName, minParameterCount, callback);
     }
 
     public static List<XposedInterface.HookHandle> hookAllMethods(

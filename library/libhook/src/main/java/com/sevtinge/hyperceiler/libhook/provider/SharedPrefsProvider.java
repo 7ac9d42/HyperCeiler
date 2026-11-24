@@ -211,8 +211,11 @@ public class SharedPrefsProvider extends ContentProvider {
             return null;
         }
         List<String> parts = uri.getPathSegments();
-        MatrixCursor cursor = new MatrixCursor(new String[]{"data"});
         int match = uriMatcher.match(uri);
+        if (match == 8 && isValidPath(parts, match)) {
+            return dockGeometryCursor();
+        }
+        MatrixCursor cursor = new MatrixCursor(new String[]{"data"});
         if (!isValidPath(parts, match)) {
             return cursor;
         }
@@ -271,9 +274,6 @@ public class SharedPrefsProvider extends ContentProvider {
                     }
                 }
                 return cursor;
-            }
-            case 8 -> {
-                return dockGeometryCursor();
             }
         }
         return null;

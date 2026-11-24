@@ -102,6 +102,12 @@ public class ContextUtils {
                     if (context != null || nowTime - time > timeout) {
                         break;
                     }
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
                 }
             }
             iContext.hadContext(context);

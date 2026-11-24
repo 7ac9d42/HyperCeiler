@@ -24,6 +24,7 @@ public final class HookDiagnostics {
     private static volatile boolean deferred,enabled;
     private static final ThreadLocal<String> OWNER=new ThreadLocal<>();
     private static final LinkedHashMap<String,String> LAST=new LinkedHashMap<>();
+    private static final Scope NO_OP_SCOPE=new Scope();
     private HookDiagnostics(){}
     public static void bootstrap(String processName,String modulePath){
         try{
@@ -43,10 +44,12 @@ public final class HookDiagnostics {
     public static void deferred(boolean value){deferred=value;}
     public static final class Scope implements AutoCloseable {
         private final String previous;
-        Scope(String id){previous=OWNER.get();OWNER.set(id);}
-        @Override public void close(){if(previous==null)OWNER.remove();else OWNER.set(previous);}
+        private final boolean active;
+        private Scope(){previous=null;active=false;}
+        Scope(String id){previous=OWNER.get();OWNER.set(id);active=true;}
+        @Override public void close(){if(!active)return;if(previous==null)OWNER.remove();else OWNER.set(previous);}
     }
-    public static Scope scope(BaseHook hook){return new Scope(hook.getClass().getName());}
+    public static Scope scope(BaseHook hook){return enabled?new Scope(hook.getClass().getName()):NO_OP_SCOPE;}
     public static String owner(){String id=OWNER.get();return id==null?"java.unattributed":id;}
     public static void lifecycle(BaseHook hook,String phase,String stage,String code){
         if(enabled&&hook!=null)event(hook.getClass().getName(),hook.TAG,phase,stage,code,"");

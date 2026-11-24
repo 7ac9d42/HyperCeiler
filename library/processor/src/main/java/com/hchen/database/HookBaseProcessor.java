@@ -22,6 +22,7 @@ import com.google.auto.service.AutoService;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -38,7 +39,7 @@ import javax.lang.model.element.TypeElement;
  */
 @AutoService(Processor.class)
 @SupportedAnnotationTypes("com.hchen.database.HookBase")
-@SupportedSourceVersion(SourceVersion.RELEASE_21)
+@SupportedSourceVersion(SourceVersion.RELEASE_25)
 public class HookBaseProcessor extends AbstractProcessor {
     private int count = 0;
 
@@ -122,7 +123,7 @@ public class HookBaseProcessor extends AbstractProcessor {
             String fullClassName = typeElement.getQualifiedName().toString();
             HookBase hookBase = element.getAnnotation(HookBase.class);
 
-            writer.write(String.format(
+            writer.write(String.format(Locale.ROOT,
                 "        dataMap.put(\"%s\", new DataBase(\"%s\", %d, %d, %sF, %sF, %d));\n",
                 fullClassName,
                 hookBase.targetPackage(),
