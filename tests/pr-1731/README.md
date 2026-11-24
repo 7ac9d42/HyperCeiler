@@ -69,7 +69,7 @@ HCL4 扩展布局与 HCY1 兼容接口的交易码、顺序和确认值未变；
 | `tests/hyos-control/run_java.py` | 65 项通过 |
 | `tests/hyos-control/run_legacy_java.py` | endpoint、10 项 idle-cache、10 项 atomic-reload 均通过 |
 | 已退役的 companion native decoder 测试 | 当时 decoder/cache 172 项通过，Java 生产 writer 的六组报文逐字段交叉解码通过 |
-| `tests/home-startup-snapshot/run_mutations.py` | 四组破坏租约／退休身份／查询顺序／关闭 payload 的代码变体均被回归拒绝 |
+| 一次性源码变异（已移除） | 当时的租约、退休身份、查询顺序和关闭 payload 变体均被回归拒绝；常规复验使用正向用例 |
 | `python3 tests/dock-title-os4/run.py` | 149 项解析器、26 项缓存协议、18 项 endpoint 检查通过 |
 | `:app:assembleDebug` | 完整 APK 构建成功，包含真实 Java/Kotlin 和 ARM64 native 编译 |
 | `:app:assembleRelease` | 完整 APK 构建成功，R8 后打包成功；APK 签名验证通过 |
@@ -91,7 +91,6 @@ python3 tests/pr-1731/run_native.py
 python3 tests/home-startup-snapshot/run_java.py --output /tmp/hcs-java-check
 python3 tests/hyos-control/run_java.py --output /tmp/hcy-java-check
 python3 tests/hyos-control/run_legacy_java.py --output /tmp/hcl-java-check
-python3 tests/home-startup-snapshot/run_mutations.py --output /tmp/hcs-mutations-check
 python3 tests/dock-title-os4/run.py
 ```
 
