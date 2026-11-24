@@ -51,8 +51,7 @@ public class WeatherView extends FrameLayout {
         confettiManager = new ConfettiManager(context,
                 new WeatherConfettoGenerator(confettoInfo), confettiSource, this)
                 .setEmissionDuration(Long.MAX_VALUE)
-                .enableFadeOut(input -> coerceIn(fadeOutPercent - input, 0f, 1f))
-                .animate();
+                .enableFadeOut(input -> coerceIn(fadeOutPercent - input, 0f, 1f));
     }
 
     public MutableRectSource getConfettiSource() {
@@ -92,6 +91,13 @@ public class WeatherView extends FrameLayout {
 
     public final void setSpeed(int value) {
         speed = value;
+        updateVelocities();
+    }
+
+    public final void setAngleAndSpeed(int angle, int speed) {
+        this.angle = angle;
+        this.angleRadians = Math.toRadians(angle);
+        this.speed = speed;
         updateVelocities();
     }
 

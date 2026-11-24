@@ -97,6 +97,9 @@ public interface LogDao {
         "ORDER BY timestamp DESC LIMIT 1000")
     List<LogEntry> queryLogs(String module, String level, String tag, String keyword);
 
+    @Query("SELECT EXISTS(SELECT 1 FROM logs WHERE module = :module)")
+    boolean hasModuleLogs(String module);
+
     @Query("SELECT * FROM logs ORDER BY timestamp ASC")
     List<LogEntry> getAllLogsForExport();
 

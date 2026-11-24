@@ -29,9 +29,14 @@ public final class GravitySensor implements SensorEventListener {
 	private final SensorManager sensorManager;
 	private float[] magneticValues;
 	private float[] accelerometerValues;
+	private final float[] rotationMatrix = new float[9];
+	private final float[] remappedRotationMatrix = new float[9];
+	private final float[] orientationAngles = new float[3];
 	private int orientation;
 	private int speed;
 	private boolean started;
+	private boolean accelerometerRegistered;
+	private boolean magnetometerRegistered;
 	private final Context context;
 	private final WeatherView weatherView;
 
@@ -64,15 +69,11 @@ public final class GravitySensor implements SensorEventListener {
 		}
 		if (this.magneticValues == null || this.accelerometerValues == null) return;
 
-		float[] rotationMatrix = new float[9];
-		float[] remappedRotationMatrix = new float[9];
-		float[] orientationAngles = new float[3];
+		SensorManager.getRotationMatrix(this.rotationMatrix, null, this.accelerometerValues, this.magneticValues);
+		SensorManager.remapCoordinateSystem(this.rotationMatrix, SensorManager.AXIS_X, SensorManager.AXIS_Z, this.remappedRotationMatrix);
+		SensorManager.getOrientation(this.remappedRotationMatrix, this.orientationAngles);
 
-		SensorManager.getRotationMatrix(rotationMatrix, null, this.accelerometerValues, this.magneticValues);
-		SensorManager.remapCoordinateSystem(rotationMatrix, SensorManager.AXIS_X, SensorManager.AXIS_Z, remappedRotationMatrix);
-		SensorManager.getOrientation(remappedRotationMatrix, orientationAngles);
-
-		double roll = Math.toDegrees(orientationAngles[2]) + Math.random() * 20 - 10;
+		double roll = Math.toDegrees(this.orientationAngles[2]) + Math.random() * 20 - 10;
 		switch (this.orientation) {
 			case Surface.ROTATION_90:
 				roll += 90;
@@ -88,17 +89,29 @@ public final class GravitySensor implements SensorEventListener {
 		if (roll > 90) roll -= 180;
 		else if (roll < -90) roll += 180;
 
-		this.weatherView.setAngle((int) roll);
-		this.weatherView.setSpeed(this.speed + (int) Math.round(Math.random() * 20 - 10));
+		this.weatherView.setAngleAndSpeed((int) roll,
+				this.speed + (int) Math.round(Math.random() * 20 - 10));
 	}
 
 	private void registerListener() {
-		this.sensorManager.registerListener(this, this.sensorManager.getDefaultSensor(1), 2);
-		this.sensorManager.registerListener(this, this.sensorManager.getDefaultSensor(2), 2);
+		if (this.sensorManager == null) return;
+		if (!this.accelerometerRegistered) {
+			Sensor sensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+			this.accelerometerRegistered = sensor != null
+					&& this.sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI);
+		}
+		if (!this.magnetometerRegistered) {
+			Sensor sensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+			this.magnetometerRegistered = sensor != null
+					&& this.sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI);
+		}
 	}
 
 	private void unregisterListener() {
+		if (!this.accelerometerRegistered && !this.magnetometerRegistered) return;
 		this.sensorManager.unregisterListener(this);
+		this.accelerometerRegistered = false;
+		this.magnetometerRegistered = false;
 	}
 
 	public void start() {

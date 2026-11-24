@@ -142,6 +142,10 @@ public class AppLanguageHelper {
             return applied.get(0);
         }
         // 2) 否则回落到 Configuration —— 跟随系统语言时由系统回填。
+        return getConfigurationLocale(context);
+    }
+
+    private static Locale getConfigurationLocale(Context context) {
         if (context != null) {
             LocaleList configurationLocales = context.getResources().getConfiguration().getLocales();
             if (!configurationLocales.isEmpty()) {
@@ -153,10 +157,14 @@ public class AppLanguageHelper {
 
     public static int getCurrentLanguageIndex(Context context) {
         LocaleList applied = getApplicationLocalesSafe(context);
-        if (applied != null && !applied.isEmpty()) {
-            return findBestLanguageIndex(applied.get(0));
+        if (applied != null) {
+            if (!applied.isEmpty()) {
+                return findBestLanguageIndex(applied.get(0));
+            }
+            // 已成功读取空列表，说明应用跟随 Configuration。
+            return findBestLanguageIndex(getConfigurationLocale(context));
         }
-        // 跟随系统语言时仍按系统语言匹配最近的列表项作为 picker 默认值。
+        // 系统服务读取不可用时重试，保留原有回退行为。
         return findBestLanguageIndex(getCurrentLocale(context));
     }
 

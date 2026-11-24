@@ -267,7 +267,7 @@ public class StartupFragment extends BaseFragment implements IOnFocusListener {
         }
     }
 
-    /*@Override
+    @Override
     public void onStop() {
         super.onStop();
         AndroidLog.d(TAG, "onStop");
@@ -275,7 +275,7 @@ public class StartupFragment extends BaseFragment implements IOnFocusListener {
             mGlowController.stop();
             AndroidLog.d(TAG, "GlowController: stop");
         }
-    }*/
+    }
 
     private void resetFirstStart() {
         if (mAnimationHandler != null) {
@@ -292,6 +292,9 @@ public class StartupFragment extends BaseFragment implements IOnFocusListener {
         mMainHandler.removeCallbacks(mRestoreNextButtonRunnable);
         if (mAnimationHandler != null) {
             mAnimationHandler.removeCallbacksAndMessages(null);
+        }
+        if (mGlowController != null) {
+            mGlowController.stop();
         }
     }
 

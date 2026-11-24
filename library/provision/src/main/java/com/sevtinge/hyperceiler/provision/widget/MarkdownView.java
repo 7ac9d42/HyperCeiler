@@ -48,17 +48,18 @@ public class MarkdownView extends TextView {
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private OnMarkdownLoadListener loadListener;
+    private Runnable retryListener;
+    private Object pendingLoad;
 
     // 样式配置
-    private static int COLOR_TITLE = Color.parseColor("#333333");
-    private static int COLOR_TEXT = Color.parseColor("#444444");
+    private final int titleColor;
+    private final int textColor;
     private static final int COLOR_LINK = Color.parseColor("#1A73E8");
     private static final int COLOR_BULLET = Color.parseColor("#888888");
     private static final int COLOR_DIVIDER = Color.parseColor("#CCCCCC");
+    private static final Pattern LINK_PATTERN = Pattern.compile("\\[(.*?)\\]\\((.*?)\\)");
+    private static final Pattern BOLD_PATTERN = Pattern.compile("\\*\\*(.*?)\\*\\*");
 
-    private static String currentUrl;
-
-    // 定义回调接口
     public interface OnMarkdownLoadListener {
         void onResult(boolean success);
     }
@@ -67,10 +68,20 @@ public class MarkdownView extends TextView {
         this.loadListener = listener;
     }
 
+    void setOnRetryListener(Runnable listener) {
+        retryListener = listener;
+    }
+
+    void clearLoadCallbacks() {
+        pendingLoad = null;
+        loadListener = null;
+        retryListener = null;
+    }
+
     public MarkdownView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        COLOR_TITLE = AttributeResolver.resolveColor(context, fan.appcompat.R.attr.textColorList);
-        COLOR_TEXT = AttributeResolver.resolveColor(context, fan.appcompat.R.attr.textColorListSecondary);
+        titleColor = AttributeResolver.resolveColor(context, fan.appcompat.R.attr.textColorList);
+        textColor = AttributeResolver.resolveColor(context, fan.appcompat.R.attr.textColorListSecondary);
         init();
     }
 
@@ -86,81 +97,69 @@ public class MarkdownView extends TextView {
     /**
      * 加载在线 MD 文件
      */
-    public void loadMarkdownFromUrl(final String urlString) {
-        currentUrl = urlString;
+    public void loadMarkdownFromUrl(String urlString) {
+        Object request = new Object();
+        pendingLoad = request;
 
         ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
-
-        if (!isConnected) {
-            String fallbackTemplate = getContext().getString(com.sevtinge.hyperceiler.provision.R.string.provision_get_md_failed);
-            String fallbackContent = fallbackTemplate.replace("%URL%", currentUrl);
-            mainHandler.post(() -> {
-                render(fallbackContent);
-                if (loadListener != null) loadListener.onResult(true);
-            });
+        if (activeNetwork == null || !activeNetwork.isConnected()) {
+            postLoadResult(request, urlString, null);
             return;
         }
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
-
         Future<?> future = executor.submit(() -> {
-            boolean success = false;
+            String content = null;
             try {
-                URL url = new URL(currentUrl);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setConnectTimeout(5000);
-                conn.setReadTimeout(5000);
-
-                if (conn.getResponseCode() == 200) {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    StringBuilder sb = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        sb.append(line).append("\n");
+                HttpURLConnection conn = (HttpURLConnection) new URL(urlString).openConnection();
+                try {
+                    conn.setConnectTimeout(5000);
+                    conn.setReadTimeout(5000);
+                    if (conn.getResponseCode() == 200) {
+                        try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                            StringBuilder body = new StringBuilder();
+                            String line;
+                            while ((line = reader.readLine()) != null) {
+                                body.append(line).append('\n');
+                            }
+                            content = body.toString();
+                        }
                     }
-                    reader.close();
+                } finally {
                     conn.disconnect();
-
-                    final String rawContent = sb.toString();
-                    mainHandler.post(() -> {
-                        render(rawContent);
-                        if (loadListener != null) loadListener.onResult(true);
-                    });
-                    success = true;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            if (!success) {
-                mainHandler.post(() -> {
-                    String fallbackTemplate = getContext().getString(com.sevtinge.hyperceiler.provision.R.string.provision_get_md_failed);
-                    String fallbackContent = fallbackTemplate.replace("%URL%", currentUrl);
-                    render(fallbackContent);
-                    if (loadListener != null) loadListener.onResult(true);
-                });
-            }
+            postLoadResult(request, urlString, content);
         });
-
         executor.shutdown();
 
         new Thread(() -> {
             try {
                 future.get(10, TimeUnit.SECONDS);
             } catch (TimeoutException e) {
+                postLoadResult(request, urlString, null);
                 future.cancel(true);
-                mainHandler.post(() -> {
-                    String fallbackTemplate = getContext().getString(com.sevtinge.hyperceiler.provision.R.string.provision_get_md_failed);
-                    String fallbackContent = fallbackTemplate.replace("%URL%", currentUrl);
-                    render(fallbackContent);
-                    if (loadListener != null) loadListener.onResult(true);
-                });
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    private void postLoadResult(Object request, String url, String content) {
+        mainHandler.post(() -> {
+            if (pendingLoad != request) return;
+            pendingLoad = null;
+            if (content != null) {
+                render(content);
+            } else {
+                String fallback = getContext().getString(com.sevtinge.hyperceiler.provision.R.string.provision_get_md_failed);
+                render(fallback.replace("%URL%", url));
+            }
+            if (loadListener != null) loadListener.onResult(true);
+        });
     }
 
     public void render(String rawText) {
@@ -186,7 +185,7 @@ public class MarkdownView extends TextView {
                 int end = ssb.length() - 1;
                 ssb.setSpan(new StyleSpan(Typeface.BOLD), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 ssb.setSpan(new AbsoluteSizeSpan(20, true), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                ssb.setSpan(new ForegroundColorSpan(COLOR_TITLE), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ssb.setSpan(new ForegroundColorSpan(titleColor), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
             // 3. 列表项 (- )
             else if (trimmedLine.startsWith("- ")) {
@@ -198,7 +197,7 @@ public class MarkdownView extends TextView {
                     ssb.append("\n");
                 } else {
                     ssb.append(line).append("\n");
-                    ssb.setSpan(new ForegroundColorSpan(COLOR_TEXT), start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    ssb.setSpan(new ForegroundColorSpan(textColor), start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     processInlineStyles(ssb, start, ssb.length());
                 }
             }
@@ -224,8 +223,7 @@ public class MarkdownView extends TextView {
     private void processInlineStyles(SpannableStringBuilder ssb, int start, int end) {
         String sub = ssb.subSequence(start, end).toString();
         // 链接
-        Pattern lp = Pattern.compile("\\[(.*?)\\]\\((.*?)\\)");
-        Matcher lm = lp.matcher(sub);
+        Matcher lm = LINK_PATTERN.matcher(sub);
         List<Object[]> links = new ArrayList<>();
         while (lm.find()) links.add(new Object[]{lm.start(), lm.end(), lm.group(1), lm.group(2)});
         for (int i = links.size() - 1; i >= 0; i--) {
@@ -236,8 +234,7 @@ public class MarkdownView extends TextView {
         }
         // 加粗
         sub = ssb.subSequence(start, ssb.length()).toString();
-        Pattern bp = Pattern.compile("\\*\\*(.*?)\\*\\*");
-        Matcher bm = bp.matcher(sub);
+        Matcher bm = BOLD_PATTERN.matcher(sub);
         List<int[]> bolds = new ArrayList<>();
         while (bm.find()) bolds.add(new int[]{bm.start(), bm.end()});
         for (int i = bolds.size() - 1; i >= 0; i--) {
@@ -270,10 +267,7 @@ public class MarkdownView extends TextView {
         @Override
         public void onClick(@NonNull View w) {
             if ("hyperceiler://refresh".equals(url)) {
-                if (currentUrl != null) {
-                    TermsAndStatementBottomSheet.loadMarkdown(currentUrl);
-                    TermsAndStatementBottomSheet.initView();
-                }
+                if (retryListener != null) retryListener.run();
                 return;
             }
             try {

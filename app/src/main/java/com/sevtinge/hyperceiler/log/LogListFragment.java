@@ -20,6 +20,9 @@ package com.sevtinge.hyperceiler.log;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,6 +72,21 @@ public class LogListFragment extends Fragment {
     private PullViewHelper mPullViewHelper;
     private boolean mHasRootPermission = false;
     private boolean mHasAnyModuleLogs = false;
+
+    private final Handler mMainHandler = new Handler(Looper.getMainLooper());
+    private int mViewGeneration;
+    private boolean mRefreshRunning;
+    private boolean mPullRefreshPending;
+    private RefreshRequest mPendingRefresh;
+
+    private record RefreshRequest(int viewGeneration, boolean xposed, String keyword,
+                                  String level, String tag, boolean syncBeforeQuery) {
+        boolean isFiltering() {
+            return !keyword.isEmpty() || !LogLevelFilter.isAll(level) || !ALL_TAG_VALUE.equals(tag);
+        }
+    }
+
+    private record RefreshResult(List<LogEntry> logs, boolean hasRootPermission, boolean hasAnyModuleLogs) {}
 
     public static LogListFragment newInstance(int module) {
         LogListFragment fragment = new LogListFragment();
@@ -148,63 +166,104 @@ public class LogListFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        mViewGeneration++;
+        mPendingRefresh = null;
+        mPullRefreshPending = false;
+        isLoaded = false;
+        mHasRootPermission = false;
+        mHasAnyModuleLogs = false;
+        mPullViewHelper.setPullListener(null);
+        mRecyclerView.setAdapter(null);
+        mPullViewHelper = null;
+        mAdapter = null;
+        mLoadingLayout = null;
+        mEmptyLayout = null;
+        mSpringBackLayout = null;
+        mRecyclerView = null;
+        mEmptyText = null;
+        mEmptyIcon = null;
+        super.onDestroyView();
+    }
+
     private void maybeLoadInitialData() {
         if (getView() == null || !getUserVisibleHint() || isLoaded) {
             return;
         }
-        forceRefresh();
         isLoaded = true;
-    }
-
-    private void refreshData() {
-        refreshData(true, false, false);
+        forceRefresh();
     }
 
     private void refreshData(boolean showLoading, boolean fromPullRefresh, boolean syncBeforeQuery) {
-        if (showLoading) {
-            showState(STATE_LOADING);
+        if (getView() == null) return;
+        if (showLoading) showState(STATE_LOADING);
+        mPullRefreshPending |= fromPullRefresh;
+
+        // New filters replace queued queries, but must not drop a requested import.
+        boolean sync = syncBeforeQuery || (mPendingRefresh != null && mPendingRefresh.syncBeforeQuery());
+        RefreshRequest request = new RefreshRequest(mViewGeneration, mModule == 1,
+            mCurrentKeyword, mCurrentLevel, mCurrentTag, sync);
+        if (mRefreshRunning) {
+            mPendingRefresh = request;
+        } else {
+            startRefresh(request);
+        }
+    }
+
+    private void startRefresh(RefreshRequest request) {
+        Context appContext = requireContext().getApplicationContext();
+        mRefreshRunning = true;
+        new Thread(() -> {
+            RefreshResult result;
+            try {
+                result = loadLogs(request, appContext);
+            } catch (RuntimeException e) {
+                Log.e("LogListFragment", "Unable to refresh logs", e);
+                result = null;
+            }
+            RefreshResult completed = result;
+            mMainHandler.post(() -> finishRefresh(request, completed));
+        }, "HyperCeiler-LogRefresh").start();
+    }
+
+    private static RefreshResult loadLogs(RefreshRequest request, Context appContext) {
+        LogDao dao = LogRepository.getInstance().getDao();
+        boolean hasRootPermission = (request.xposed() || request.syncBeforeQuery())
+            && LogSyncDiagnostics.checkRoot(dao);
+        if (request.syncBeforeQuery()) {
+            // The loader persists denied Root access too; never silently skip collection.
+            XposedLogLoader.syncLogsToDatabaseSync(appContext);
+            // LoggerHealthChecker reads the copied LSPosed files: check only after import.
+            LogManager.startHealthCheck(appContext, null);
         }
 
-        final Context context = getContext();
-        final String module = mModule == 0 ? "App" : "Xposed";
-        final String keyword = mCurrentKeyword;
-        final String level = mCurrentLevel;
-        final String tag = mCurrentTag;
-        final boolean isFiltering = !keyword.isEmpty() || !LogLevelFilter.isAll(level) || !ALL_TAG_VALUE.equals(tag);
+        String module = request.xposed() ? "Xposed" : "App";
+        List<LogEntry> logs = dao.queryLogs(module, request.level(), request.tag(), request.keyword());
+        boolean hasAnyModuleLogs = !logs.isEmpty() || (request.isFiltering() && dao.hasModuleLogs(module));
+        return new RefreshResult(logs, hasRootPermission, hasAnyModuleLogs);
+    }
 
-        new Thread(() -> {
-            boolean hasRootPermission;
-            if (mModule == 1 || syncBeforeQuery) {
-                hasRootPermission = LogSyncDiagnostics.checkRoot(LogRepository.getInstance().getDao());
-                if (syncBeforeQuery && context != null) {
-                    // The loader persists denied Root access too; never silently skip collection.
-                    XposedLogLoader.syncLogsToDatabaseSync(context.getApplicationContext());
-                    // LoggerHealthChecker reads the copied LSPosed files: check only
-                    // after the first import, not before it on direct viewer launches.
-                    LogManager.startHealthCheck(context.getApplicationContext(), null);
-                }
-            } else {
-                hasRootPermission = false;
-            }
+    private void finishRefresh(RefreshRequest request, @Nullable RefreshResult result) {
+        mRefreshRunning = false;
+        RefreshRequest next = mPendingRefresh;
+        mPendingRefresh = null;
+        if (next != null) {
+            startRefresh(next);
+            return;
+        }
+        if (request.viewGeneration() != mViewGeneration || getView() == null) return;
 
-            LogDao dao = LogRepository.getInstance().getDao();
-            List<LogEntry> logs = dao.queryLogs(module, level, tag, keyword);
-            boolean hasAnyModuleLogs = isFiltering
-                ? !dao.queryLogs(module, LogLevelFilter.ALL.getValue(), ALL_TAG_VALUE, "").isEmpty()
-                : !logs.isEmpty();
-
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(() -> {
-                    mHasRootPermission = hasRootPermission;
-                    mHasAnyModuleLogs = hasAnyModuleLogs;
-                    mAdapter.updateData(logs, keyword);
-                    showState(logs.isEmpty() ? STATE_EMPTY : STATE_CONTENT);
-                    if (fromPullRefresh) {
-                        mPullViewHelper.onPullRefreshComplete();
-                    }
-                });
-            }
-        }).start();
+        if (result != null) {
+            mHasRootPermission = result.hasRootPermission();
+            mHasAnyModuleLogs = result.hasAnyModuleLogs();
+            mAdapter.updateData(result.logs(), request.keyword());
+        }
+        showState(mAdapter.getItemCount() == 0 ? STATE_EMPTY : STATE_CONTENT);
+        if (mPullRefreshPending) {
+            mPullRefreshPending = false;
+            mPullViewHelper.onPullRefreshComplete();
+        }
     }
 
     private void showLogDetail(LogEntry entry) {

@@ -49,10 +49,10 @@ public class TermsTitleSpan extends ClickableSpan {
         ModuleLog.i("TermsAndStatementFragment", " here is TermsTitleSpan onClick ");
         if (mHiperlinkType == 2) {
             ModuleLog.i("TermsAndStatementFragment", " here is User Agreement click ");
-            TermsAndStatementBottomSheet.loadMarkdown("https://raw.githubusercontent.com/ReChronoRain/website/main/Protocol.md");
+            sheet.loadMarkdown("https://raw.githubusercontent.com/ReChronoRain/website/main/Protocol.md");
         } else if (mHiperlinkType == 1) {
             ModuleLog.i("TermsAndStatementFragment", " here is Privacy Policy click ");
-            TermsAndStatementBottomSheet.loadMarkdown("https://raw.githubusercontent.com/ReChronoRain/website/main/Privacy.md");
+            sheet.loadMarkdown("https://raw.githubusercontent.com/ReChronoRain/website/main/Privacy.md");
         }
         sheet.show();
     }

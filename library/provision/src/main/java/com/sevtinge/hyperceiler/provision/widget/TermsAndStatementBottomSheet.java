@@ -18,7 +18,6 @@
  */
 package com.sevtinge.hyperceiler.provision.widget;
 
-import android.annotation.SuppressLint;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
@@ -35,17 +34,12 @@ import fan.bottomsheet.BottomSheetModal;
 
 public class TermsAndStatementBottomSheet {
 
-    static FragmentActivity mActivity;
-    BottomSheetModal mBottomSheet;
-
-    @SuppressLint("StaticFieldLeak")
-    static ProgressBar mProgressBar;
-    @SuppressLint("StaticFieldLeak")
-    static TextView verificationCodeTip;
-    static MarkdownView mMarkdownView;
+    private final BottomSheetModal mBottomSheet;
+    private final ProgressBar mProgressBar;
+    private final TextView verificationCodeTip;
+    private final MarkdownView mMarkdownView;
 
     public TermsAndStatementBottomSheet(FragmentActivity activity) {
-        mActivity = activity;
         mBottomSheet = new BottomSheetModal(activity);
         mBottomSheet.setDragHandleViewEnabled(true);
         BottomSheetBehavior<FrameLayout> behavior = mBottomSheet.getBehavior();
@@ -62,10 +56,10 @@ public class TermsAndStatementBottomSheet {
         mProgressBar = rootView.findViewById(R.id.progress_bar);
         mMarkdownView = rootView.findViewById(R.id.markdown);
         verificationCodeTip = rootView.findViewById(R.id.verification_code_tip);
-        initView();
+        mBottomSheet.setOnDismissListener(mMarkdownView::clearLoadCallbacks);
     }
 
-    public static void initView() {
+    public void loadMarkdown(String uri) {
         OobeUtils.refreshSecureSixDigit();
 
         mProgressBar.setVisibility(View.VISIBLE);
@@ -79,7 +73,7 @@ public class TermsAndStatementBottomSheet {
                 mProgressBar.setVisibility(View.INVISIBLE);
                 mMarkdownView.setVisibility(View.VISIBLE);
                 verificationCodeTip.setText(
-                    mActivity.getString(
+                    verificationCodeTip.getContext().getString(
                         R.string.provision_terms_of_use_verification_code_tip,
                         verificationCode
                     )
@@ -89,24 +83,11 @@ public class TermsAndStatementBottomSheet {
                 verificationCodeTip.setVisibility(View.GONE);
             }
         });
-    }
-
-
-    public static void loadMarkdown(String uri) {
-        if (mMarkdownView != null) {
-            mMarkdownView.loadMarkdownFromUrl(uri);
-        }
+        mMarkdownView.setOnRetryListener(() -> loadMarkdown(uri));
+        mMarkdownView.loadMarkdownFromUrl(uri);
     }
 
     public void show() {
-        if (mBottomSheet != null) {
-            mBottomSheet.show();
-        }
-    }
-
-    private void dismiss() {
-        if (mBottomSheet != null) {
-            mBottomSheet.dismiss();
-        }
+        mBottomSheet.show();
     }
 }

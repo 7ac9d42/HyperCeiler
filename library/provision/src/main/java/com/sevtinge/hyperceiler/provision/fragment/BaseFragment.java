@@ -49,6 +49,13 @@ public abstract class BaseFragment extends Fragment {
         return mRootView;
     }
 
+    @Override
+    public void onDestroyView() {
+        mRootView = null;
+        mContext = null;
+        super.onDestroyView();
+    }
+
     public void setResult(int resultCode) {
         requireActivity().setResult(resultCode);
     }

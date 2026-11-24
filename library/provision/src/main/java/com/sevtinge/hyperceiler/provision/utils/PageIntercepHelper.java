@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
+import android.os.Looper;
 import com.sevtinge.hyperceiler.common.log.ModuleLog;
 
 import androidx.annotation.Nullable;
@@ -39,6 +40,8 @@ public class PageIntercepHelper {
 
     private static final String TAG = "PageIntercepHelper";
 
+    private static final PageIntercepHelper INSTANCE = new PageIntercepHelper();
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
     private Callback mCallback;
     private BroadcastReceiver mReceiver;
 
@@ -49,7 +52,7 @@ public class PageIntercepHelper {
     }
 
     public static PageIntercepHelper getInstance() {
-        return new PageIntercepHelper();
+        return INSTANCE;
     }
 
     public interface Callback {
@@ -57,6 +60,7 @@ public class PageIntercepHelper {
     }
 
     public void register(Context context) {
+        if (mReceiver != null) unregisterReceiver(context);
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -75,7 +79,7 @@ public class PageIntercepHelper {
                     if (activity != null) {
                         activity.overridePendingTransition(R.anim.provision_slide_in_right, R.anim.provision_slide_out_left);
                     }
-                    new Handler().postDelayed(() -> {
+                    mHandler.postDelayed(() -> {
                         if (activity instanceof BaseActivity) {
                             ((BaseActivity) activity).setCheck(false);
                         }
@@ -90,9 +94,12 @@ public class PageIntercepHelper {
     }
 
     public void unregisterReceiver(Context context) {
+        mHandler.removeCallbacksAndMessages(null);
         if (mReceiver != null) {
             LocalBroadcastHelper.getInstance(context).unregisterReceiver(mReceiver);
+            mReceiver = null;
         }
+        mCallback = null;
     }
 
     public void setCallback(Callback callback) {
